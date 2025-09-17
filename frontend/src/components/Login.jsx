@@ -2,12 +2,12 @@ import React from 'react';
 
 const Login = () => {
   return (
-    <div className="flex h-screen bg-gradient-to-br from-teal-100 to-gray-800">
+    <div className="flex h-screen bg-gradient-to-br from-teal-50 to-gray-600">
       <div className="w-1/2 flex items-center justify-center">
         {/* Left Side - Login Form with Frame */}
-        <div className="w-3/4 max-w-md p-8 bg-teal-50 rounded-xl shadow-2xl border border-gray-100 transform hover:scale-105 transition duration-300">
+        <div className="w-2/3 max-w-lg p-12 bg-teal-50 rounded-xl shadow-2xl border border-gray-100 transform hover:scale-105 transition duration-300">
           <h2 className="text-3xl font-bold text-teal-700 mb-6 text-center">Login</h2>
-          <form className="space-y-6">
+          <form className="space-y-8">
             <div>
               <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
                 Email
@@ -36,7 +36,6 @@ const Login = () => {
             >
               Login
             </button>
-           
           </form>
         </div>
       </div>
