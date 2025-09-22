@@ -45,6 +45,12 @@ const AdminDashboard = () => {
             </nav>
           </div>
 
+          <div className="flex-1 p-6">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-center text-gray-800">Admin Dashboard</h2>
+            </div>
+            </div>
+
           {/* Main Content Area (empty for now as per request) */}
           <div className="flex-1 p-6"></div>
         </div>
