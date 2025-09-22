@@ -51,8 +51,7 @@ const AdminDashboard = () => {
             </div>
             </div>
 
-          {/* Main Content Area (empty for now as per request) */}
-          <div className="flex-1 p-6"></div>
+         
         </div>
       </div>
     </div>
