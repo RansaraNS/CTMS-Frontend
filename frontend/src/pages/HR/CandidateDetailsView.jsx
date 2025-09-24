@@ -11,6 +11,7 @@ const CandidateDetailsView = () => {
 
   useEffect(() => {
     fetchCandidateDetails();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchCandidateDetails = async () => {

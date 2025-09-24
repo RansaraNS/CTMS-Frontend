@@ -12,6 +12,7 @@ const CandidateDetails = () => {
 
   useEffect(() => {
     fetchCandidates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCandidates = async () => {
@@ -52,6 +53,7 @@ const CandidateDetails = () => {
 
   useEffect(() => {
     filterCandidates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, statusFilter, candidates]);
 
   const filterCandidates = () => {
