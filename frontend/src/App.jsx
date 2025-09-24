@@ -11,6 +11,9 @@ import ManageHR from './pages/Admin/ManageHR';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { isAuthenticated } from './context/auth';
+import InterviewFeedback from './pages/HR/InterviewFeedback';
+import ViewFeedback from './pages/HR/ViewFeedback';
+import CandidateDetailsView from './pages/HR/CandidateDetailsView';
 
 function App() {
   return (
@@ -85,6 +88,17 @@ function App() {
             </ProtectedRoute>
           } 
         />
+             
+
+               <Route 
+          path="/candidates/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <CandidateDetailsView />
+            </ProtectedRoute>
+          } 
+        />
+
         <Route 
           path="/interviews" 
           element={
@@ -93,6 +107,33 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+          <Route 
+          path="/interviews/:interviewId/feedback" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <InterviewFeedback />
+            </ProtectedRoute>
+          } 
+        />
+
+          <Route 
+          path="/interviews/:interviewId/view-feedback" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <ViewFeedback />
+            </ProtectedRoute>
+          } 
+        />
+
+        
+        
+
+        
+
+        {/* <Route path="/interviews/:interviewId/feedback"
+         element={<InterviewFeedback />} /> */}
+
         
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
