@@ -9,10 +9,15 @@ const InterviewList = () => {
       alert('Interview Report Generated! (Mock functionality)');
     };
   
-    const handleLogout = () => {
-      localStorage.removeItem('role');
-      navigate('/');
-    };
+     const handleLogout = () => {
+    // Remove authentication data
+    localStorage.removeItem('role');
+    localStorage.removeItem('token'); // If you have a token
+    localStorage.removeItem('user'); // If you store user info
+    
+    // Redirect to login page
+    navigate('/');
+  };
   
     const navigateTo = (path) => {
       navigate(path);

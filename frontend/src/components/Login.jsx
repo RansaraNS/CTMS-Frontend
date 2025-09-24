@@ -1,40 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import API from "../services/api";
+import { isAuthenticated } from '../context/auth';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated()) {
+      const role = localStorage.getItem('role');
+      navigate(role === 'admin' ? '/admin/dashboard' : '/hr/dashboard');
+    }
+  }, [navigate]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
-    mode: 'onBlur', // Validate on blur for better UX
+    mode: 'onBlur',
   });
 
-  const onSubmit = (data) => {
-   
-    if (data.email === 'admin@gmail.com' && data.password === 'admin123') {
-      localStorage.setItem('role', 'admin');
-      navigate('/admin/dashboard');
-    } else if (data.email.endsWith('@hr.gamagerecruiters.lk') && data.password.length >= 6) {
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await API.post('/auth/login', {
+        email: data.email,
+        password: data.password
+      });
+
+      const { token, user } = response.data;
       
-      localStorage.setItem('role', 'hr');
-      navigate('/hr/dashboard');
-    } else {
-      alert('Invalid credentials. Please try again.');
+      // Store token and user data
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Navigate based on role
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (user.role === 'hr') {
+        navigate('/hr/dashboard');
+      }
+      
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    reset(); // Reset form after submission
   };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-teal-50 to-gray-300">
       <div className="w-1/2 flex items-center justify-center">
-        {/* Left Side - Login Form with Frame */}
         <div className="w-2/3 max-w-lg p-12 bg-teal-50 rounded-xl shadow-2xl border border-gray-100 transform hover:scale-105 transition duration-300">
           <h2 className="text-3xl font-bold text-teal-700 mb-6 text-center">Login</h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
                 Email
@@ -86,16 +120,25 @@ const Login = () => {
               )}
             </div>
             <button
-              className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold"
+              className={`w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold ${
+                loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
               type="submit"
+              disabled={loading}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
+          
+    
         </div>
       </div>
       <div className="w-1/2 bg-gray-300 flex items-center justify-center overflow-hidden rounded-l-3xl">
-        <img src="https://img.freepik.com/free-photo/application-contact-communication-connection-concept_53876-132755.jpg?semt=ais_incoming&w=740&q=80" alt="Login Image" className="w-full h-full object-cover transform hover:scale-105 transition duration-300" />
+        <img 
+          src="https://img.freepik.com/free-photo/application-contact-communication-connection-concept_53876-132755.jpg?semt=ais_incoming&w=740&q=80" 
+          alt="Login" 
+          className="w-full h-full object-cover transform hover:scale-105 transition duration-300" 
+        />
       </div>
     </div>
   );

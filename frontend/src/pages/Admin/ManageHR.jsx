@@ -10,8 +10,13 @@ const ManageHR = () => {
     alert('HR Report Generated! (Mock functionality)');
   };
 
-  const handleLogout = () => {
+    const handleLogout = () => {
+    // Remove authentication data
     localStorage.removeItem('role');
+    localStorage.removeItem('token'); // If you have a token
+    localStorage.removeItem('user'); // If you store user info
+    
+    // Redirect to login page
     navigate('/');
   };
 
