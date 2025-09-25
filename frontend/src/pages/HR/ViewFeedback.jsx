@@ -1,12 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ViewFeedback = () => {
   const navigate = useNavigate();
   const { interviewId } = useParams();
   const [loading, setLoading] = useState(true);
   const [interview, setInterview] = useState(null);
+  const [error, setError] = useState('');
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchInterviewDetails();
@@ -31,33 +35,9 @@ const ViewFeedback = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching interview details:', error);
+      setError('Failed to load interview details. Please try again.');
       setLoading(false);
     }
-  };
-
-  const getRatingStars = (rating) => {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-  };
-
-  const getOutcomeBadge = (outcome) => {
-    const outcomeConfig = {
-      passed: { color: 'bg-green-100 text-green-800', label: 'Passed' },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      'recommended-next-round': { color: 'bg-purple-100 text-purple-800', label: 'Recommended for Next Round' }
-    };
-
-    const config = outcomeConfig[outcome] || { color: 'bg-gray-100 text-gray-800', label: outcome };
-    
-    return (
-      <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
-        {config.label}
-      </span>
-    );
-  };
-
-  const navigateTo = (path) => {
-    navigate(path);
   };
 
   const handleLogout = () => {
@@ -67,238 +47,455 @@ const ViewFeedback = () => {
     navigate('/');
   };
 
+  const navigateTo = (path) => {
+    navigate(path);
+  };
+
+  const getRatingStars = (rating) => {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  };
+
+  const getOutcomeBadge = (outcome) => {
+    const outcomeConfig = {
+      passed: { color: 'bg-green-100 text-green-800 border border-green-200', label: 'Passed' },
+      failed: { color: 'bg-red-100 text-red-800 border border-red-200', label: 'Failed' },
+      pending: { color: 'bg-yellow-100 text-yellow-800 border border-yellow-200', label: 'Pending' },
+      'recommended-next-round': { color: 'bg-purple-100 text-purple-800 border border-purple-200', label: 'Recommended for Next Round' }
+    };
+
+    const config = outcomeConfig[outcome] || { color: 'bg-gray-100 text-gray-800 border border-gray-200', label: outcome };
+    
+    return (
+      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${config.color} shadow-sm`}>
+        {config.label}
+      </span>
+    );
+  };
+
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      >
         <div className="flex-1 flex flex-col">
-          {/* Navbar */}
-          <nav className="bg-teal-600 text-white p-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold">Candidate Tracking Management System</h1>
+          {/* Enhanced Navbar */}
+          <motion.nav 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          >
             <div className="flex items-center">
-              <span className="mr-4">Welcome, HR</span>
-              <button onClick={handleLogout} className="bg-teal-800 px-4 py-2 rounded hover:bg-teal-700">
-                Logout
-              </button>
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl mr-3"
+              >
+                📊
+              </motion.div>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                Candidate Tracking Management System
+              </h1>
             </div>
-          </nav>
+            <div className="flex items-center space-x-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              >
+                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              >
+                Logout
+              </motion.button>
+            </div>
+          </motion.nav>
           
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading feedback details...</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full mx-auto"
+              ></motion.div>
+              <p className="mt-4 text-gray-600 text-lg font-medium">Loading feedback details...</p>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   if (!interview || !interview.feedback) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      >
         <div className="flex-1 flex flex-col">
-          {/* Navbar */}
-          <nav className="bg-teal-600 text-white p-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold">Candidate Tracking Management System</h1>
+          {/* Enhanced Navbar */}
+          <motion.nav 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          >
             <div className="flex items-center">
-              <span className="mr-4">Welcome, HR</span>
-              <button onClick={handleLogout} className="bg-teal-800 px-4 py-2 rounded hover:bg-teal-700">
-                Logout
-              </button>
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl mr-3"
+              >
+                📊
+              </motion.div>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                Candidate Tracking Management System
+              </h1>
             </div>
-          </nav>
+            <div className="flex items-center space-x-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              >
+                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              >
+                Logout
+              </motion.button>
+            </div>
+          </motion.nav>
           
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-gray-600">No feedback found for this interview.</p>
-              <button 
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center bg-white p-8 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full mx-4"
+            >
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">No Feedback Found</h3>
+              <p className="text-gray-600 mb-6">No feedback available for this interview.</p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/interviews')}
-                className="mt-4 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700"
+                className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
               >
                 Back to Interviews
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   const { candidate, interviewDate, interviewType, interviewers, feedback } = interview;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+    >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <nav className="bg-teal-600 text-white p-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Candidate Tracking Management System</h1>
+        {/* Enhanced Navbar */}
+        <motion.nav 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+        >
           <div className="flex items-center">
-            <span className="mr-4">Welcome, HR</span>
-            <button onClick={handleLogout} className="bg-teal-800 px-4 py-2 rounded hover:bg-teal-700">
+            <motion.div
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl mr-3"
+            >
+              📊
+            </motion.div>
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+              Candidate Tracking Management System
+            </h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+            >
+              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
+            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleLogout}
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+            >
               Logout
-            </button>
+            </motion.button>
           </div>
-        </nav>
+        </motion.nav>
 
-        {/* Sidebar and Main Content */}
+        {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Sidebar */}
-          <div className="w-64 bg-gray-800 text-white h-full">
-            <nav className="flex flex-col h-full">
-              <button 
-                onClick={() => navigateTo('/hr/dashboard')} 
-                className="flex items-center p-4 hover:bg-gray-700"
+          {/* Enhanced Sidebar */}
+          <motion.div 
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+          >
+            <nav className="flex flex-col h-full py-6">
+              <motion.button
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigateTo("/hr/dashboard")}
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
               >
-                <span className="mr-2">🏠</span> HR Dashboard
-              </button>
-              <button 
-                onClick={() => navigateTo('/hr/add-candidate')} 
-                className="flex items-center p-4 hover:bg-gray-700"
-              >
-                <span className="mr-2">👤</span> Add Candidate
-              </button>
-              <button 
-                onClick={() => navigateTo('/hr/schedule-interview')} 
-                className="flex items-center p-4 hover:bg-gray-700"
-              >
-                <span className="mr-2">🗓️</span> Schedule Interview
-              </button>
-              <button 
-                onClick={() => navigateTo('/interviews')} 
-                className="flex items-center p-4 hover:bg-gray-700"
-              >
-                <span className="mr-2">📊</span> Manage Interviews
-              </button>
-              <button 
-                onClick={() => navigateTo('/candidates')} 
-                className="flex items-center p-4 hover:bg-gray-700"
-              >
-                <span className="mr-2">🔍</span> View Candidates
-              </button>
-         
+                <span className="mr-3 text-xl">🏠</span> 
+                <span className="font-semibold">HR Dashboard</span>
+              </motion.button>
+              
+              {[
+                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
+                { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
+                { path: "/interviews", icon: "📊", label: "Manage Interviews" },
+                { path: "/candidates", icon: "🔍", label: "View Candidates" },
+              ].map((item, index) => (
+                <motion.button
+                  key={item.path}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigateTo(item.path)}
+                  className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
+                >
+                  <span className="mr-3 text-lg">{item.icon}</span>
+                  <span>{item.label}</span>
+                </motion.button>
+              ))}
             </nav>
-          </div>
+          </motion.div>
 
           {/* Main Content */}
-          <div className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">
+          <div className="flex-1 p-6 overflow-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-center items-start min-h-full"
+            >
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="max-w-4xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
+              >
+                {/* Error Message */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
+                    >
+                      ❌ {error}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Header */}
+                <motion.div 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-between items-center mb-8"
+                >
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
                     Interview Feedback - {candidate?.firstName} {candidate?.lastName}
                   </h2>
-                  <button 
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => navigate('/interviews')}
-                    className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg"
                   >
-                    Back to Interviews
-                  </button>
-                </div>
+                    ← Back to Interviews
+                  </motion.button>
+                </motion.div>
 
                 {/* Interview Details */}
-                <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-4">Interview Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p><strong>Candidate:</strong> {candidate?.firstName} {candidate?.lastName}</p>
-                      <p><strong>Position:</strong> {candidate?.position}</p>
-                      <p><strong>Email:</strong> {candidate?.email}</p>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-8 p-6 bg-gradient-to-r from-gray-50 to-teal-50 rounded-2xl border border-gray-200"
+                >
+                  <h3 className="font-semibold text-lg mb-4 text-gray-800">📋 Interview Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <p><strong className="text-gray-700">Candidate:</strong> {candidate?.firstName} {candidate?.lastName}</p>
+                      <p><strong className="text-gray-700">Position:</strong> {candidate?.position}</p>
+                      <p><strong className="text-gray-700">Email:</strong> {candidate?.email}</p>
                     </div>
-                    <div>
-                      <p><strong>Interview Date:</strong> {new Date(interviewDate).toLocaleString()}</p>
-                      <p><strong>Type:</strong> {interviewType}</p>
-                      <p><strong>Interviewers:</strong> {interviewers?.join(', ')}</p>
+                    <div className="space-y-3">
+                      <p><strong className="text-gray-700">Interview Date:</strong> {new Date(interviewDate).toLocaleString()}</p>
+                      <p><strong className="text-gray-700">Type:</strong> <span className="capitalize">{interviewType}</span></p>
+                      <p><strong className="text-gray-700">Interviewers:</strong> {interviewers?.join(', ')}</p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Feedback Summary */}
-                <div className="mb-8">
-                  <h3 className="font-semibold text-lg mb-4">Feedback Summary</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="mb-8"
+                >
+                  <h3 className="font-semibold text-lg mb-6 text-gray-800">📊 Feedback Summary</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Ratings */}
+                    <div className="space-y-6">
                       {[
-                        { label: 'Technical Skills', value: feedback.technicalSkills },
-                        { label: 'Communication', value: feedback.communication },
-                        { label: 'Problem Solving', value: feedback.problemSolving },
-                        { label: 'Cultural Fit', value: feedback.culturalFit }
-                      ].map((item) => (
-                        <div key={item.label} className="flex justify-between items-center">
-                          <span className="font-medium">{item.label}:</span>
-                          <div className="flex items-center">
-                            <span className="mr-2">{item.value}/5</span>
-                            <span className="text-yellow-400">{getRatingStars(item.value)}</span>
+                        { label: 'Technical Skills', value: feedback.technicalSkills, color: 'from-blue-500 to-blue-600' },
+                        { label: 'Communication', value: feedback.communication, color: 'from-green-500 to-green-600' },
+                        { label: 'Problem Solving', value: feedback.problemSolving, color: 'from-purple-500 to-purple-600' },
+                        { label: 'Cultural Fit', value: feedback.culturalFit, color: 'from-orange-500 to-orange-600' }
+                      ].map((item, index) => (
+                        <motion.div 
+                          key={item.label}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 + index * 0.1 }}
+                          className="flex justify-between items-center p-4 bg-white rounded-xl border border-gray-200 shadow-sm"
+                        >
+                          <span className="font-medium text-gray-700">{item.label}:</span>
+                          <div className="flex items-center space-x-3">
+                            <span className="font-bold text-gray-800">{item.value}/5</span>
+                            <div className="flex">
+                              <span className="text-yellow-400 text-lg">{getRatingStars(item.value)}</span>
+                            </div>
                           </div>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                     
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-semibold">Overall Rating:</span>
-                          <span className="text-xl font-bold">{feedback.overallRating}/5</span>
+                    {/* Overall Rating and Details */}
+                    <div className="space-y-6">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="bg-gradient-to-br from-teal-50 to-blue-50 p-6 rounded-2xl border border-teal-200"
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="font-semibold text-gray-800">Overall Rating:</span>
+                          <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+                            {feedback.overallRating}/5
+                          </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                           <div 
-                            className="bg-blue-600 h-3 rounded-full" 
+                            className="bg-gradient-to-r from-teal-600 to-blue-600 h-3 rounded-full transition-all duration-500" 
                             style={{ width: `${(feedback.overallRating / 5) * 100}%` }}
                           ></div>
                         </div>
-                      </div>
-                      
-                      <div>
-                        <span className="font-medium">Outcome:</span>
-                        <div className="mt-2">{getOutcomeBadge(feedback.outcome)}</div>
-                      </div>
-                      
-                      <div>
-                        <span className="font-medium">Submitted By:</span>
-                        <p className="mt-1">{feedback.submittedBy}</p>
-                      </div>
-                      
-                      {feedback.submittedAt && (
-                        <div>
-                          <span className="font-medium">Submitted On:</span>
-                          <p className="mt-1">{new Date(feedback.submittedAt).toLocaleString()}</p>
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>0</span>
+                          <span>5</span>
                         </div>
-                      )}
+                      </motion.div>
+                      
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.7 }}
+                        className="space-y-4"
+                      >
+                        <div>
+                          <span className="font-medium text-gray-700 block mb-2">Outcome:</span>
+                          {getOutcomeBadge(feedback.outcome)}
+                        </div>
+                        
+                        <div>
+                          <span className="font-medium text-gray-700">Submitted By:</span>
+                          <p className="mt-1 text-gray-600">{feedback.submittedBy}</p>
+                        </div>
+                        
+                        {feedback.submittedAt && (
+                          <div>
+                            <span className="font-medium text-gray-700">Submitted On:</span>
+                            <p className="mt-1 text-gray-600">{new Date(feedback.submittedAt).toLocaleString()}</p>
+                          </div>
+                        )}
+                      </motion.div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Additional Notes */}
                 {feedback.notes && (
-                  <div className="mb-8">
-                    <h3 className="font-semibold text-lg mb-4">Additional Notes</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="whitespace-pre-wrap">{feedback.notes}</p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                    className="mb-8"
+                  >
+                    <h3 className="font-semibold text-lg mb-4 text-gray-800">📝 Additional Notes</h3>
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                      <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">{feedback.notes}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex space-x-4 pt-6 border-t">
-                  <button
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9 }}
+                  className="flex space-x-4 pt-6 border-t border-gray-200"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => navigate(`/interviews/${interviewId}/feedback`)}
-                    className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
                   >
-                    Edit Feedback
-                  </button>
-                  <button
+                    ✏️ Edit Feedback
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => window.print()}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold shadow-lg"
                   >
-                    Print Feedback
-                  </button>
-                </div>
-              </div>
-            </div>
+                    🖨️ Print Feedback
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

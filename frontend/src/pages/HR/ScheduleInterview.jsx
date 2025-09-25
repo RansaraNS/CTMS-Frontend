@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {  AnimatePresence } from 'framer-motion';
 
 const ScheduleInterview = () => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ const ScheduleInterview = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [candidates, setCandidates] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -73,20 +77,13 @@ const ScheduleInterview = () => {
     }
   };
 
-  // Fix: Proper date-time combination
   const combineDateTime = (dateString, timeString) => {
     if (!dateString || !timeString) return null;
     
-    // Create a date object from the date string
     const date = new Date(dateString);
-    
-    // Extract hours and minutes from time string
     const [hours, minutes] = timeString.split(':').map(Number);
-    
-    // Set the time on the date object (this uses local time)
     date.setHours(hours, minutes, 0, 0);
     
-    // Convert to ISO string for backend
     return date.toISOString();
   };
 
@@ -111,7 +108,6 @@ const ScheduleInterview = () => {
     if (!formData.interviewTime) {
       newErrors.interviewTime = 'Time is required.';
     } else {
-      // Validate time is not in the past if date is today
       if (formData.interviewDate === new Date().toISOString().split('T')[0]) {
         const now = new Date();
         const selectedTime = new Date();
@@ -163,7 +159,6 @@ const ScheduleInterview = () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Fix: Use the proper date-time combination function
       const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
       
       if (!interviewDateTime) {
@@ -177,9 +172,6 @@ const ScheduleInterview = () => {
         interviewers: formData.interviewers.split(',').map(i => i.trim()),
         meetingLink: formData.meetingLink
       };
-
-      console.log('Scheduling interview with data:', requestBody);
-      console.log('Local time representation:', new Date(interviewDateTime).toString());
 
       const response = await fetch('http://localhost:5000/api/interviews', {
         method: 'POST',
@@ -198,7 +190,6 @@ const ScheduleInterview = () => {
 
       setSuccessMessage('Interview scheduled successfully!');
       
-      // Reset form
       setFormData({
         candidateId: '',
         interviewDate: '',
@@ -220,7 +211,6 @@ const ScheduleInterview = () => {
     }
   };
 
-  // Get minimum date (today) and time for validation
   const getMinDate = () => {
     return new Date().toISOString().split('T')[0];
   };
@@ -228,7 +218,6 @@ const ScheduleInterview = () => {
   const getMinTime = () => {
     if (formData.interviewDate === new Date().toISOString().split('T')[0]) {
       const now = new Date();
-      // Add 15 minutes to current time
       now.setMinutes(now.getMinutes() + 15);
       return now.toTimeString().slice(0, 5);
     }
@@ -236,188 +225,373 @@ const ScheduleInterview = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+    >
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <nav className="bg-teal-600 text-white p-4 flex justify-between items-center w-full">
-          <h1 className="text-xl font-bold">Candidate Tracking Management System</h1>
+        {/* Enhanced Navbar */}
+        <motion.nav 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+        >
           <div className="flex items-center">
-            <span className="mr-4">Welcome, HR</span>
+            <motion.div
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl mr-3"
+            >
+              📊
+            </motion.div>
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+              Candidate Tracking Management System
+            </h1>
           </div>
-          <button onClick={handleLogout} className="bg-teal-800 px-4 py-2 rounded">Logout</button>
-        </nav>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+            >
+              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
+            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleLogout}
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+            >
+              Logout
+            </motion.button>
+          </div>
+        </motion.nav>
 
+        {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          <div className="w-64 bg-gray-800 text-white h-full">
-            <nav className="flex flex-col h-full">
-              <button onClick={() => navigateTo('/hr/dashboard')} className="flex items-center p-4 hover:bg-gray-700">
-                <span className="mr-2">🏠</span> HR Dashboard
-              </button>
-              <button onClick={() => navigateTo('/hr/add-candidate')} className="flex items-center p-4 hover:bg-gray-700">
-                <span className="mr-2">👤</span> Add Candidate
-              </button>
-              <button onClick={() => navigateTo('/hr/schedule-interview')} className="flex items-center p-4 bg-blue-600 hover:bg-blue-600">
-                <span className="mr-2">🗓️</span> Schedule Interview
-              </button>
-              <button onClick={() => navigateTo('/interviews')} className="flex items-center p-4 hover:bg-gray-700">
-                <span className="mr-2">📊</span> Manage Interviews
-              </button>
-              <button onClick={() => navigateTo('/candidates')} className="flex items-center p-4 hover:bg-gray-700">
-                <span className="mr-2">🔍</span> View Candidates
-              </button>
+          {/* Enhanced Sidebar */}
+          <motion.div 
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+          >
+            <nav className="flex flex-col h-full py-6">
+              <motion.button
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigateTo("/hr/dashboard")}
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+              >
+                <span className="mr-3 text-xl">🏠</span> 
+                <span className="font-semibold">HR Dashboard</span>
+              </motion.button>
+              
+              {[
+                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
+                { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
+                { path: "/interviews", icon: "📊", label: "Manage Interviews" },
+                { path: "/candidates", icon: "🔍", label: "View Candidates" },
+              ].map((item, index) => (
+                <motion.button
+                  key={item.path}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigateTo(item.path)}
+                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
+                    item.path === "/hr/schedule-interview" 
+                      ? "bg-gradient-to-r from-teal-600 to-blue-600" 
+                      : "hover:bg-white hover:bg-opacity-10"
+                  }`}
+                >
+                  <span className="mr-3 text-lg">{item.icon}</span>
+                  <span>{item.label}</span>
+                </motion.button>
+              ))}
             </nav>
-          </div>
+          </motion.div>
 
-          <div className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-              <h2 className="text-2xl font-bold text-teal-700 mb-6 text-center">Schedule Interview</h2>
-              
-              {successMessage && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                  {successMessage}
-                </div>
-              )}
-              
-              {errors.fetch && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                  {errors.fetch}
-                </div>
-              )}
-              
-              {errors.submit && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                  {errors.submit}
-                </div>
-              )}
-              
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div>
-                  <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="candidateId">
-                    Select Candidate *
-                  </label>
-                  <select
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                      errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
-                    }`}
-                    id="candidateId"
-                    value={formData.candidateId}
-                    onChange={handleChange}
-                    disabled={candidates.length === 0}
-                  >
-                    <option value="">{candidates.length === 0 ? 'Loading candidates...' : 'Select a candidate'}</option>
-                    {candidates.map((candidate) => (
-                      <option key={candidate._id} value={candidate._id}>
-                        {candidate.firstName} {candidate.lastName} - {candidate.position} ({candidate.email})
-                      </option>
-                    ))}
-                  </select>
-                  {errors.candidateId && <p className="mt-1 text-sm text-red-600">{errors.candidateId}</p>}
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="interviewDate">
-                      Interview Date *
-                    </label>
-                    <input
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                        errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
-                      }`}
-                      id="interviewDate"
-                      type="date"
-                      value={formData.interviewDate}
-                      onChange={handleChange}
-                      min={getMinDate()}
-                    />
-                    {errors.interviewDate && <p className="mt-1 text-sm text-red-600">{errors.interviewDate}</p>}
-                  </div>
+          {/* Main Content */}
+          <div className="flex-1 p-6 overflow-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-center items-start min-h-full"
+            >
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="max-w-2xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
+              >
+                <motion.h2 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                >
+                  Schedule Interview
+                </motion.h2>
+                
+                {/* Success Message */}
+                <AnimatePresence>
+                  {successMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl"
+                    >
+                      ✅ {successMessage}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
+                {/* Error Messages */}
+                <AnimatePresence>
+                  {errors.fetch && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
+                    >
+                      ❌ {errors.fetch}
+                    </motion.div>
+                  )}
                   
-                  <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="interviewTime">
-                      Interview Time *
-                    </label>
-                    <input
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                        errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
-                      }`}
-                      id="interviewTime"
-                      type="time"
-                      value={formData.interviewTime}
-                      onChange={handleChange}
-                      min={formData.interviewDate === getMinDate() ? getMinTime() : undefined}
-                    />
-                    {errors.interviewTime && <p className="mt-1 text-sm text-red-600">{errors.interviewTime}</p>}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="interviewType">
-                      Interview Type *
+                  {errors.submit && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
+                    >
+                      ❌ {errors.submit}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  {/* Candidate Selection */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="candidateId">
+                      Select Candidate *
                     </label>
                     <select
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                        errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                        errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
                       }`}
-                      id="interviewType"
-                      value={formData.interviewType}
+                      id="candidateId"
+                      value={formData.candidateId}
                       onChange={handleChange}
+                      disabled={candidates.length === 0}
                     >
-                      <option value="technical">Technical</option>
-                      <option value="behavioral">Behavioral</option>
-                      <option value="hr">HR</option>
-                      <option value="cultural">Cultural Fit</option>
+                      <option value="">{candidates.length === 0 ? 'Loading candidates...' : 'Select a candidate'}</option>
+                      {candidates.map((candidate) => (
+                        <option key={candidate._id} value={candidate._id}>
+                          {candidate.firstName} {candidate.lastName} - {candidate.position} ({candidate.email})
+                        </option>
+                      ))}
                     </select>
-                    {errors.interviewType && <p className="mt-1 text-sm text-red-600">{errors.interviewType}</p>}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="interviewers">
-                      Interviewers (comma separated) *
+                    {errors.candidateId && (
+                      <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-2 text-sm text-red-600"
+                      >
+                        {errors.candidateId}
+                      </motion.p>
+                    )}
+                  </motion.div>
+
+                  {/* Date and Time */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  >
+                    <div>
+                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewDate">
+                        Interview Date *
+                      </label>
+                      <input
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                          errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        }`}
+                        id="interviewDate"
+                        type="date"
+                        value={formData.interviewDate}
+                        onChange={handleChange}
+                        min={getMinDate()}
+                      />
+                      {errors.interviewDate && (
+                        <motion.p 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="mt-2 text-sm text-red-600"
+                        >
+                          {errors.interviewDate}
+                        </motion.p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewTime">
+                        Interview Time *
+                      </label>
+                      <input
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                          errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        }`}
+                        id="interviewTime"
+                        type="time"
+                        value={formData.interviewTime}
+                        onChange={handleChange}
+                        min={formData.interviewDate === getMinDate() ? getMinTime() : undefined}
+                      />
+                      {errors.interviewTime && (
+                        <motion.p 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="mt-2 text-sm text-red-600"
+                        >
+                          {errors.interviewTime}
+                        </motion.p>
+                      )}
+                    </div>
+                  </motion.div>
+
+                  {/* Interview Type and Interviewers */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  >
+                    <div>
+                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewType">
+                        Interview Type *
+                      </label>
+                      <select
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                          errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        }`}
+                        id="interviewType"
+                        value={formData.interviewType}
+                        onChange={handleChange}
+                      >
+                        <option value="technical">Technical</option>
+                        <option value="behavioral">Behavioral</option>
+                        <option value="hr">HR</option>
+                        <option value="cultural">Cultural Fit</option>
+                      </select>
+                      {errors.interviewType && (
+                        <motion.p 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="mt-2 text-sm text-red-600"
+                        >
+                          {errors.interviewType}
+                        </motion.p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewers">
+                        Interviewers (comma separated) *
+                      </label>
+                      <input
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                          errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        }`}
+                        id="interviewers"
+                        type="text"
+                        placeholder="e.g., john@company.com, jane@company.com"
+                        value={formData.interviewers}
+                        onChange={handleChange}
+                      />
+                      {errors.interviewers && (
+                        <motion.p 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="mt-2 text-sm text-red-600"
+                        >
+                          {errors.interviewers}
+                        </motion.p>
+                      )}
+                    </div>
+                  </motion.div>
+
+                  {/* Meeting Link */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="meetingLink">
+                      Meeting Link *
                     </label>
                     <input
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                        errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+                        errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
                       }`}
-                      id="interviewers"
-                      type="text"
-                      placeholder="e.g., john@company.com, jane@company.com"
-                      value={formData.interviewers}
+                      id="meetingLink"
+                      type="url"
+                      placeholder="https://meet.google.com/abc-def-ghi"
+                      value={formData.meetingLink}
                       onChange={handleChange}
                     />
-                    {errors.interviewers && <p className="mt-1 text-sm text-red-600">{errors.interviewers}</p>}
-                  </div>
-                </div>
+                    {errors.meetingLink && (
+                      <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-2 text-sm text-red-600"
+                      >
+                        {errors.meetingLink}
+                      </motion.p>
+                    )}
+                  </motion.div>
 
-                <div>
-                  <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="meetingLink">
-                    Meeting Link *
-                  </label>
-                  <input
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 ${
-                      errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
-                    }`}
-                    id="meetingLink"
-                    type="url"
-                    placeholder="https://meet.google.com/abc-def-ghi"
-                    value={formData.meetingLink}
-                    onChange={handleChange}
-                  />
-                  {errors.meetingLink && <p className="mt-1 text-sm text-red-600">{errors.meetingLink}</p>}
-                </div>
-
-                <button
-                  className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                  type="submit"
-                  disabled={isSubmitting || candidates.length === 0}
-                >
-                  {isSubmitting ? 'Scheduling Interview...' : 'Schedule Interview'}
-                </button>
-              </form>
-            </div>
+                  {/* Submit Button */}
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-gradient-to-r from-teal-600 to-blue-600 text-white py-4 rounded-xl hover:from-teal-700 hover:to-blue-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    type="submit"
+                    disabled={isSubmitting || candidates.length === 0}
+                  >
+                    {isSubmitting ? (
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="inline-block"
+                      >
+                        ⏳
+                      </motion.span>
+                    ) : (
+                      '🗓️ Schedule Interview'
+                    )}
+                  </motion.button>
+                </form>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
