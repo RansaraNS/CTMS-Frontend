@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {  AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const ScheduleInterview = () => {
   const navigate = useNavigate();
@@ -32,12 +32,13 @@ const ScheduleInterview = () => {
     navigate(path);
   };
 
-  // Fetch candidates for dropdown
+  // Fetch only NEW candidates for dropdown
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/candidates?page=1&limit=100', {
+        // Add status filter to only get new candidates
+        const response = await fetch('http://localhost:5000/api/candidates?page=1&limit=100&status=new', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -240,13 +241,15 @@ const ScheduleInterview = () => {
           className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
+            {/* Logo image */}
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
               transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
+              className="w-10 h-10 mr-3 object-contain"
+            />
+    
+            {/* Title */}
             <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
               Candidate Tracking Management System
             </h1>
@@ -375,6 +378,26 @@ const ScheduleInterview = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Info message when no new candidates available */}
+                {candidates.length === 0 && !errors.fetch && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl"
+                  >
+                    <p className="text-blue-700 flex items-center">
+                      <span className="mr-2">ℹ️</span>
+                      No new candidates available for scheduling. 
+                      <button 
+                        onClick={() => navigateTo("/hr/add-candidate")}
+                        className="ml-2 text-teal-600 hover:text-teal-800 font-medium underline"
+                      >
+                        Add a new candidate first.
+                      </button>
+                    </p>
+                  </motion.div>
+                )}
                 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   {/* Candidate Selection */}
@@ -395,7 +418,9 @@ const ScheduleInterview = () => {
                       onChange={handleChange}
                       disabled={candidates.length === 0}
                     >
-                      <option value="">{candidates.length === 0 ? 'Loading candidates...' : 'Select a candidate'}</option>
+                      <option value="">
+                        {candidates.length === 0 ? 'No new candidates available' : 'Select a candidate'}
+                      </option>
                       {candidates.map((candidate) => (
                         <option key={candidate._id} value={candidate._id}>
                           {candidate.firstName} {candidate.lastName} - {candidate.position} ({candidate.email})

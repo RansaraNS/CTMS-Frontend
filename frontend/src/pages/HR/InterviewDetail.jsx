@@ -1,45 +1,139 @@
+/* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
-const ViewFeedback = () => {
+const InterviewDetail = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { interviewId } = useParams();
-  const [loading, setLoading] = useState(true);
   const [interview, setInterview] = useState(null);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    fetchInterviewDetails();
-  }, [interviewId]);
+  // Enhanced helper to safely format dates and handle objects
+  const formatDate = (date) => {
+    if (!date) return "N/A";
 
-  const fetchInterviewDetails = async () => {
-    setLoading(true);
+    // Handle MongoDB date objects { $date: ... }
+    if (typeof date === "object" && "$date" in date) {
+      date = date.$date;
+    }
+
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setInterview(data.interview);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching interview details:', error);
-      setError('Failed to load interview details. Please try again.');
-      setLoading(false);
+      const dateObj = new Date(date);
+      return isNaN(dateObj.getTime()) ? "Invalid Date" : dateObj.toLocaleString();
+    } catch {
+      return "Invalid Date";
     }
   };
+
+  // Process interview data properly
+  const processInterviewData = (fetchedInterview) => {
+    if (!fetchedInterview) return null;
+
+    const processed = { ...fetchedInterview };
+
+    // Process dates
+    if (processed.interviewDate) {
+      processed.interviewDate = formatDate(processed.interviewDate);
+    }
+    if (processed.submittedAt) {
+      processed.submittedAt = formatDate(processed.submittedAt);
+    }
+    if (processed.createdAt) {
+      processed.createdAt = formatDate(processed.createdAt);
+    }
+    if (processed.updatedAt) {
+      processed.updatedAt = formatDate(processed.updatedAt);
+    }
+
+    // Process candidate object
+    if (processed.candidate && typeof processed.candidate === 'object') {
+      processed.candidate = { ...processed.candidate };
+      // Add any candidate-specific processing if needed
+    }
+
+    // Process interviewers array - ensure it's properly formatted
+    if (processed.interviewers) {
+      if (Array.isArray(processed.interviewers)) {
+        // If it's already an array, use it as is
+        processed.interviewers = processed.interviewers.join(', ');
+      } else if (typeof processed.interviewers === 'string') {
+        // If it's a string, try to parse it as JSON
+        try {
+          const parsed = JSON.parse(processed.interviewers);
+          if (Array.isArray(parsed)) {
+            processed.interviewers = parsed.join(', ');
+          }
+        } catch {
+          // If parsing fails, use the string as is
+          processed.interviewers = processed.interviewers;
+        }
+      }
+    }
+
+    // Process feedback if it exists
+    if (processed.feedback && typeof processed.feedback === 'object') {
+      // If feedback is an object, stringify it for display
+      try {
+        processed.feedback = JSON.stringify(processed.feedback, null, 2);
+      } catch {
+        processed.feedback = "Unable to display feedback";
+      }
+    }
+
+    return processed;
+  };
+
+  useEffect(() => {
+    const fetchInterview = async () => {
+      try {
+        setError(null);
+        setLoading(true);
+        
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const res = await fetch(
+          `http://localhost:5000/api/interviews/${id}`,
+          {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (!data.interview) {
+          throw new Error("Interview not found");
+        }
+
+        // Process the interview data properly
+        const processedInterview = processInterviewData(data.interview);
+        setInterview(processedInterview);
+      } catch (error) {
+        console.error("Error fetching interview details:", error);
+        setError(error.message);
+        setInterview(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInterview();
+  }, [id]);
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -52,25 +146,30 @@ const ViewFeedback = () => {
     navigate(path);
   };
 
-  const getRatingStars = (rating) => {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-  };
-
-  const getOutcomeBadge = (outcome) => {
-    const outcomeConfig = {
-      passed: { color: 'bg-green-100 text-green-800 border border-green-200', label: 'Passed' },
-      failed: { color: 'bg-red-100 text-red-800 border border-red-200', label: 'Failed' },
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      scheduled: { color: 'bg-blue-100 text-blue-800 border border-blue-200', label: 'Scheduled' },
+      completed: { color: 'bg-green-100 text-green-800 border border-green-200', label: 'Completed' },
+      cancelled: { color: 'bg-red-100 text-red-800 border border-red-200', label: 'Cancelled' },
       pending: { color: 'bg-yellow-100 text-yellow-800 border border-yellow-200', label: 'Pending' },
-      'recommended-next-round': { color: 'bg-purple-100 text-purple-800 border border-purple-200', label: 'Recommended for Next Round' }
+      'in-progress': { color: 'bg-purple-100 text-purple-800 border border-purple-200', label: 'In Progress' }
     };
 
-    const config = outcomeConfig[outcome] || { color: 'bg-gray-100 text-gray-800 border border-gray-200', label: outcome };
+    const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800 border border-gray-200', label: status };
     
     return (
       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${config.color} shadow-sm`}>
         {config.label}
       </span>
     );
+  };
+
+  // Helper to safely render values
+  const safeRender = (value, defaultValue = "N/A") => {
+    if (value === null || value === undefined || value === "") return defaultValue;
+    if (Array.isArray(value)) return value.join(', ');
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
   };
 
   if (loading) {
@@ -88,20 +187,20 @@ const ViewFeedback = () => {
             animate={{ y: 0 }}
             className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
-       <div className="flex items-center">
-                   {/* Logo image */}
-                   <motion.img
-                     src="/GR.jpg" // make sure this is in public folder
-                     alt="Company Logo"
-                     transition={{ duration: 0.5 }}
-                     className="w-10 h-10 mr-3 object-contain"
-                   />
-       
-                   {/* Title */}
-                   <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                     Candidate Tracking Management System
-                   </h1>
-                 </div>
+           <div className="flex items-center">
+                       {/* Logo image */}
+                       <motion.img
+                         src="/GR.jpg" // make sure this is in public folder
+                         alt="Company Logo"
+                         transition={{ duration: 0.5 }}
+                         className="w-10 h-10 mr-3 object-contain"
+                       />
+           
+                       {/* Title */}
+                       <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                         Candidate Tracking Management System
+                       </h1>
+                     </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -131,7 +230,7 @@ const ViewFeedback = () => {
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full mx-auto"
               ></motion.div>
-              <p className="mt-4 text-gray-600 text-lg font-medium">Loading feedback details...</p>
+              <p className="mt-4 text-gray-600 text-lg font-medium">Loading interview details...</p>
             </motion.div>
           </div>
         </div>
@@ -139,7 +238,76 @@ const ViewFeedback = () => {
     );
   }
 
-  if (!interview || !interview.feedback) {
+  if (error) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      >
+        <div className="flex-1 flex flex-col">
+          {/* Enhanced Navbar */}
+          <motion.nav 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          >
+            <div className="flex items-center">
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl mr-3"
+              >
+                📊
+              </motion.div>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                Candidate Tracking Management System
+              </h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              >
+                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              >
+                Logout
+              </motion.button>
+            </div>
+          </motion.nav>
+          
+          <div className="flex-1 flex items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center bg-white p-8 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full mx-4"
+            >
+              <div className="text-6xl mb-4">❌</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Error Loading Interview</h3>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/interviews')}
+                className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+              >
+                Back to Interviews
+              </motion.button>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (!interview) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}
@@ -191,8 +359,8 @@ const ViewFeedback = () => {
               className="text-center bg-white p-8 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full mx-4"
             >
               <div className="text-6xl mb-4">📝</div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No Feedback Found</h3>
-              <p className="text-gray-600 mb-6">No feedback available for this interview.</p>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Interview Not Found</h3>
+              <p className="text-gray-600 mb-6">No interview details found for the specified ID.</p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -207,8 +375,6 @@ const ViewFeedback = () => {
       </motion.div>
     );
   }
-
-  const { candidate, interviewDate, interviewType, interviewers, feedback } = interview;
 
   return (
     <motion.div 
@@ -332,7 +498,7 @@ const ViewFeedback = () => {
                   className="flex justify-between items-center mb-8"
                 >
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
-                    Interview Feedback - {candidate?.firstName} {candidate?.lastName}
+                    Interview Details - {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}
                   </h2>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -344,64 +510,63 @@ const ViewFeedback = () => {
                   </motion.button>
                 </motion.div>
 
-                {/* Interview Details */}
+                {/* Candidate Details */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                   className="mb-8 p-6 bg-gradient-to-r from-gray-50 to-teal-50 rounded-2xl border border-gray-200"
                 >
-                  <h3 className="font-semibold text-lg mb-4 text-gray-800">📋 Interview Details</h3>
+                  <h3 className="font-semibold text-lg mb-4 text-gray-800">👤 Candidate Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <p><strong className="text-gray-700">Candidate:</strong> {candidate?.firstName} {candidate?.lastName}</p>
-                      <p><strong className="text-gray-700">Position:</strong> {candidate?.position}</p>
-                      <p><strong className="text-gray-700">Email:</strong> {candidate?.email}</p>
+                      <p><strong className="text-gray-700">Full Name:</strong> {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}</p>
+                      <p><strong className="text-gray-700">Position:</strong> {safeRender(interview.candidate?.position)}</p>
+                      <p><strong className="text-gray-700">Email:</strong> {safeRender(interview.candidate?.email)}</p>
                     </div>
                     <div className="space-y-3">
-                      <p><strong className="text-gray-700">Interview Date:</strong> {new Date(interviewDate).toLocaleString()}</p>
-                      <p><strong className="text-gray-700">Type:</strong> <span className="capitalize">{interviewType}</span></p>
-                      <p><strong className="text-gray-700">Interviewers:</strong> {interviewers?.join(', ')}</p>
+                      {/* <p><strong className="text-gray-700">Phone:</strong> {safeRender(interview.candidate?.phone)}</p> */}
+                
                     </div>
                   </div>
                 </motion.div>
 
-                {/* Feedback Summary */}
+                {/* Interview Details */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                   className="mb-8"
                 >
-                  <h3 className="font-semibold text-lg mb-6 text-gray-800">📊 Feedback Summary</h3>
+                  <h3 className="font-semibold text-lg mb-6 text-gray-800">📋 Interview Details</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Ratings */}
+                    {/* Basic Information */}
                     <div className="space-y-6">
                       {[
-                        { label: 'Technical Skills', value: feedback.technicalSkills, color: 'from-blue-500 to-blue-600' },
-                        { label: 'Communication', value: feedback.communication, color: 'from-green-500 to-green-600' },
-                        { label: 'Problem Solving', value: feedback.problemSolving, color: 'from-purple-500 to-purple-600' },
-                        { label: 'Cultural Fit', value: feedback.culturalFit, color: 'from-orange-500 to-orange-600' }
+                        { label: 'Interview Date', value: safeRender(interview.interviewDate), icon: '📅' },
+                        { label: 'Interview Type', value: safeRender(interview.interviewType), icon: '🎯' },
+                        { label: 'Status', value: interview.status ? getStatusBadge(interview.status) : "N/A", icon: '📊' },
+                        { label: 'Interviewers', value: safeRender(interview.interviewers), icon: '👥' },
                       ].map((item, index) => (
                         <motion.div 
                           key={item.label}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.5 + index * 0.1 }}
-                          className="flex justify-between items-center p-4 bg-white rounded-xl border border-gray-200 shadow-sm"
+                          className="flex justify-between items-center p-4 px-1 bg-white rounded-xl border border-gray-200 shadow-sm"
                         >
-                          <span className="font-medium text-gray-700">{item.label}:</span>
-                          <div className="flex items-center space-x-3">
-                            <span className="font-bold text-gray-800">{item.value}/5</span>
-                            <div className="flex">
-                              <span className="text-yellow-400 text-lg">{getRatingStars(item.value)}</span>
-                            </div>
+                          <div className="flex items-center space-x-1">
+                            <span className="text-xl">{item.icon}</span>
+                            <span className="font-medium text-gray-700">{item.label}:</span>
+                          </div>
+                          <div className="text-right max-w-xs">
+                            {item.label === 'Status' ? item.value : <span className="font-semibold text-gray-800 break-words">{item.value}</span>}
                           </div>
                         </motion.div>
                       ))}
                     </div>
                     
-                    {/* Overall Rating and Details */}
+                    {/* Additional Details */}
                     <div className="space-y-6">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -409,65 +574,43 @@ const ViewFeedback = () => {
                         transition={{ delay: 0.6 }}
                         className="bg-gradient-to-br from-teal-50 to-blue-50 p-6 rounded-2xl border border-teal-200"
                       >
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="font-semibold text-gray-800">Overall Rating:</span>
-                          <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
-                            {feedback.overallRating}/5
-                          </span>
+                        <div className="space-y-3">
+                          {interview.meetingLink && interview.meetingLink !== "N/A" && (
+                            <div>
+                              <strong className="text-gray-700">Meeting Link:</strong>
+                              <a
+                                href={interview.meetingLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="ml-2 text-blue-600 underline hover:text-blue-800 break-all"
+                              >
+                                Join Meeting
+                              </a>
+                            </div>
+                          )}
+                          {/* {interview.feedback && interview.feedback !== "N/A" && (
+                            <div>
+                              <strong className="text-gray-700">Feedback:</strong>
+                              <p className="mt-1 text-gray-600 whitespace-pre-wrap break-words">{safeRender(interview.feedback)}</p>
+                            </div>
+                          )}
+                          {interview.submittedAt && interview.submittedAt !== "N/A" && (
+                            <div>
+                              <strong className="text-gray-700">Submitted At:</strong>
+                              <p className="mt-1 text-gray-600">{safeRender(interview.submittedAt)}</p>
+                            </div>
+                          )} */}
+                          {interview.notes && interview.notes !== "N/A" && (
+                            <div>
+                              <strong className="text-gray-700">Notes:</strong>
+                              <p className="mt-1 text-gray-600 whitespace-pre-wrap break-words">{safeRender(interview.notes)}</p>
+                            </div>
+                          )}
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-                          <div 
-                            className="bg-gradient-to-r from-teal-600 to-blue-600 h-3 rounded-full transition-all duration-500" 
-                            style={{ width: `${(feedback.overallRating / 5) * 100}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>0</span>
-                          <span>5</span>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.7 }}
-                        className="space-y-4"
-                      >
-                        <div>
-                          <span className="font-medium text-gray-700 block mb-2">Outcome:</span>
-                          {getOutcomeBadge(feedback.outcome)}
-                        </div>
-                        
-                        <div>
-                          <span className="font-medium text-gray-700">Submitted By:</span>
-                          <p className="mt-1 text-gray-600">{feedback.submittedBy}</p>
-                        </div>
-                        
-                        {feedback.submittedAt && (
-                          <div>
-                            <span className="font-medium text-gray-700">Submitted On:</span>
-                            <p className="mt-1 text-gray-600">{new Date(feedback.submittedAt).toLocaleString()}</p>
-                          </div>
-                        )}
                       </motion.div>
                     </div>
                   </div>
                 </motion.div>
-
-                {/* Additional Notes */}
-                {feedback.notes && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                    className="mb-8"
-                  >
-                    <h3 className="font-semibold text-lg mb-4 text-gray-800">📝 Additional Notes</h3>
-                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
-                      <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">{feedback.notes}</p>
-                    </div>
-                  </motion.div>
-                )}
 
                 {/* Action Buttons */}
                 <motion.div
@@ -479,18 +622,10 @@ const ViewFeedback = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate(`/interviews/${interviewId}/feedback`)}
+                    onClick={() => navigate(`/interviews/${id}/feedback`)}
                     className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
                   >
-                    ✏️ Edit Feedback
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => window.print()}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold shadow-lg"
-                  >
-                    🖨️ Print Feedback
+                    📝 View/Add Feedback
                   </motion.button>
                 </motion.div>
               </motion.div>
@@ -502,4 +637,4 @@ const ViewFeedback = () => {
   );
 };
 
-export default ViewFeedback;
+export default InterviewDetail;

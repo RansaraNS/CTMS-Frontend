@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -26,65 +28,65 @@ const HRDashboard = () => {
     fetchDashboardData();
   }, [timeRange]);
 
-const fetchDashboardData = async () => {
-  try {
-    setError("");
-    setLoading(true);
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/");
-      return;
-    }
-
-    // Sequential API calls with individual error handling
+  const fetchDashboardData = async () => {
     try {
-      const statsResponse = await axios.get("http://localhost:5000/api/candidates/dashboard/stats", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setStats(statsResponse.data);
-    } catch (error) {
-      console.error("Stats API error:", error);
-      // Set default stats
-      setStats({
-        totalCandidates: 0,
-        newCandidates: 0,
-        interviewedCandidates: 0,
-        hiredCandidates: 0,
-        rejectedCandidates: 0,
-        upcomingInterviews: 0,
-        todayInterviews: 0,
-      });
-    }
+      setError("");
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    try {
-      const candidatesResponse = await axios.get("http://localhost:5000/api/candidates?limit=5", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setRecentCandidates(candidatesResponse.data.candidates || []);
-    } catch (error) {
-      console.error("Candidates API error:", error);
-      setRecentCandidates([]);
-    }
+      if (!token) {
+        navigate("/");
+        return;
+      }
 
-    try {
-      const interviewsResponse = await axios.get("http://localhost:5000/api/interviews/upcoming?limit=3", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUpcomingInterviews(interviewsResponse.data.interviews || []);
-    } catch (error) {
-      console.error("Interviews API error:", error);
-      setUpcomingInterviews([]);
-      // setError("Upcoming interviews feature is currently unavailable.");
-    }
+      // Sequential API calls with individual error handling
+      try {
+        const statsResponse = await axios.get("http://localhost:5000/api/candidates/dashboard/stats", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setStats(statsResponse.data);
+      } catch (error) {
+        console.error("Stats API error:", error);
+        // Set default stats
+        setStats({
+          totalCandidates: 0,
+          newCandidates: 0,
+          interviewedCandidates: 0,
+          hiredCandidates: 0,
+          rejectedCandidates: 0,
+          upcomingInterviews: 0,
+          todayInterviews: 0,
+        });
+      }
 
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    setError("Failed to load dashboard data. Please try refreshing the page.");
-  } finally {
-    setLoading(false);
-  }
-};
+      try {
+        const candidatesResponse = await axios.get("http://localhost:5000/api/candidates?limit=5", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRecentCandidates(candidatesResponse.data.candidates || []);
+      } catch (error) {
+        console.error("Candidates API error:", error);
+        setRecentCandidates([]);
+      }
+
+      try {
+        const interviewsResponse = await axios.get("http://localhost:5000/api/interviews/upcoming?limit=3", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUpcomingInterviews(interviewsResponse.data.interviews || []);
+      } catch (error) {
+        console.error("Interviews API error:", error);
+        setUpcomingInterviews([]);
+        setError("Upcoming interviews feature is currently unavailable.");
+      }
+
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      setError("Failed to load dashboard data. Please try refreshing the page.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("role");
@@ -99,17 +101,17 @@ const fetchDashboardData = async () => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-50 to-blue-100"
       >
         <motion.div
-          animate={{ 
+          animate={{
             rotate: 360,
             scale: [1, 1.2, 1]
           }}
-          transition={{ 
+          transition={{
             rotate: { duration: 2, repeat: Infinity, ease: "linear" },
             scale: { duration: 1.5, repeat: Infinity }
           }}
@@ -120,7 +122,7 @@ const fetchDashboardData = async () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -129,23 +131,26 @@ const fetchDashboardData = async () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Enhanced Navbar */}
-        <motion.nav 
+        <motion.nav
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
+            {/* Logo image */}
+            <motion.img
+              src="/GR.jpg" // make sure this is in public folder
+              alt="Company Logo"
               transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
+              className="w-10 h-10 mr-3 object-contain"
+            />
+
+            {/* Title */}
             <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
               Candidate Tracking Management System
             </h1>
           </div>
+
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -165,7 +170,7 @@ const fetchDashboardData = async () => {
         </motion.nav>
 
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4"
@@ -177,7 +182,7 @@ const fetchDashboardData = async () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-          <motion.div 
+          <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
@@ -190,10 +195,10 @@ const fetchDashboardData = async () => {
                 onClick={() => navigateTo("/hr/dashboard")}
                 className="flex items-center p-4 bg-gradient-to-r from-teal-600 to-blue-600 mx-4 rounded-xl mb-2 shadow-lg"
               >
-                <span className="mr-3 text-xl">🏠</span> 
+                <span className="mr-3 text-xl">🏠</span>
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
-              
+
               {[
                 { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
@@ -221,15 +226,15 @@ const fetchDashboardData = async () => {
           <div className="flex-1 p-6 overflow-auto">
             {/* Time Range Selector */}
             <div className="flex justify-between items-center mb-6">
-              <motion.h2 
+              <motion.h2
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
               >
                 HR Dashboard Overview
               </motion.h2>
-              
-              <motion.div 
+
+              <motion.div
                 whileHover={{ scale: 1.02 }}
                 className="flex space-x-2 bg-white rounded-lg p-1 shadow-lg"
               >
@@ -237,11 +242,10 @@ const fetchDashboardData = async () => {
                   <button
                     key={range}
                     onClick={() => setTimeRange(range)}
-                    className={`px-4 py-2 rounded-md font-medium capitalize transition-all ${
-                      timeRange === range 
-                        ? "bg-teal-600 text-white shadow-md" 
+                    className={`px-4 py-2 rounded-md font-medium capitalize transition-all ${timeRange === range
+                        ? "bg-teal-600 text-white shadow-md"
                         : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
                     {range}
                   </button>
@@ -250,19 +254,19 @@ const fetchDashboardData = async () => {
             </div>
 
             {/* Statistics Grid with Enhanced Cards */}
-            <motion.div 
+            <motion.div
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
             >
               {[
                 { title: "Total Candidates", value: stats.totalCandidates, icon: "👥", color: "blue" },
                 { title: "New Candidates", value: stats.newCandidates, icon: "🆕", color: "green" },
-                { title: "Interviewed", value: stats.interviewedCandidates, icon: "📋", color: "purple" },
-                { title: "Hired", value: stats.hiredCandidates, icon: "✅", color: "teal",  },
+                { title: "Have To Interview", value: stats.interviewedCandidates, icon: "📋", color: "purple" },
+                { title: "Hired", value: stats.hiredCandidates, icon: "✅", color: "teal", },
                 { title: "Rejected", value: stats.rejectedCandidates, icon: "❌", color: "red" },
-                { title: "Upcoming Interviews", value: stats.upcomingInterviews, icon: "📅", color: "orange" },
-                { title: "Today's Interviews", value: stats.todayInterviews, icon: "🎯", color: "yellow" },
-                { title: "Conversion Rate", value: stats.totalCandidates ? ((stats.hiredCandidates / stats.totalCandidates) * 100).toFixed(1) + "%" : "0%", icon: "📊", color: "indigo"},
+                // { title: "Toal Interviews", value: stats.upcomingInterviews, icon: "📅", color: "orange" },
+                // { title: "Today's Interviews", value: stats.todayInterviews, icon: "🎯", color: "yellow" },
+                { title: "Conversion Rate", value: stats.totalCandidates ? ((stats.hiredCandidates / stats.totalCandidates) * 100).toFixed(1) + "%" : "0%", icon: "📊", color: "indigo" },
               ].map((stat, index) => (
                 <StatCard key={stat.title} {...stat} index={index} />
               ))}
@@ -270,13 +274,13 @@ const fetchDashboardData = async () => {
 
             {/* Recent + Upcoming */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <RecentCandidatesSection 
-                recentCandidates={recentCandidates} 
-                navigateTo={navigateTo} 
+              <RecentCandidatesSection
+                recentCandidates={recentCandidates}
+                navigateTo={navigateTo}
               />
-              <UpcomingInterviewsSection 
-                upcomingInterviews={upcomingInterviews} 
-                navigateTo={navigateTo} 
+              <UpcomingInterviewsSection
+                upcomingInterviews={upcomingInterviews}
+                navigateTo={navigateTo}
               />
             </div>
 
@@ -307,7 +311,7 @@ const StatCard = ({ title, value, icon, color, index }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ 
+      whileHover={{
         scale: 1.05,
         y: -5,
         transition: { type: "spring", stiffness: 300 }
@@ -317,7 +321,7 @@ const StatCard = ({ title, value, icon, color, index }) => {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium opacity-90">{title}</p>
-          <motion.p 
+          <motion.p
             key={value}
             initial={{ scale: 0.5 }}
             animate={{ scale: 1 }}
@@ -325,7 +329,7 @@ const StatCard = ({ title, value, icon, color, index }) => {
           >
             {value}
           </motion.p>
-    
+
         </div>
         <motion.div
           whileHover={{ scale: 1.2, rotate: 5 }}
@@ -340,7 +344,7 @@ const StatCard = ({ title, value, icon, color, index }) => {
 
 // Enhanced Section Components
 const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, x: -50 }}
     animate={{ opacity: 1, x: 0 }}
     className="bg-white rounded-2xl shadow-xl overflow-hidden"
@@ -369,12 +373,11 @@ const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
                 </div>
                 <motion.span
                   whileHover={{ scale: 1.1 }}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    candidate.status === "new" ? "bg-blue-100 text-blue-800" :
-                    candidate.status === "interviewed" ? "bg-purple-100 text-purple-800" :
-                    candidate.status === "hired" ? "bg-green-100 text-green-800" :
-                    "bg-red-100 text-red-800"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${candidate.status === "new" ? "bg-blue-100 text-blue-800" :
+                      candidate.status === "interviewed" ? "bg-purple-100 text-purple-800" :
+                        candidate.status === "hired" ? "bg-green-100 text-green-800" :
+                          "bg-red-100 text-red-800"
+                    }`}
                 >
                   {candidate.status}
                 </motion.span>
@@ -382,7 +385,7 @@ const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
             ))}
           </div>
         ) : (
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-gray-500 text-center py-8"
@@ -404,7 +407,7 @@ const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
 );
 
 const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, x: 50 }}
     animate={{ opacity: 1, x: 0 }}
     className="bg-white rounded-2xl shadow-xl overflow-hidden"
@@ -423,20 +426,25 @@ const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
-                className="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-all"
+                className="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-all cursor-pointer"
+                onClick={() => navigateTo(`/interviews/${interview._id}`)} // navigate to detail
               >
                 <p className="font-medium text-gray-900">
                   {interview.candidate?.firstName} {interview.candidate?.lastName || "Candidate"}
                 </p>
                 <p className="text-sm text-gray-600">{interview.interviewType}</p>
                 <p className="text-sm text-teal-600 font-medium">
-                  {new Date(interview.interviewDate).toLocaleDateString()} at {interview.interviewTime}
+                  {new Date(interview.interviewDate).toLocaleDateString()} at{" "}
+                  {new Date(interview.interviewDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </motion.div>
             ))}
           </div>
         ) : (
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-gray-500 text-center py-8"
@@ -445,6 +453,7 @@ const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
           </motion.p>
         )}
       </AnimatePresence>
+
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -457,8 +466,10 @@ const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
   </motion.div>
 );
 
+
+
 const QuickActionsSection = ({ navigateTo }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, y: 50 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.6 }}
@@ -486,7 +497,7 @@ const ActionCard = ({ title, description, icon, path, color, index, navigateTo }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 + 0.8 }}
-      whileHover={{ 
+      whileHover={{
         scale: 1.05,
         y: -5
       }}
@@ -495,7 +506,7 @@ const ActionCard = ({ title, description, icon, path, color, index, navigateTo }
       className={`p-6 bg-gradient-to-br ${color} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all text-left`}
     >
       <div className="flex items-center mb-3">
-        <motion.span 
+        <motion.span
           whileHover={{ scale: 1.2, rotate: 5 }}
           className="text-3xl mr-3"
         >

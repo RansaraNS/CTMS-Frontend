@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -142,18 +143,21 @@ const AddCandidate = () => {
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-          <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-              Candidate Tracking Management System
-            </h1>
-          </div>
+     <div className="flex items-center">
+  {/* Logo image */}
+  <motion.img
+    src="/GR.jpg" // make sure this is in public folder
+    alt="Company Logo"
+    transition={{ duration: 0.5 }}
+    className="w-10 h-10 mr-3 object-contain"
+  />
+
+  {/* Title */}
+  <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+    Candidate Tracking Management System
+  </h1>
+</div>
+
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -288,7 +292,7 @@ const AddCandidate = () => {
                       <div className="text-orange-700 space-y-1">
                         <p><strong>Name:</strong> {existingCandidate.name}</p>
                         <p><strong>Status:</strong> <span className="capitalize">{existingCandidate.status}</span></p>
-                        <p><strong>Position:</strong> {existingCandidate.lastPosition}</p>
+                        {/* <p><strong>Position:</strong> {existingCandidate.Position}</p> */}
                       </div>
                     </motion.div>
                   )}
@@ -468,14 +472,14 @@ const AddCandidate = () => {
                         })}
                       >
                         <option value="">Select Position</option>
-                        <option value="Software Engineer">Software Engineer</option>
-                        <option value="Frontend Developer">Frontend Developer</option>
-                        <option value="Backend Developer">Backend Developer</option>
-                        <option value="Full Stack Developer">Full Stack Developer</option>
-                        <option value="Data Analyst">Data Analyst</option>
-                        <option value="Project Manager">Project Manager</option>
-                        <option value="UI/UX Designer">UI/UX Designer</option>
-                        <option value="DevOps Engineer">DevOps Engineer</option>
+                        <option value="Software Engineer">Software Engineer Intern</option>
+                        <option value="Frontend Developer">Frontend Developer Intern</option>
+                        <option value="Backend Developer">Backend Developer Intern</option>
+                        <option value="Full Stack Developer">Full Stack Developer Intern</option>
+                        <option value="Data Analyst">Data Analyst Intern</option>
+                        <option value="Project Manager">Project Manager Intern</option>
+                        <option value="UI/UX Designer">UI/UX Designer Intern</option>
+                        <option value="DevOps Engineer">DevOps Engineer Intern</option>
                       </select>
                       {errors.position && (
                         <motion.p 

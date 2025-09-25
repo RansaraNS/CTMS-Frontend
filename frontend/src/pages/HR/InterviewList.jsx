@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -170,6 +171,31 @@ const InterviewList = () => {
     }
   };
 
+const handleDeleteInterview = async (interviewId) => {
+  if (window.confirm('Are you sure you want to permanently delete this interview? This action cannot be undone.')) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete interview');
+      }
+      
+      await fetchInterviews();
+      alert('Interview deleted successfully');
+    } catch (error) {
+      console.error('Error deleting interview:', error);
+      alert('Failed to delete interview');
+    }
+  }
+};
+
   const navigateTo = (path) => {
     navigate(path);
   };
@@ -218,18 +244,20 @@ const InterviewList = () => {
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-          <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-              Candidate Tracking Management System
-            </h1>
-          </div>
+      <div className="flex items-center">
+                  {/* Logo image */}
+                  <motion.img
+                    src="/GR.jpg" // make sure this is in public folder
+                    alt="Company Logo"
+                    transition={{ duration: 0.5 }}
+                    className="w-10 h-10 mr-3 object-contain"
+                  />
+      
+                  {/* Title */}
+                  <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                    Candidate Tracking Management System
+                  </h1>
+                </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -489,58 +517,71 @@ const InterviewList = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {getOutcomeBadge(interview.feedback?.outcome)}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  <div className="flex flex-col space-y-2">
-                                    {interview.status === 'completed' ? (
-                                      <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleViewFeedback(interview._id)}
-                                        className="text-blue-600 hover:text-blue-900 text-left font-medium"
-                                      >
-                                        View Feedback
-                                      </motion.button>
-                                    ) : interview.status === 'scheduled' && (
-                                      <>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleAddFeedback(interview._id)}
-                                          className="text-green-600 hover:text-green-900 text-left font-medium"
-                                        >
-                                          Add Feedback
-                                        </motion.button>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleReschedule(interview._id)}
-                                          className="text-blue-600 hover:text-blue-900 text-left font-medium"
-                                        >
-                                          Reschedule
-                                        </motion.button>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleCancelInterview(interview._id)}
-                                          className="text-red-600 hover:text-red-900 text-left font-medium"
-                                        >
-                                          Cancel
-                                        </motion.button>
-                                      </>
-                                    )}
-                                    {interview.meetingLink && interview.status === 'scheduled' && (
-                                      <motion.a
-                                        whileHover={{ scale: 1.05 }}
-                                        href={interview.meetingLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-teal-600 hover:text-teal-900 text-left font-medium"
-                                      >
-                                        Join Meeting
-                                      </motion.a>
-                                    )}
-                                  </div>
-                                </td>
+<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+  <div className="flex flex-col space-y-2">
+    {interview.status === 'completed' ? (
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => handleViewFeedback(interview._id)}
+        className="text-blue-600 hover:text-blue-900 text-left font-medium"
+      >
+        View Feedback
+      </motion.button>
+    ) : interview.status === 'scheduled' && (
+      <>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleAddFeedback(interview._id)}
+          className="text-green-600 hover:text-green-900 text-left font-medium"
+        >
+          Add Feedback
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleReschedule(interview._id)}
+          className="text-blue-600 hover:text-blue-900 text-left font-medium"
+        >
+          Reschedule
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleCancelInterview(interview._id)}
+          className="text-orange-600 hover:text-orange-900 text-left font-medium"
+        >
+          Cancel
+        </motion.button>
+      </>
+    )}
+    
+    {/* Only show Delete button if no outcome is available */}
+    {!interview.feedback?.outcome && (
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => handleDeleteInterview(interview._id)}
+        className="text-red-600 hover:text-red-900 text-left font-medium"
+      >
+        Delete
+      </motion.button>
+    )}
+    
+    {interview.meetingLink && interview.status === 'scheduled' && (
+      <motion.a
+        whileHover={{ scale: 1.05 }}
+        href={interview.meetingLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-teal-600 hover:text-teal-900 text-left font-medium"
+      >
+        Join Meeting
+      </motion.a>
+    )}
+  </div>
+</td>
                               </motion.tr>
                             );
                           })}

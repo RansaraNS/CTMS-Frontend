@@ -14,6 +14,7 @@ import { isAuthenticated } from './context/auth';
 import InterviewFeedback from './pages/HR/InterviewFeedback';
 import ViewFeedback from './pages/HR/ViewFeedback';
 import CandidateDetailsView from './pages/HR/CandidateDetailsView';
+import InterviewDetail from './pages/HR/InterviewDetail';
 
 function App() {
   return (
@@ -107,6 +108,17 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+         <Route 
+          path="/interviews/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <InterviewDetail />
+            </ProtectedRoute>
+          } 
+        />
+
+
 
           <Route 
           path="/interviews/:interviewId/feedback" 

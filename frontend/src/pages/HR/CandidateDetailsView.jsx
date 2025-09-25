@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -242,17 +244,19 @@ const CandidateDetailsView = () => {
           className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-              Candidate Tracking Management System
-            </h1>
-          </div>
+                      {/* Logo image */}
+                      <motion.img
+                        src="/GR.jpg" // make sure this is in public folder
+                        alt="Company Logo"
+                        transition={{ duration: 0.5 }}
+                        className="w-10 h-10 mr-3 object-contain"
+                      />
+          
+                      {/* Title */}
+                      <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+                        Candidate Tracking Management System
+                      </h1>
+                    </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -400,7 +404,7 @@ const CandidateDetailsView = () => {
                       </div>
                     </motion.div>
 
-                    {/* Professional Information */}
+                    {/* Professional Information
                     <motion.div
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -427,7 +431,7 @@ const CandidateDetailsView = () => {
                           <p className="text-gray-900 font-medium">{candidate.noticePeriod || 'N/A'}</p>
                         </div>
                       </div>
-                    </motion.div>
+                    </motion.div> */}
                   </div>
 
                   {/* Skills */}
