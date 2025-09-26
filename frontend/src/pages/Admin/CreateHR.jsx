@@ -85,65 +85,81 @@ const CreateHR = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 font-sans overflow-hidden">
+    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans overflow-hidden">
       <div className="flex flex-1 flex-col w-full">
         {/* Navbar */}
-        <nav className="bg-gradient-to-r from-teal-800 to-blue-900 text-white p-6 flex justify-between items-center shadow-lg backdrop-blur-md">
+        <motion.nav 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
+        >
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold mr-6 bg-gradient-to-r text-white bg-clip-text text-transparent">Candidate Tracking System</h1>
-            
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking System
+            </h1>
           </div>
-          <div className="flex items-center">
-            <span className="mr-6 text-md font-medium">Welcome, Admin</span>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
+            >
+              <span className="font-medium">Welcome, Admin</span>
+            </motion.div>
             <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#1e40af' }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
-              className="flex items-center bg-blue-800 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md"
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
             >
               <FiLogOut className="mr-2" /> Logout
             </motion.button>
           </div>
-        </nav>
+        </motion.nav>
 
         {/* Sidebar and Main Content */}
         <div className="flex flex-1">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 256 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gray-800 text-white h-full shadow-lg min-w-[256px]"
+          <motion.div 
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
-            <nav className="flex flex-col h-full p-6">
+            <nav className="flex flex-col h-full py-6">
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiHome className="mr-3 text-lg" /> Dashboard
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-3 mb-4 bg-blue-600/80 text-white rounded-xl hover:bg-blue-700 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUserPlus className="mr-3 text-lg" /> Create HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUsers className="mr-3 text-lg" /> Manage HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiEye className="mr-3 text-lg" /> View Interviews
               </motion.button>
@@ -162,11 +178,11 @@ const CreateHR = () => {
                 initial={{ opacity: 0, y: -20 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="bg-gradient-to-r from-teal-500 via-blue-500 to-purple-600 rounded-3xl p-2 mb-12 text-white shadow-2xl"
+                className="bg-gradient-to-r from-[#03624c] via-[#030f0f] to-[#00df82] rounded-3xl p-2 mb-12 text-white shadow-2xl"
               >
                 <div className="text-center">
                   <h1 className="text-3xl font-bold mb-4">Create New HR</h1>
-                  <p className="text-teal-100">Add a new Human Resource professional to your team</p>
+                  <p className="text-white">Add a new Human Resource professional to your team</p>
                 </div>
               </motion.div>
 
@@ -181,11 +197,11 @@ const CreateHR = () => {
                   <motion.div variants={itemVariants} className="space-y-6">
                     <label className="block text-gray-700 text-sm font-semibold" htmlFor="name">
                       Full Name
-                      <span className="text-teal-600 ml-1">★</span>
+                      <span className="text-[#00df82] ml-1">★</span>
                     </label>
                     <input
-                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all duration-300 shadow-md ${
-                        errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-teal-300'
+                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
+                        errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
                       }`}
                       id="name"
                       type="text"
@@ -209,11 +225,11 @@ const CreateHR = () => {
                   <motion.div variants={itemVariants} className="space-y-6">
                     <label className="block text-gray-700 text-sm font-semibold" htmlFor="email">
                       Email Address
-                      <span className="text-teal-600 ml-1">★</span>
+                      <span className="text-[#00df82] ml-1">★</span>
                     </label>
                     <input
-                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all duration-300 shadow-md ${
-                        errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-teal-300'
+                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
+                        errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
                       }`}
                       id="email"
                       type="email"
@@ -240,12 +256,12 @@ const CreateHR = () => {
                   <motion.div variants={itemVariants} className="space-y-6">
                     <label className="block text-gray-700 text-sm font-semibold" htmlFor="password">
                       Password
-                      <span className="text-teal-600 ml-1">★</span>
+                      <span className="text-[#00df82] ml-1">★</span>
                     </label>
                     <div className="relative">
                       <input
-                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all duration-300 shadow-md ${
-                          errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-teal-300'
+                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
+                          errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
                         }`}
                         id="password"
                         type="password"
@@ -275,12 +291,12 @@ const CreateHR = () => {
                   <motion.div variants={itemVariants} className="space-y-6">
                     <label className="block text-gray-700 text-sm font-semibold" htmlFor="role">
                       Role
-                      <span className="text-teal-600 ml-1">★</span>
+                      <span className="text-[#00df82] ml-1">★</span>
                     </label>
                     <div className="relative">
                       <input
-                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all duration-300 shadow-md ${
-                          errors.role ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-teal-300'
+                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
+                          errors.role ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
                         }`}
                         id="role"
                         type="text"
@@ -305,18 +321,18 @@ const CreateHR = () => {
                     )}
                   </motion.div>
 
-                 <motion.button 
+                  <motion.button 
                     variants={itemVariants} 
-                    whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(20, 184, 166, 0.3)' }} 
+                    whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 223, 130, 0.3)' }} 
                     whileTap={{ scale: 0.98 }} 
                     type="submit" 
-                    className="w-full bg-gradient-to-r from-teal-600 to-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition duration-300 focus:ring-2 focus:ring-teal-500/50"
-                    >
+                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition duration-300 focus:ring-2 focus:ring-[#00df82]/50"
+                  >
                     <span className="inline-flex items-center">
-                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                         </svg>
-                              Create New HR
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Create New HR
                     </span>
                   </motion.button>
                 </form>

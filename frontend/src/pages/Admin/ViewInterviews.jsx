@@ -51,8 +51,8 @@ const ViewInterviews = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      scheduled: { color: 'bg-blue-100 text-blue-800', label: 'Scheduled' },
-      completed: { color: 'bg-green-100 text-green-800', label: 'Completed' },
+      scheduled: { color: 'bg-[#00df82]/20 text-[#00df82]', label: 'Scheduled' },
+      completed: { color: 'bg-[#00df82]/20 text-[#00df82]', label: 'Completed' },
       cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
       'no-show': { color: 'bg-orange-100 text-orange-800', label: 'No Show' },
     };
@@ -63,7 +63,7 @@ const ViewInterviews = () => {
   const getOutcomeBadge = (outcome) => {
     if (!outcome) return null;
     const outcomeConfig = {
-      passed: { color: 'bg-green-100 text-green-800', label: 'Passed' },
+      passed: { color: 'bg-[#00df82]/20 text-[#00df82]', label: 'Passed' },
       failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
       pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
       'recommended-next-round': { color: 'bg-purple-100 text-purple-800', label: 'Next Round' },
@@ -113,29 +113,45 @@ const ViewInterviews = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 font-sans overflow-hidden">
+      <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans overflow-hidden">
         <div className="flex flex-1 flex-col w-full">
-          <nav className="bg-gradient-to-r from-teal-800 to-blue-900 text-white p-6 flex justify-between items-center shadow-lg backdrop-blur-md">
+          <motion.nav 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
+          >
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold mr-6 bg-gradient-to-r from-teal-300 to-blue-300 bg-clip-text text-transparent">Candidate Tracking System</h1>
-              <span className="text-md">{new Date('2025-09-26T05:41:00+05:30').toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short', hour12: true })}</span>
+              <motion.img
+                src="/GR.jpg"
+                alt="Company Logo"
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 mr-3 object-contain"
+              />
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+                Candidate Tracking System
+              </h1>
             </div>
-            <div className="flex items-center">
-              <span className="mr-6 text-md font-medium">Welcome, Admin</span>
+            <div className="flex items-center space-x-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
+              >
+                <span className="font-medium">Welcome, Admin</span>
+              </motion.div>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#1e40af' }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
-                className="flex items-center bg-blue-800 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md"
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
               >
                 <FiLogOut className="mr-2" /> Logout
               </motion.button>
             </div>
-          </nav>
+          </motion.nav>
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-teal-600"></div>
-              <p className="mt-6 text-gray-600 text-lg">Loading interviews...</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#00df82]"></div>
+              <p className="mt-6 text-gray-200 text-lg">Loading interviews...</p>
             </div>
           </div>
         </div>
@@ -144,63 +160,79 @@ const ViewInterviews = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 font-sans overflow-hidden">
+    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans overflow-hidden">
       <div className="flex flex-1 flex-col w-full">
-        <nav className="bg-gradient-to-r from-teal-800 to-blue-900 text-white p-6 flex justify-between items-center shadow-lg backdrop-blur-md">
+        <motion.nav 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
+        >
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold mr-6 bg-gradient-to-r text-white bg-clip-text text-transparent">Candidate Tracking System</h1>
-           
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking System
+            </h1>
           </div>
-          <div className="flex items-center">
-            <span className="mr-6 text-md font-medium">Welcome, Admin</span>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
+            >
+              <span className="font-medium">Welcome, Admin</span>
+            </motion.div>
             <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#1e40af' }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
-              className="flex items-center bg-blue-800 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md"
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
             >
               <FiLogOut className="mr-2" /> Logout
             </motion.button>
           </div>
-        </nav>
+        </motion.nav>
 
         <div className="flex flex-1">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 256 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gray-800 text-white h-full shadow-lg min-w-[256px]"
+          <motion.div 
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
-            <nav className="flex flex-col h-full p-6">
+            <nav className="flex flex-col h-full py-6">
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiHome className="mr-3 text-lg" /> Dashboard
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUserPlus className="mr-3 text-lg" /> Create HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUsers className="mr-3 text-lg" /> Manage HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-3 mb-4 bg-blue-600/80 text-white rounded-xl hover:bg-blue-700 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiEye className="mr-3 text-lg" /> View Interviews
               </motion.button>
@@ -209,7 +241,7 @@ const ViewInterviews = () => {
 
           <div className="flex-1 p-10 overflow-auto">
             <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-10">
-              <h2 className="text-4xl font-bold text-gray-800 text-center bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">View Interviews</h2>
+              <h2 className="text-4xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">View Interviews</h2>
               <motion.div variants={itemVariants} >
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">
                   <div className="flex-1 relative">
@@ -218,7 +250,7 @@ const ViewInterviews = () => {
                       placeholder="Search by candidate name, email, or position..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-0 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-teal-500/20 shadow-lg"
+                      className="w-full pl-12 pr-4 py-3 border-0 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 shadow-lg"
                     />
                     <span className="absolute left-4 top-3.5 text-gray-500">🔍</span>
                   </div>
@@ -227,12 +259,12 @@ const ViewInterviews = () => {
                       type="date"
                       value={dateFilter}
                       onChange={(e) => setDateFilter(e.target.value)}
-                      className="border-0 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-teal-500/20 shadow-md"
+                      className="border-0 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 shadow-md"
                     />
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
-                      className="border-0 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-teal-500/20 shadow-md"
+                      className="border-0 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 shadow-md"
                     >
                       <option value="all">All Statuses</option>
                       <option value="scheduled">Scheduled</option>
@@ -245,19 +277,19 @@ const ViewInterviews = () => {
               </motion.div>
 
               <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-teal-50 to-blue-50">
-                  <div className="text-3xl font-bold text-teal-600">{interviews.length}</div>
+                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
+                  <div className="text-3xl font-bold text-[#03624c]">{interviews.length}</div>
                   <div className="text-md text-gray-500">Total Interviews</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-blue-50 to-teal-50">
-                  <div className="text-3xl font-bold text-blue-600">{interviews.filter(i => i.status === 'scheduled').length}</div>
+                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
+                  <div className="text-3xl font-bold text-[#00df82]">{interviews.filter(i => i.status === 'scheduled').length}</div>
                   <div className="text-md text-gray-500">Scheduled</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-green-50 to-teal-50">
-                  <div className="text-3xl font-bold text-green-600">{interviews.filter(i => i.status === 'completed').length}</div>
+                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
+                  <div className="text-3xl font-bold text-[#00df82]">{interviews.filter(i => i.status === 'completed').length}</div>
                   <div className="text-md text-gray-500">Completed</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-red-50 to-teal-50">
+                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
                   <div className="text-3xl font-bold text-red-600">{interviews.filter(i => i.status === 'cancelled').length}</div>
                   <div className="text-md text-gray-500">Cancelled</div>
                 </div>
@@ -271,7 +303,7 @@ const ViewInterviews = () => {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gradient-to-r from-teal-100 to-blue-100">
+                      <thead className="bg-gradient-to-r from-[#03624c]/50 to-[#030f0f]/50">
                         <tr>
                           <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Candidate & Position</th>
                           <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Date & Time</th>
@@ -286,7 +318,7 @@ const ViewInterviews = () => {
                         {filteredInterviews.map((interview) => {
                           const candidate = interview.candidate || {};
                           return (
-                            <motion.tr key={interview._id} variants={itemVariants} className="hover:bg-teal-50/50 transition duration-300">
+                            <motion.tr key={interview._id} variants={itemVariants} className="hover:bg-[#00df82]/10 transition duration-300">
                               <td className="px-6 py-5">
                                 <div className="text-sm font-medium text-gray-900">{candidate.firstName} {candidate.lastName}</div>
                                 <div className="text-sm text-gray-500">{candidate.position}</div>
@@ -302,12 +334,12 @@ const ViewInterviews = () => {
                               <td className="px-6 py-5 whitespace-nowrap text-sm font-medium">
                                 <div className="flex flex-col space-y-2">
                                   {interview.status === 'completed' && (
-                                    <motion.button whileHover={{ scale: 1.1, color: '#2563eb' }} whileTap={{ scale: 0.95 }} onClick={() => navigate(`/admin/${interview._id}/report-interviews`)} className="text-blue-600 hover:text-blue-800 text-left">
+                                    <motion.button whileHover={{ scale: 1.1, color: '#00df82' }} whileTap={{ scale: 0.95 }} onClick={() => navigate(`/admin/${interview._id}/report-interviews`)} className="text-[#03624c] hover:text-[#00df82] text-left">
                                       View Feedback
                                     </motion.button>
                                   )}
                                   {interview.meetingLink && interview.status === 'scheduled' && (
-                                    <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:text-teal-800 text-left">
+                                    <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" className="text-[#00df82] hover:text-[#03624c] text-left">
                                       Join Meeting
                                     </a>
                                   )}

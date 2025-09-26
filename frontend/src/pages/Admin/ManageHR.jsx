@@ -32,7 +32,7 @@ const ManageHR = () => {
   const handleGenerateReport = () => {
     try {
       const doc = new jsPDF();
-      const now = new Date();
+      const now = new Date('2025-09-26T22:38:00+0530');
       const dateStr = now.toLocaleDateString();
       const timeStr = now.toLocaleTimeString();
 
@@ -52,7 +52,7 @@ const ManageHR = () => {
         body: tableRows,
         startY: 40,
         styles: { fontSize: 10 },
-        headStyles: { fillColor: [0, 128, 128] },
+        headStyles: { fillColor: [3, 98, 76] }, // Matching #03624c
       });
 
       const pageHeight = doc.internal.pageSize.height;
@@ -142,65 +142,81 @@ const ManageHR = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 font-sans relative">
+    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans relative">
       <div className="flex-1 flex flex-col transition-all duration-300">
         {/* Navbar */}
-        <nav className="bg-gradient-to-r from-teal-800 to-blue-900 text-white p-6 flex justify-between items-center shadow-lg backdrop-blur-md">
+        <motion.nav 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
+        >
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold mr-6 bg-gradient-to-r text-white bg-clip-text text-transparent">Candidate Tracking System</h1>
-            
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking System
+            </h1>
           </div>
-          <div className="flex items-center">
-            <span className="mr-6 text-md  font-medium">Welcome, Admin</span>
+          <div className="flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
+            >
+              <span className="font-medium">Welcome, Admin</span>
+            </motion.div>
             <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#1e40af' }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
-              className="flex items-center bg-blue-800 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md"
+              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
             >
               <FiLogOut className="mr-2" /> Logout
             </motion.button>
           </div>
-        </nav>
+        </motion.nav>
 
         <div className="flex flex-1">
           {/* Sidebar */}
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 256 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gray-800 text-white h-full shadow-lg min-w-[256px]"
+          <motion.div 
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
-            <nav className="flex flex-col h-full p-6">
+            <nav className="flex flex-col h-full py-6">
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiHome className="mr-3 text-lg" /> Dashboard
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUserPlus className="mr-3 text-lg" /> Create HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-3 mb-4 bg-blue-600/80 text-white rounded-xl hover:bg-blue-700 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiUsers className="mr-3 text-lg" /> Manage HR
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: '#2563eb', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-3 mb-4 bg-gray-700/80 text-white rounded-xl hover:bg-gray-600 transition duration-200 shadow-md"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <FiEye className="mr-3 text-lg" /> View Interviews
               </motion.button>
@@ -208,9 +224,9 @@ const ManageHR = () => {
           </motion.div>
 
           {/* Content */}
-          <div className="flex-1 p-8 overflow-auto bg-gradient-to-br from-gray-50 to-teal-50">
+          <div className="flex-1 p-8 overflow-auto bg-gradient-to-br from-[#03624c]/10 to-[#00df82]/10">
             <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-8">
-              <h2 className="text-3xl font-bold text-teal-700 text-center bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">Manage HR</h2>
+              <h2 className="text-3xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">Manage HR</h2>
               <div className="flex items-center space-x-6">
                 <motion.div variants={itemVariants} className="flex-1 relative">
                   <input
@@ -218,14 +234,14 @@ const ManageHR = () => {
                     placeholder="Search HR by name or email..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border-0 rounded-xl bg-white/80 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-lg"
+                    className="w-full pl-10 pr-4 py-3 border-0 rounded-xl bg-white/80 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-[#00df82] shadow-lg"
                   />
                   <span className="absolute left-3 top-3.5 text-gray-500">🔍</span>
                 </motion.div>
                 <motion.button 
                   whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   onClick={handleGenerateReport}
-                  className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 focus:ring-2 focus:ring-gold-500 transition duration-300 font-semibold"
+                  className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-2 focus:ring-[#00df82]/50 transition duration-300 font-semibold"
                 >
                   Generate Report
                 </motion.button>
@@ -234,7 +250,7 @@ const ManageHR = () => {
               <motion.div variants={itemVariants} className="mt-8">
                 <div className="bg-white rounded-xl shadow-xl overflow-hidden">
                   <table className="w-full divide-y divide-gray-200">
-                    <thead className="bg-gradient-to-r from-teal-100 to-blue-100">
+                    <thead className="bg-gradient-to-r from-[#03624c]/50 to-[#030f0f]/50">
                       <tr>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Full Name</th>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Email</th>
@@ -244,15 +260,15 @@ const ManageHR = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
                       {filteredHrs.map((hr) => (
-                        <motion.tr key={hr._id} variants={itemVariants} className="hover:bg-teal-50 transition duration-200">
+                        <motion.tr key={hr._id} variants={itemVariants} className="hover:bg-[#00df82]/10 transition duration-200">
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{hr.name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{hr.email}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{hr.role}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <motion.button 
-                              whileHover={{ scale: 1.1, color: '#2563eb' }} whileTap={{ scale: 0.95 }}
+                              whileHover={{ scale: 1.1, color: '#00df82' }} whileTap={{ scale: 0.95 }}
                               onClick={() => handleUpdate(hr)}
-                              className="text-blue-600 hover:text-blue-800 mr-4"
+                              className="text-[#03624c] hover:text-[#00df82] mr-4"
                             >
                               ✏️ Edit
                             </motion.button>
@@ -290,14 +306,14 @@ const ManageHR = () => {
             exit={{ opacity: 0, y: 50 }}
             className="bg-white p-6 rounded-2xl shadow-2xl w-96 z-50 border border-gray-200"
           >
-            <div className="bg-gradient-to-r from-teal-600 to-blue-600 rounded-t-xl p-4 mb-6">
+            <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] rounded-t-xl p-4 mb-6">
               <h3 className="text-xl font-bold text-white">Update HR</h3>
             </div>
             <form onSubmit={handleSaveUpdate} className="space-y-6">
               <div>
                 <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-name">Full Name</label>
                 <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
                   id="update-name"
                   type="text"
                   value={selectedHr.name}
@@ -307,7 +323,7 @@ const ManageHR = () => {
               <div>
                 <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-email">Email</label>
                 <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
                   id="update-email"
                   type="email"
                   value={selectedHr.email}
@@ -317,7 +333,7 @@ const ManageHR = () => {
               <div>
                 <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-password">Password</label>
                 <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
                   id="update-password"
                   type="password"
                   value={selectedHr.password || ''}
@@ -327,7 +343,7 @@ const ManageHR = () => {
               <div>
                 <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-role">Role</label>
                 <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
                   id="update-role"
                   type="text"
                   value={selectedHr.role}
@@ -346,7 +362,7 @@ const ManageHR = () => {
                 <motion.button 
                   whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   type="submit" 
-                  className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-teal-700 hover:to-blue-700 transition duration-200"
+                  className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-4 py-2 rounded-lg hover:from-[#00df82] hover:to-[#03624c] transition duration-200"
                 >
                   Save
                 </motion.button>
