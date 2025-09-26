@@ -14,7 +14,8 @@ import { isAuthenticated } from './context/auth';
 import InterviewFeedback from './pages/HR/InterviewFeedback';
 import ViewFeedback from './pages/HR/ViewFeedback';
 import CandidateDetailsView from './pages/HR/CandidateDetailsView';
-import InterviewDetail from './pages/HR/InterviewDetail';
+import ViewInterviews from './pages/Admin/ViewInterviews';
+import InterviewReport from './pages/Admin/InterviewReport';
 
 function App() {
   return (
@@ -52,6 +53,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <ManageHR />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/view-interviews" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ViewInterviews />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/:interviewId/report-interviews" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <InterviewReport />
             </ProtectedRoute>
           } 
         />
