@@ -16,6 +16,7 @@ import ViewFeedback from './pages/HR/ViewFeedback';
 import CandidateDetailsView from './pages/HR/CandidateDetailsView';
 import ViewInterviews from './pages/Admin/ViewInterviews';
 import InterviewReport from './pages/Admin/InterviewReport';
+import InterviewDetail from './pages/HR/InterviewDetail';
 
 function App() {
   return (
