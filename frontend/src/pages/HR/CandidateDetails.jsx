@@ -82,7 +82,7 @@ const CandidateDetails = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       new: { color: 'bg-gray-100 text-gray-800', label: 'New' },
-      contacted: { color: 'bg-blue-100 text-blue-800', label: 'Contacted' },
+      contacted: { color: 'bg-[#03624c] text-white', label: 'Contacted' },
       interviewed: { color: 'bg-yellow-100 text-yellow-800', label: 'Interviewed' },
       hired: { color: 'bg-green-100 text-green-800', label: 'Hired' },
       rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
@@ -181,7 +181,7 @@ const CandidateDetails = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-50 to-blue-100"
+        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <motion.div
           animate={{ 
@@ -192,7 +192,7 @@ const CandidateDetails = () => {
             rotate: { duration: 2, repeat: Infinity, ease: "linear" },
             scale: { duration: 1.5, repeat: Infinity }
           }}
-          className="rounded-full h-16 w-16 border-4 border-teal-600 border-t-transparent"
+          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
         ></motion.div>
       </motion.div>
     );
@@ -203,7 +203,7 @@ const CandidateDetails = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -211,26 +211,23 @@ const CandidateDetails = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-       <div className="flex items-center">
-                   {/* Logo image */}
-                   <motion.img
-                     src="/GR.jpg" // make sure this is in public folder
-                     alt="Company Logo"
-                     transition={{ duration: 0.5 }}
-                     className="w-10 h-10 mr-3 object-contain"
-                   />
-       
-                   {/* Title */}
-                   <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                     Candidate Tracking Management System
-                   </h1>
-                 </div>
+          <div className="flex items-center">
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking Management System
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -262,14 +259,14 @@ const CandidateDetails = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -286,12 +283,12 @@ const CandidateDetails = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
                     item.path === "/candidates" 
-                      ? "bg-gradient-to-r from-teal-600 to-blue-600" 
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
                       : "hover:bg-white hover:bg-opacity-10"
                   }`}
                 >
@@ -313,7 +310,7 @@ const CandidateDetails = () => {
                 <motion.h2 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Manage Candidates
                 </motion.h2>
@@ -333,7 +330,7 @@ const CandidateDetails = () => {
                       placeholder="Search candidates by name, email, or position..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
                     />
                     <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
                   </div>
@@ -342,7 +339,7 @@ const CandidateDetails = () => {
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
                     >
                       <option value="all">All Statuses</option>
                       <option value="new">New</option>
@@ -357,7 +354,7 @@ const CandidateDetails = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleGenerateReport}
-                      className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 focus:ring-2 focus:ring-green-500 transition duration-200 shadow-sm"
+                      className="bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] focus:ring-2 focus:ring-[#00df82] transition duration-200 shadow-sm"
                     >
                       📊 Generate Report
                     </motion.button>
@@ -382,9 +379,9 @@ const CandidateDetails = () => {
                 className="grid grid-cols-1 md:grid-cols-4 gap-6"
               >
                 {[
-                  { title: "Total Candidates", value: candidates.length, color: "teal", icon: "👥" },
-                  { title: "Interviewed", value: candidates.filter(c => c.status === 'interviewed').length, color: "blue", icon: "📅" },
-                  { title: "Hired", value: candidates.filter(c => c.status === 'hired').length, color: "green", icon: "✅" },
+                  { title: "Total Candidates", value: candidates.length, color: "#03624c", icon: "👥" },
+                  { title: "Interviewed", value: candidates.filter(c => c.status === 'interviewed').length, color: "#030f0f", icon: "📅" },
+                  { title: "Hired", value: candidates.filter(c => c.status === 'hired').length, color: "#00df82", icon: "✅" },
                   { title: "Rejected", value: candidates.filter(c => c.status === 'rejected').length, color: "red", icon: "❌" },
                 ].map((stat, index) => (
                   <motion.div
@@ -397,7 +394,7 @@ const CandidateDetails = () => {
                       y: -5,
                       transition: { type: "spring", stiffness: 300 }
                     }}
-                    className={`bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
+                    className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -444,7 +441,7 @@ const CandidateDetails = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => navigateTo('/hr/add-candidate')}
-                        className="mt-4 bg-teal-600 text-white px-6 py-3 rounded-xl hover:bg-teal-700 shadow-lg"
+                        className="mt-4 bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] shadow-lg"
                       >
                         Add Your First Candidate
                       </motion.button>
@@ -453,7 +450,7 @@ const CandidateDetails = () => {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gradient-to-r from-gray-50 to-teal-50">
+                      <thead className="bg-gradient-to-r from-[#03624c] to-[#030f0f]">
                         <tr>
                           {[
                             "Candidate",
@@ -463,7 +460,7 @@ const CandidateDetails = () => {
                             "Last Updated",
                             "Actions"
                           ].map((header, index) => (
-                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">
                               {header}
                             </th>
                           ))}
@@ -484,9 +481,9 @@ const CandidateDetails = () => {
                                 <div className="flex items-center">
                                   <motion.div 
                                     whileHover={{ scale: 1.1 }}
-                                    className="flex-shrink-0 h-10 w-10 bg-teal-100 rounded-full flex items-center justify-center shadow-sm"
+                                    className="flex-shrink-0 h-10 w-10 bg-[#03624c] rounded-full flex items-center justify-center shadow-sm"
                                   >
-                                    <span className="text-teal-600 font-medium">
+                                    <span className="text-white font-medium">
                                       {candidate.firstName?.[0]}{candidate.lastName?.[0]}
                                     </span>
                                   </motion.div>
@@ -517,7 +514,7 @@ const CandidateDetails = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleViewCandidate(candidate._id)}
-                                    className="text-teal-600 hover:text-teal-900 text-left font-medium"
+                                    className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
                                   >
                                     👁️ View Details
                                   </motion.button>

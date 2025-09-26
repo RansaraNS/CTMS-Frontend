@@ -230,7 +230,7 @@ const ScheduleInterview = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -238,26 +238,23 @@ const ScheduleInterview = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-            {/* Logo image */}
             <motion.img
               src="/GR.jpg"
               alt="Company Logo"
               transition={{ duration: 0.5 }}
               className="w-10 h-10 mr-3 object-contain"
             />
-    
-            {/* Title */}
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
               Candidate Tracking Management System
             </h1>
           </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -279,14 +276,14 @@ const ScheduleInterview = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -303,12 +300,12 @@ const ScheduleInterview = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
                     item.path === "/hr/schedule-interview" 
-                      ? "bg-gradient-to-r from-teal-600 to-blue-600" 
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
                       : "hover:bg-white hover:bg-opacity-10"
                   }`}
                 >
@@ -335,7 +332,7 @@ const ScheduleInterview = () => {
                 <motion.h2 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Schedule Interview
                 </motion.h2>
@@ -391,7 +388,7 @@ const ScheduleInterview = () => {
                       No new candidates available for scheduling. 
                       <button 
                         onClick={() => navigateTo("/hr/add-candidate")}
-                        className="ml-2 text-teal-600 hover:text-teal-800 font-medium underline"
+                        className="ml-2 text-[#00df82] hover:text-[#03624c] font-medium underline"
                       >
                         Add a new candidate first.
                       </button>
@@ -411,7 +408,7 @@ const ScheduleInterview = () => {
                     </label>
                     <select
                       className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                        errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                       }`}
                       id="candidateId"
                       value={formData.candidateId}
@@ -451,7 +448,7 @@ const ScheduleInterview = () => {
                       </label>
                       <input
                         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                          errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                         }`}
                         id="interviewDate"
                         type="date"
@@ -476,7 +473,7 @@ const ScheduleInterview = () => {
                       </label>
                       <input
                         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                          errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                         }`}
                         id="interviewTime"
                         type="time"
@@ -509,7 +506,7 @@ const ScheduleInterview = () => {
                       </label>
                       <select
                         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                          errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                         }`}
                         id="interviewType"
                         value={formData.interviewType}
@@ -537,7 +534,7 @@ const ScheduleInterview = () => {
                       </label>
                       <input
                         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                          errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                         }`}
                         id="interviewers"
                         type="text"
@@ -568,7 +565,7 @@ const ScheduleInterview = () => {
                     </label>
                     <input
                       className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                        errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'
+                        errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
                       }`}
                       id="meetingLink"
                       type="url"
@@ -594,7 +591,7 @@ const ScheduleInterview = () => {
                     transition={{ delay: 0.7 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-teal-600 to-blue-600 text-white py-4 rounded-xl hover:from-teal-700 hover:to-blue-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-4 focus:ring-[#00df82] transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
                     disabled={isSubmitting || candidates.length === 0}
                   >

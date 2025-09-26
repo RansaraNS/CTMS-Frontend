@@ -178,33 +178,30 @@ const InterviewDetail = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col">
           {/* Enhanced Navbar */}
           <motion.nav 
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
-           <div className="flex items-center">
-                       {/* Logo image */}
-                       <motion.img
-                         src="/GR.jpg" // make sure this is in public folder
-                         alt="Company Logo"
-                         transition={{ duration: 0.5 }}
-                         className="w-10 h-10 mr-3 object-contain"
-                       />
-           
-                       {/* Title */}
-                       <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                         Candidate Tracking Management System
-                       </h1>
-                     </div>
+            <div className="flex items-center">
+              <motion.img
+                src="/GR.jpg"
+                alt="Company Logo"
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 mr-3 object-contain"
+              />
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+                Candidate Tracking Management System
+              </h1>
+            </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
               >
                 <span className="font-medium">Welcome, {user?.name || "HR"}</span>
               </motion.div>
@@ -228,7 +225,7 @@ const InterviewDetail = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full mx-auto"
+                className="w-16 h-16 border-4 border-[#00df82] border-t-transparent rounded-full mx-auto"
               ></motion.div>
               <p className="mt-4 text-gray-600 text-lg font-medium">Loading interview details...</p>
             </motion.div>
@@ -244,14 +241,14 @@ const InterviewDetail = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col">
           {/* Enhanced Navbar */}
           <motion.nav 
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
             <div className="flex items-center">
               <motion.div
@@ -261,14 +258,14 @@ const InterviewDetail = () => {
               >
                 📊
               </motion.div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
                 Candidate Tracking Management System
               </h1>
             </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
               >
                 <span className="font-medium">Welcome, {user?.name || "HR"}</span>
               </motion.div>
@@ -296,7 +293,7 @@ const InterviewDetail = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/interviews')}
-                className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+                className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
               >
                 Back to Interviews
               </motion.button>
@@ -313,14 +310,14 @@ const InterviewDetail = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col">
           {/* Enhanced Navbar */}
           <motion.nav 
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
             <div className="flex items-center">
               <motion.div
@@ -330,14 +327,14 @@ const InterviewDetail = () => {
               >
                 📊
               </motion.div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
                 Candidate Tracking Management System
               </h1>
             </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
               >
                 <span className="font-medium">Welcome, {user?.name || "HR"}</span>
               </motion.div>
@@ -365,7 +362,7 @@ const InterviewDetail = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/interviews')}
-                className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+                className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
               >
                 Back to Interviews
               </motion.button>
@@ -381,7 +378,7 @@ const InterviewDetail = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -389,7 +386,7 @@ const InterviewDetail = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
             <motion.div
@@ -399,14 +396,14 @@ const InterviewDetail = () => {
             >
               📊
             </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
               Candidate Tracking Management System
             </h1>
           </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -428,14 +425,14 @@ const InterviewDetail = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -452,7 +449,7 @@ const InterviewDetail = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
@@ -497,14 +494,14 @@ const InterviewDetail = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-between items-center mb-8"
                 >
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">
                     Interview Details - {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}
                   </h2>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate('/interviews')}
-                    className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
                   >
                     ← Back to Interviews
                   </motion.button>
@@ -515,18 +512,17 @@ const InterviewDetail = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="mb-8 p-6 bg-gradient-to-r from-gray-50 to-teal-50 rounded-2xl border border-gray-200"
+                  className="mb-8 p-6 bg-gradient-to-r from-[#03624c] to-[#030f0f] rounded-2xl border border-gray-200"
                 >
-                  <h3 className="font-semibold text-lg mb-4 text-gray-800">👤 Candidate Information</h3>
+                  <h3 className="font-semibold text-lg mb-4 text-white">👤 Candidate Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <p><strong className="text-gray-700">Full Name:</strong> {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}</p>
-                      <p><strong className="text-gray-700">Position:</strong> {safeRender(interview.candidate?.position)}</p>
-                      <p><strong className="text-gray-700">Email:</strong> {safeRender(interview.candidate?.email)}</p>
+                      <p><strong className="text-[#00df82]">Full Name:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}</span></p>
+                      <p><strong className="text-[#00df82]">Position:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.position)}</span></p>
+                      <p><strong className="text-[#00df82]">Email:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.email)}</span></p>
                     </div>
                     <div className="space-y-3">
                       {/* <p><strong className="text-gray-700">Phone:</strong> {safeRender(interview.candidate?.phone)}</p> */}
-                
                     </div>
                   </div>
                 </motion.div>
@@ -572,38 +568,26 @@ const InterviewDetail = () => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.6 }}
-                        className="bg-gradient-to-br from-teal-50 to-blue-50 p-6 rounded-2xl border border-teal-200"
+                        className="bg-gradient-to-br from-[#03624c] to-[#030f0f] p-6 rounded-2xl border border-[#00df82]"
                       >
                         <div className="space-y-3">
                           {interview.meetingLink && interview.meetingLink !== "N/A" && (
                             <div>
-                              <strong className="text-gray-700">Meeting Link:</strong>
+                              <strong className="text-white">Meeting Link:</strong>
                               <a
                                 href={interview.meetingLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="ml-2 text-blue-600 underline hover:text-blue-800 break-all"
+                                className="ml-2 text-[#00df82] underline hover:text-white break-all"
                               >
                                 Join Meeting
                               </a>
                             </div>
                           )}
-                          {/* {interview.feedback && interview.feedback !== "N/A" && (
-                            <div>
-                              <strong className="text-gray-700">Feedback:</strong>
-                              <p className="mt-1 text-gray-600 whitespace-pre-wrap break-words">{safeRender(interview.feedback)}</p>
-                            </div>
-                          )}
-                          {interview.submittedAt && interview.submittedAt !== "N/A" && (
-                            <div>
-                              <strong className="text-gray-700">Submitted At:</strong>
-                              <p className="mt-1 text-gray-600">{safeRender(interview.submittedAt)}</p>
-                            </div>
-                          )} */}
                           {interview.notes && interview.notes !== "N/A" && (
                             <div>
-                              <strong className="text-gray-700">Notes:</strong>
-                              <p className="mt-1 text-gray-600 whitespace-pre-wrap break-words">{safeRender(interview.notes)}</p>
+                              <strong className="text-white">Notes:</strong>
+                              <p className="mt-1 text-gray-200 whitespace-pre-wrap break-words">{safeRender(interview.notes)}</p>
                             </div>
                           )}
                         </div>
@@ -623,7 +607,7 @@ const InterviewDetail = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate(`/interviews/${id}/feedback`)}
-                    className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
                   >
                     📝 View/Add Feedback
                   </motion.button>

@@ -39,7 +39,6 @@ const HRDashboard = () => {
         return;
       }
 
-      // Sequential API calls with individual error handling
       try {
         const statsResponse = await axios.get("http://localhost:5000/api/candidates/dashboard/stats", {
           headers: { Authorization: `Bearer ${token}` },
@@ -47,7 +46,6 @@ const HRDashboard = () => {
         setStats(statsResponse.data);
       } catch (error) {
         console.error("Stats API error:", error);
-        // Set default stats
         setStats({
           totalCandidates: 0,
           newCandidates: 0,
@@ -104,18 +102,18 @@ const HRDashboard = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-50 to-blue-100"
+        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <motion.div
           animate={{
             rotate: 360,
-            scale: [1, 1.2, 1]
+            scale: [1, 1.2, 1],
           }}
           transition={{
             rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1.5, repeat: Infinity }
+            scale: { duration: 1.5, repeat: Infinity },
           }}
-          className="rounded-full h-16 w-16 border-4 border-teal-600 border-t-transparent"
+          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
         ></motion.div>
       </motion.div>
     );
@@ -126,35 +124,29 @@ const HRDashboard = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
         <motion.nav
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-            {/* Logo image */}
             <motion.img
-              src="/GR.jpg" // make sure this is in public folder
+              src="/GR.jpg"
               alt="Company Logo"
               transition={{ duration: 0.5 }}
               className="w-10 h-10 mr-3 object-contain"
             />
-
-            {/* Title */}
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
               Candidate Tracking Management System
             </h1>
           </div>
-
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -179,26 +171,23 @@ const HRDashboard = () => {
           </motion.div>
         )}
 
-        {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
           <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 bg-gradient-to-r from-teal-600 to-blue-600 mx-4 rounded-xl mb-2 shadow-lg"
+                className="flex items-center p-4 bg-gradient-to-r from-[#03624c] to-[#030f0f] mx-4 rounded-xl mb-2 shadow-lg"
               >
                 <span className="mr-3 text-xl">🏠</span>
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
-
               {[
                 { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
@@ -210,7 +199,7 @@ const HRDashboard = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
@@ -222,18 +211,15 @@ const HRDashboard = () => {
             </nav>
           </motion.div>
 
-          {/* Dashboard Content */}
           <div className="flex-1 p-6 overflow-auto">
-            {/* Time Range Selector */}
             <div className="flex justify-between items-center mb-6">
               <motion.h2
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                className="text-3xl font-bold bg-gradient-to-r from-[#030f0f] to-[#03624c] bg-clip-text text-transparent"
               >
-                HR Dashboard Overview
+                {/* HR Dashboard Overview */}
               </motion.h2>
-
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 className="flex space-x-2 bg-white rounded-lg p-1 shadow-lg"
@@ -243,8 +229,8 @@ const HRDashboard = () => {
                     key={range}
                     onClick={() => setTimeRange(range)}
                     className={`px-4 py-2 rounded-md font-medium capitalize transition-all ${timeRange === range
-                        ? "bg-teal-600 text-white shadow-md"
-                        : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-[#00df82] text-white shadow-md"
+                      : "text-gray-600 hover:bg-gray-100"
                       }`}
                   >
                     {range}
@@ -253,26 +239,22 @@ const HRDashboard = () => {
               </motion.div>
             </div>
 
-            {/* Statistics Grid with Enhanced Cards */}
             <motion.div
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
             >
               {[
-                { title: "Total Candidates", value: stats.totalCandidates, icon: "👥", color: "blue" },
-                { title: "New Candidates", value: stats.newCandidates, icon: "🆕", color: "green" },
-                { title: "Have To Interview", value: stats.interviewedCandidates, icon: "📋", color: "purple" },
-                { title: "Hired", value: stats.hiredCandidates, icon: "✅", color: "teal", },
-                { title: "Rejected", value: stats.rejectedCandidates, icon: "❌", color: "red" },
-                // { title: "Toal Interviews", value: stats.upcomingInterviews, icon: "📅", color: "orange" },
-                // { title: "Today's Interviews", value: stats.todayInterviews, icon: "🎯", color: "yellow" },
-                { title: "Conversion Rate", value: stats.totalCandidates ? ((stats.hiredCandidates / stats.totalCandidates) * 100).toFixed(1) + "%" : "0%", icon: "📊", color: "indigo" },
+                { title: "Total Candidates", value: stats.totalCandidates, icon: "👥", color: "#00df82" },
+                { title: "New Candidates", value: stats.newCandidates, icon: "🆕", color: "#03624c" },
+                { title: "Have To Interview", value: stats.interviewedCandidates, icon: "📋", color: "#030f0f" },
+                { title: "Hired", value: stats.hiredCandidates, icon: "✅", color: "#00df82" },
+                { title: "Rejected", value: stats.rejectedCandidates, icon: "❌", color: "#03624c" },
+                { title: "Conversion Rate", value: stats.totalCandidates ? ((stats.hiredCandidates / stats.totalCandidates) * 100).toFixed(1) + "%" : "0%", icon: "📊", color: "#030f0f" },
               ].map((stat, index) => (
                 <StatCard key={stat.title} {...stat} index={index} />
               ))}
             </motion.div>
 
-            {/* Recent + Upcoming */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <RecentCandidatesSection
                 recentCandidates={recentCandidates}
@@ -284,7 +266,6 @@ const HRDashboard = () => {
               />
             </div>
 
-            {/* Quick Actions */}
             <QuickActionsSection navigateTo={navigateTo} />
           </div>
         </div>
@@ -295,17 +276,6 @@ const HRDashboard = () => {
 
 // Enhanced StatCard Component
 const StatCard = ({ title, value, icon, color, index }) => {
-  const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    green: "from-green-500 to-green-600",
-    purple: "from-purple-500 to-purple-600",
-    teal: "from-teal-500 to-teal-600",
-    red: "from-red-500 to-red-600",
-    orange: "from-orange-500 to-orange-600",
-    yellow: "from-yellow-500 to-yellow-600",
-    indigo: "from-indigo-500 to-indigo-600",
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -316,7 +286,7 @@ const StatCard = ({ title, value, icon, color, index }) => {
         y: -5,
         transition: { type: "spring", stiffness: 300 }
       }}
-      className={`bg-gradient-to-br ${colorClasses[color]} text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
+      className={`bg-[${color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
     >
       <div className="flex items-center justify-between">
         <div>
@@ -329,7 +299,6 @@ const StatCard = ({ title, value, icon, color, index }) => {
           >
             {value}
           </motion.p>
-
         </div>
         <motion.div
           whileHover={{ scale: 1.2, rotate: 5 }}
@@ -373,12 +342,18 @@ const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
                 </div>
                 <motion.span
                   whileHover={{ scale: 1.1 }}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${candidate.status === "new" ? "bg-blue-100 text-blue-800" :
-                      candidate.status === "interviewed" ? "bg-purple-100 text-purple-800" :
-                        candidate.status === "hired" ? "bg-green-100 text-green-800" :
-                          "bg-red-100 text-red-800"
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${candidate.status === "new"
+                      ? "bg-[#82162fff] text-white"
+                      : candidate.status === "scheduled"
+                        ? "bg-[#03624c] text-white"
+                        : candidate.status === "hired"
+                          ? "bg-[#00df82] text-white"
+                          : candidate.status === "rejected"
+                            ? "bg-red-500 text-white"
+                            : "bg-gray-300 text-gray-800"
                     }`}
                 >
+
                   {candidate.status}
                 </motion.span>
               </motion.div>
@@ -398,7 +373,7 @@ const RecentCandidatesSection = ({ recentCandidates, navigateTo }) => (
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => navigateTo("/candidates")}
-        className="w-full mt-6 bg-gradient-to-r from-teal-600 to-blue-600 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all"
+        className="w-full mt-6 bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all"
       >
         View All Candidates
       </motion.button>
@@ -427,13 +402,13 @@ const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 className="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-all cursor-pointer"
-                onClick={() => navigateTo(`/interviews/${interview._id}`)} // navigate to detail
+                onClick={() => navigateTo(`/interviews/${interview._id}`)}
               >
                 <p className="font-medium text-gray-900">
                   {interview.candidate?.firstName} {interview.candidate?.lastName || "Candidate"}
                 </p>
                 <p className="text-sm text-gray-600">{interview.interviewType}</p>
-                <p className="text-sm text-teal-600 font-medium">
+                <p className="text-sm text-[#00df82] font-medium">
                   {new Date(interview.interviewDate).toLocaleDateString()} at{" "}
                   {new Date(interview.interviewDate).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -453,20 +428,17 @@ const UpcomingInterviewsSection = ({ upcomingInterviews, navigateTo }) => (
           </motion.p>
         )}
       </AnimatePresence>
-
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => navigateTo("/interviews")}
-        className="w-full mt-6 bg-gradient-to-r from-teal-600 to-blue-600 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all"
+        className="w-full mt-6 bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all"
       >
         View All Interviews
       </motion.button>
     </div>
   </motion.div>
 );
-
-
 
 const QuickActionsSection = ({ navigateTo }) => (
   <motion.div
@@ -475,14 +447,14 @@ const QuickActionsSection = ({ navigateTo }) => (
     transition={{ delay: 0.6 }}
     className="mt-8"
   >
-    <h3 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-gray-800 to-teal-600 bg-clip-text text-transparent">
+    <h3 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-[#030f0f] to-[#03624c] bg-clip-text text-transparent">
       Quick Actions
     </h3>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[
-        { title: "Add Candidate", description: "Add a new candidate to the system", icon: "👤", path: "/hr/add-candidate", color: "from-blue-500 to-blue-600" },
-        { title: "Schedule Interview", description: "Schedule a new interview", icon: "🗓️", path: "/hr/schedule-interview", color: "from-green-500 to-green-600" },
-        { title: "Generate Reports", description: "Create detailed analytics reports", icon: "📈", path: "/reports", color: "from-purple-500 to-purple-600" },
+        { title: "Add Candidate", description: "Add a new candidate to the system", icon: "👤", path: "/hr/add-candidate", color: "#00df82" },
+        { title: "Schedule Interview", description: "Schedule a new interview", icon: "🗓️", path: "/hr/schedule-interview", color: "#03624c" },
+        { title: "Generate Reports", description: "Create detailed analytics reports", icon: "📈", path: "/reports", color: "#030f0f" },
       ].map((action, index) => (
         <ActionCard key={action.title} {...action} index={index} navigateTo={navigateTo} />
       ))}
@@ -490,7 +462,6 @@ const QuickActionsSection = ({ navigateTo }) => (
   </motion.div>
 );
 
-// Enhanced ActionCard Component
 const ActionCard = ({ title, description, icon, path, color, index, navigateTo }) => {
   return (
     <motion.button
@@ -503,7 +474,7 @@ const ActionCard = ({ title, description, icon, path, color, index, navigateTo }
       }}
       whileTap={{ scale: 0.95 }}
       onClick={() => navigateTo(path)}
-      className={`p-6 bg-gradient-to-br ${color} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all text-left`}
+      className={`p-6 bg-[${color}] text-white rounded-2xl shadow-lg hover:shadow-xl transition-all text-left`}
     >
       <div className="flex items-center mb-3">
         <motion.span

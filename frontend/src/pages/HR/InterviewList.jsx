@@ -81,7 +81,7 @@ const InterviewList = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      scheduled: { color: 'bg-blue-100 text-blue-800', label: 'Scheduled' },
+      scheduled: { color: 'bg-[#03624c] text-white', label: 'Scheduled' },
       completed: { color: 'bg-green-100 text-green-800', label: 'Completed' },
       cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
       'no-show': { color: 'bg-orange-100 text-orange-800', label: 'No Show' }
@@ -171,30 +171,30 @@ const InterviewList = () => {
     }
   };
 
-const handleDeleteInterview = async (interviewId) => {
-  if (window.confirm('Are you sure you want to permanently delete this interview? This action cannot be undone.')) {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+  const handleDeleteInterview = async (interviewId) => {
+    if (window.confirm('Are you sure you want to permanently delete this interview? This action cannot be undone.')) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete interview');
         }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete interview');
+        
+        await fetchInterviews();
+        alert('Interview deleted successfully');
+      } catch (error) {
+        console.error('Error deleting interview:', error);
+        alert('Failed to delete interview');
       }
-      
-      await fetchInterviews();
-      alert('Interview deleted successfully');
-    } catch (error) {
-      console.error('Error deleting interview:', error);
-      alert('Failed to delete interview');
     }
-  }
-};
+  };
 
   const navigateTo = (path) => {
     navigate(path);
@@ -212,7 +212,7 @@ const handleDeleteInterview = async (interviewId) => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-50 to-blue-100"
+        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <motion.div
           animate={{ 
@@ -223,7 +223,7 @@ const handleDeleteInterview = async (interviewId) => {
             rotate: { duration: 2, repeat: Infinity, ease: "linear" },
             scale: { duration: 1.5, repeat: Infinity }
           }}
-          className="rounded-full h-16 w-16 border-4 border-teal-600 border-t-transparent"
+          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
         ></motion.div>
       </motion.div>
     );
@@ -234,7 +234,7 @@ const handleDeleteInterview = async (interviewId) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -242,26 +242,23 @@ const handleDeleteInterview = async (interviewId) => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-      <div className="flex items-center">
-                  {/* Logo image */}
-                  <motion.img
-                    src="/GR.jpg" // make sure this is in public folder
-                    alt="Company Logo"
-                    transition={{ duration: 0.5 }}
-                    className="w-10 h-10 mr-3 object-contain"
-                  />
-      
-                  {/* Title */}
-                  <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                    Candidate Tracking Management System
-                  </h1>
-                </div>
+          <div className="flex items-center">
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking Management System
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -293,14 +290,14 @@ const handleDeleteInterview = async (interviewId) => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -317,12 +314,12 @@ const handleDeleteInterview = async (interviewId) => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
                     item.path === "/interviews" 
-                      ? "bg-gradient-to-r from-teal-600 to-blue-600" 
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
                       : "hover:bg-white hover:bg-opacity-10"
                   }`}
                 >
@@ -344,7 +341,7 @@ const handleDeleteInterview = async (interviewId) => {
                 <motion.h2 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Manage Interviews
                 </motion.h2>
@@ -364,7 +361,7 @@ const handleDeleteInterview = async (interviewId) => {
                       placeholder="Search interviews by candidate name, email, or position..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
                     />
                     <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
                   </div>
@@ -374,13 +371,13 @@ const handleDeleteInterview = async (interviewId) => {
                       type="date"
                       value={dateFilter}
                       onChange={(e) => setDateFilter(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
                     />
                     
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
                     >
                       <option value="all">All Statuses</option>
                       <option value="scheduled">Scheduled</option>
@@ -400,10 +397,10 @@ const handleDeleteInterview = async (interviewId) => {
                 className="grid grid-cols-1 md:grid-cols-4 gap-6"
               >
                 {[
-                  { title: "Total Interviews", value: interviews.length, color: "teal" },
-                  { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, color: "blue" },
-                  { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, color: "green" },
-                  { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, color: "red" },
+                  { title: "Total Interviews", value: interviews.length, color: "#03624c" },
+                  { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, color: "#030f0f" },
+                  { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, color: "#00df82" },
+                  { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, color: "#e93b63ff" },
                 ].map((stat, index) => (
                   <motion.div
                     key={stat.title}
@@ -415,7 +412,7 @@ const handleDeleteInterview = async (interviewId) => {
                       y: -5,
                       transition: { type: "spring", stiffness: 300 }
                     }}
-                    className={`bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
+                    className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -461,7 +458,7 @@ const handleDeleteInterview = async (interviewId) => {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gradient-to-r from-gray-50 to-teal-50">
+                      <thead className="bg-gradient-to-r from-[#03624c] to-[#030f0f]">
                         <tr>
                           {[
                             "Candidate & Position",
@@ -472,7 +469,7 @@ const handleDeleteInterview = async (interviewId) => {
                             "Outcome",
                             "Actions"
                           ].map((header, index) => (
-                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">
                               {header}
                             </th>
                           ))}
@@ -517,71 +514,71 @@ const handleDeleteInterview = async (interviewId) => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {getOutcomeBadge(interview.feedback?.outcome)}
                                 </td>
-<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-  <div className="flex flex-col space-y-2">
-    {interview.status === 'completed' ? (
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => handleViewFeedback(interview._id)}
-        className="text-blue-600 hover:text-blue-900 text-left font-medium"
-      >
-        View Feedback
-      </motion.button>
-    ) : interview.status === 'scheduled' && (
-      <>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleAddFeedback(interview._id)}
-          className="text-green-600 hover:text-green-900 text-left font-medium"
-        >
-          Add Feedback
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleReschedule(interview._id)}
-          className="text-blue-600 hover:text-blue-900 text-left font-medium"
-        >
-          Reschedule
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleCancelInterview(interview._id)}
-          className="text-orange-600 hover:text-orange-900 text-left font-medium"
-        >
-          Cancel
-        </motion.button>
-      </>
-    )}
-    
-    {/* Only show Delete button if no outcome is available */}
-    {!interview.feedback?.outcome && (
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => handleDeleteInterview(interview._id)}
-        className="text-red-600 hover:text-red-900 text-left font-medium"
-      >
-        Delete
-      </motion.button>
-    )}
-    
-    {interview.meetingLink && interview.status === 'scheduled' && (
-      <motion.a
-        whileHover={{ scale: 1.05 }}
-        href={interview.meetingLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-teal-600 hover:text-teal-900 text-left font-medium"
-      >
-        Join Meeting
-      </motion.a>
-    )}
-  </div>
-</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                  <div className="flex flex-col space-y-2">
+                                    {interview.status === 'completed' ? (
+                                      <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => handleViewFeedback(interview._id)}
+                                        className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
+                                      >
+                                        View Feedback
+                                      </motion.button>
+                                    ) : interview.status === 'scheduled' && (
+                                      <>
+                                        <motion.button
+                                          whileHover={{ scale: 1.05 }}
+                                          whileTap={{ scale: 0.95 }}
+                                          onClick={() => handleAddFeedback(interview._id)}
+                                          className="text-green-600 hover:text-green-900 text-left font-medium"
+                                        >
+                                          Add Feedback
+                                        </motion.button>
+                                        <motion.button
+                                          whileHover={{ scale: 1.05 }}
+                                          whileTap={{ scale: 0.95 }}
+                                          onClick={() => handleReschedule(interview._id)}
+                                          className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
+                                        >
+                                          Reschedule
+                                        </motion.button>
+                                        <motion.button
+                                          whileHover={{ scale: 1.05 }}
+                                          whileTap={{ scale: 0.95 }}
+                                          onClick={() => handleCancelInterview(interview._id)}
+                                          className="text-orange-600 hover:text-orange-900 text-left font-medium"
+                                        >
+                                          Cancel
+                                        </motion.button>
+                                      </>
+                                    )}
+                                    
+                                    {/* Only show Delete button if no outcome is available */}
+                                    {!interview.feedback?.outcome && (
+                                      <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => handleDeleteInterview(interview._id)}
+                                        className="text-red-600 hover:text-red-900 text-left font-medium"
+                                      >
+                                        Delete
+                                      </motion.button>
+                                    )}
+                                    
+                                    {interview.meetingLink && interview.status === 'scheduled' && (
+                                      <motion.a
+                                        whileHover={{ scale: 1.05 }}
+                                        href={interview.meetingLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
+                                      >
+                                        Join Meeting
+                                      </motion.a>
+                                    )}
+                                  </div>
+                                </td>
                               </motion.tr>
                             );
                           })}

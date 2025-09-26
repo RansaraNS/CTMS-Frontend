@@ -61,7 +61,7 @@ const CandidateDetailsView = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       new: { color: 'bg-gray-100 text-gray-800', label: 'New' },
-      contacted: { color: 'bg-blue-100 text-blue-800', label: 'Contacted' },
+      contacted: { color: 'bg-[#03624c] text-white', label: 'Contacted' },
       interviewed: { color: 'bg-yellow-100 text-yellow-800', label: 'Interviewed' },
       hired: { color: 'bg-green-100 text-green-800', label: 'Hired' },
       rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
@@ -154,7 +154,7 @@ const CandidateDetailsView = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-50 to-blue-100"
+        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <motion.div
           animate={{ 
@@ -165,7 +165,7 @@ const CandidateDetailsView = () => {
             rotate: { duration: 2, repeat: Infinity, ease: "linear" },
             scale: { duration: 1.5, repeat: Infinity }
           }}
-          className="rounded-full h-16 w-16 border-4 border-teal-600 border-t-transparent"
+          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
         ></motion.div>
       </motion.div>
     );
@@ -176,7 +176,7 @@ const CandidateDetailsView = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col items-center justify-center p-6">
           <motion.div
@@ -190,7 +190,7 @@ const CandidateDetailsView = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleBack}
-              className="mt-4 bg-teal-600 text-white px-6 py-2 rounded-xl hover:bg-teal-700 shadow-lg"
+              className="mt-4 bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
             >
               Back to Candidates
             </motion.button>
@@ -205,7 +205,7 @@ const CandidateDetailsView = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col items-center justify-center p-6">
           <motion.div
@@ -218,7 +218,7 @@ const CandidateDetailsView = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleBack}
-              className="bg-teal-600 text-white px-6 py-2 rounded-xl hover:bg-teal-700 shadow-lg"
+              className="bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
             >
               Back to Candidates
             </motion.button>
@@ -233,7 +233,7 @@ const CandidateDetailsView = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -241,26 +241,23 @@ const CandidateDetailsView = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
-                      {/* Logo image */}
-                      <motion.img
-                        src="/GR.jpg" // make sure this is in public folder
-                        alt="Company Logo"
-                        transition={{ duration: 0.5 }}
-                        className="w-10 h-10 mr-3 object-contain"
-                      />
-          
-                      {/* Title */}
-                      <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                        Candidate Tracking Management System
-                      </h1>
-                    </div>
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking Management System
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -282,14 +279,14 @@ const CandidateDetailsView = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -306,10 +303,10 @@ const CandidateDetailsView = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
-                  className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
+                  className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200"
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   <span>{item.label}</span>
@@ -331,7 +328,7 @@ const CandidateDetailsView = () => {
                   whileHover={{ scale: 1.05, x: -5 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleBack}
-                  className="flex items-center text-teal-600 hover:text-teal-800 font-medium"
+                  className="flex items-center text-[#00df82] hover:text-[#03624c] font-medium"
                 >
                   ← Back to Candidates
                 </motion.button>
@@ -339,7 +336,7 @@ const CandidateDetailsView = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleEdit}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 shadow-lg font-medium"
+                  className="bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] shadow-lg font-medium"
                 >
                   ✏️ Edit Candidate
                 </motion.button>
@@ -352,7 +349,7 @@ const CandidateDetailsView = () => {
                 transition={{ delay: 0.1 }}
                 className="bg-white rounded-2xl shadow-xl overflow-hidden"
               >
-                <div className="bg-gradient-to-r from-teal-500 to-blue-500 p-6 text-white">
+                <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <motion.div 
@@ -367,12 +364,12 @@ const CandidateDetailsView = () => {
                         <h2 className="text-3xl font-bold">
                           {candidate.firstName} {candidate.lastName}
                         </h2>
-                        <p className="text-teal-100 text-lg">{candidate.position}</p>
+                        <p className="text-[#00df82] text-lg">{candidate.position}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       {getStatusBadge(candidate.status)}
-                      <p className="text-teal-100 mt-2">Added on {formatDate(candidate.createdAt)}</p>
+                      <p className="text-[#00df82] mt-2">Added on {formatDate(candidate.createdAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -404,7 +401,7 @@ const CandidateDetailsView = () => {
                       </div>
                     </motion.div>
 
-                    {/* Professional Information
+                    {/* Professional Information */}
                     <motion.div
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -431,7 +428,7 @@ const CandidateDetailsView = () => {
                           <p className="text-gray-900 font-medium">{candidate.noticePeriod || 'N/A'}</p>
                         </div>
                       </div>
-                    </motion.div> */}
+                    </motion.div>
                   </div>
 
                   {/* Skills */}
@@ -450,7 +447,7 @@ const CandidateDetailsView = () => {
                           <motion.span 
                             key={index}
                             whileHover={{ scale: 1.05 }}
-                            className="bg-gradient-to-r from-teal-100 to-blue-100 text-teal-800 px-4 py-2 rounded-full text-sm font-medium shadow-sm"
+                            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-[#00df82] px-4 py-2 rounded-full text-sm font-medium shadow-sm"
                           >
                             {skill}
                           </motion.span>
@@ -505,8 +502,8 @@ const CandidateDetailsView = () => {
                 transition={{ delay: 0.7 }}
                 className="bg-white rounded-2xl shadow-xl overflow-hidden"
               >
-                <div className="bg-gradient-to-r from-gray-50 to-teal-50 px-6 py-4 border-b">
-                  <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+                <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] px-6 py-4 border-b">
+                  <h3 className="text-xl font-semibold text-white flex items-center">
                     <span className="mr-2">📊</span> Interview History ({interviews.length})
                   </h3>
                 </div>
@@ -541,7 +538,7 @@ const CandidateDetailsView = () => {
                               <motion.span 
                                 whileHover={{ scale: 1.05 }}
                                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                  interview.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                                  interview.status === 'scheduled' ? 'bg-[#03624c] text-white' :
                                   interview.status === 'completed' ? 'bg-green-100 text-green-800' :
                                   interview.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                                   'bg-gray-100 text-gray-800'

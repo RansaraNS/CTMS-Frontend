@@ -133,7 +133,7 @@ const AddCandidate = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -141,27 +141,23 @@ const AddCandidate = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-     <div className="flex items-center">
-  {/* Logo image */}
-  <motion.img
-    src="/GR.jpg" // make sure this is in public folder
-    alt="Company Logo"
-    transition={{ duration: 0.5 }}
-    className="w-10 h-10 mr-3 object-contain"
-  />
-
-  {/* Title */}
-  <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-    Candidate Tracking Management System
-  </h1>
-</div>
-
+          <div className="flex items-center">
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking Management System
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -183,14 +179,14 @@ const AddCandidate = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
                 <span className="mr-3 text-xl">🏠</span> 
                 <span className="font-semibold">HR Dashboard</span>
@@ -207,12 +203,12 @@ const AddCandidate = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
                     item.active 
-                      ? "bg-gradient-to-r from-teal-600 to-blue-600" 
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
                       : "hover:bg-white hover:bg-opacity-10"
                   }`}
                 >
@@ -239,7 +235,7 @@ const AddCandidate = () => {
                 <motion.h2 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Add New Candidate
                 </motion.h2>
@@ -269,7 +265,7 @@ const AddCandidate = () => {
                         <div className="mt-3">
                           <button 
                             onClick={clearExistingCandidate}
-                            className="text-blue-600 hover:text-blue-800 font-medium underline transition duration-200"
+                            className="text-[#00df82] hover:text-[#03624c] font-medium underline transition duration-200"
                           >
                             Use different email address
                           </button>
@@ -292,7 +288,6 @@ const AddCandidate = () => {
                       <div className="text-orange-700 space-y-1">
                         <p><strong>Name:</strong> {existingCandidate.name}</p>
                         <p><strong>Status:</strong> <span className="capitalize">{existingCandidate.status}</span></p>
-                        {/* <p><strong>Position:</strong> {existingCandidate.Position}</p> */}
                       </div>
                     </motion.div>
                   )}
@@ -314,7 +309,7 @@ const AddCandidate = () => {
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                           errors.firstName
                             ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                         }`}
                         id="firstName"
                         type="text"
@@ -345,7 +340,7 @@ const AddCandidate = () => {
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                           errors.lastName
                             ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                         }`}
                         id="lastName"
                         type="text"
@@ -386,7 +381,7 @@ const AddCandidate = () => {
                           className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                             errors.email
                               ? 'border-red-500 focus:ring-red-200'
-                              : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                              : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                           }`}
                           id="email"
                           type="email"
@@ -404,7 +399,7 @@ const AddCandidate = () => {
                           onClick={handleQuickScan}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition duration-200 shadow-md"
+                          className="px-6 py-3 bg-[#03624c] text-white font-semibold rounded-xl hover:bg-[#030f0f] transition duration-200 shadow-md"
                         >
                           Scan
                         </motion.button>
@@ -427,14 +422,13 @@ const AddCandidate = () => {
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                           errors.phone
                             ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                         }`}
                         id="phone"
                         type="tel"
                         placeholder="Enter 10-digit phone number"
                         {...register('phone', {
                           required: 'Phone number is required',
-                       
                         })}
                       />
                       {errors.phone && (
@@ -464,7 +458,7 @@ const AddCandidate = () => {
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                           errors.position
                             ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                         }`}
                         id="position"
                         {...register('position', {
@@ -499,7 +493,7 @@ const AddCandidate = () => {
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
                           errors.source
                             ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-blue-200 focus:border-blue-500'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
                         }`}
                         id="source"
                         {...register('source', {
@@ -537,7 +531,7 @@ const AddCandidate = () => {
                       Additional Notes
                     </label>
                     <textarea
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-200"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82] focus:border-[#03624c] transition duration-200"
                       id="notes"
                       rows="4"
                       placeholder="Add any additional notes about the candidate (skills, experience, etc.)..."
@@ -552,7 +546,7 @@ const AddCandidate = () => {
                     transition={{ delay: 0.7 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-teal-600 to-blue-600 text-white py-4 rounded-xl hover:from-teal-700 hover:to-blue-700 focus:ring-4 focus:ring-teal-300 transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-4 focus:ring-[#00df82] transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
                     disabled={isSubmitting || existingCandidate}
                   >

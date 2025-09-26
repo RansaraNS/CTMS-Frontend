@@ -26,11 +26,11 @@ const ViewFeedback = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setInterview(data.interview);
       setLoading(false);
@@ -65,7 +65,7 @@ const ViewFeedback = () => {
     };
 
     const config = outcomeConfig[outcome] || { color: 'bg-gray-100 text-gray-800 border border-gray-200', label: outcome };
-    
+
     return (
       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${config.color} shadow-sm`}>
         {config.label}
@@ -75,37 +75,34 @@ const ViewFeedback = () => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col">
           {/* Enhanced Navbar */}
-          <motion.nav 
+          <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
-       <div className="flex items-center">
-                   {/* Logo image */}
-                   <motion.img
-                     src="/GR.jpg" // make sure this is in public folder
-                     alt="Company Logo"
-                     transition={{ duration: 0.5 }}
-                     className="w-10 h-10 mr-3 object-contain"
-                   />
-       
-                   {/* Title */}
-                   <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
-                     Candidate Tracking Management System
-                   </h1>
-                 </div>
+            <div className="flex items-center">
+              <motion.img
+                src="/GR.jpg"
+                alt="Company Logo"
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 mr-3 object-contain"
+              />
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+                Candidate Tracking Management System
+              </h1>
+            </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
               >
                 <span className="font-medium">Welcome, {user?.name || "HR"}</span>
               </motion.div>
@@ -119,7 +116,7 @@ const ViewFeedback = () => {
               </motion.button>
             </div>
           </motion.nav>
-          
+
           <div className="flex-1 flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -129,7 +126,7 @@ const ViewFeedback = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full mx-auto"
+                className="w-16 h-16 border-4 border-[#00df82] border-t-transparent rounded-full mx-auto"
               ></motion.div>
               <p className="mt-4 text-gray-600 text-lg font-medium">Loading feedback details...</p>
             </motion.div>
@@ -141,18 +138,18 @@ const ViewFeedback = () => {
 
   if (!interview || !interview.feedback) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
       >
         <div className="flex-1 flex flex-col">
           {/* Enhanced Navbar */}
-          <motion.nav 
+          <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
             <div className="flex items-center">
               <motion.div
@@ -162,14 +159,14 @@ const ViewFeedback = () => {
               >
                 📊
               </motion.div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
                 Candidate Tracking Management System
               </h1>
             </div>
             <div className="flex items-center space-x-4">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
               >
                 <span className="font-medium">Welcome, {user?.name || "HR"}</span>
               </motion.div>
@@ -183,7 +180,7 @@ const ViewFeedback = () => {
               </motion.button>
             </div>
           </motion.nav>
-          
+
           <div className="flex-1 flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -197,7 +194,7 @@ const ViewFeedback = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/interviews')}
-                className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+                className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
               >
                 Back to Interviews
               </motion.button>
@@ -211,19 +208,19 @@ const ViewFeedback = () => {
   const { candidate, interviewDate, interviewType, interviewers, feedback } = interview;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-gray-50 to-teal-50"
+      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Enhanced Navbar */}
-        <motion.nav 
+        <motion.nav
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="bg-gradient-to-r from-teal-600 to-blue-600 text-white p-4 flex justify-between items-center w-full shadow-lg"
+          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
           <div className="flex items-center">
             <motion.div
@@ -233,14 +230,14 @@ const ViewFeedback = () => {
             >
               📊
             </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-teal-200">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
               Candidate Tracking Management System
             </h1>
           </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="bg-teal-700 px-4 py-2 rounded-full shadow-lg"
+              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-medium">Welcome, {user?.name || "HR"}</span>
             </motion.div>
@@ -258,23 +255,23 @@ const ViewFeedback = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-          <motion.div 
+          <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white h-full shadow-2xl"
+            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
           >
             <nav className="flex flex-col h-full py-6">
               <motion.button
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(255,255,255,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
-                <span className="mr-3 text-xl">🏠</span> 
+                <span className="mr-3 text-xl">🏠</span>
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
-              
+
               {[
                 { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
@@ -286,7 +283,7 @@ const ViewFeedback = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.1)" }}
+                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
                   className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
@@ -300,12 +297,12 @@ const ViewFeedback = () => {
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center items-start min-h-full"
             >
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
@@ -326,19 +323,19 @@ const ViewFeedback = () => {
                 </AnimatePresence>
 
                 {/* Header */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-between items-center mb-8"
                 >
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">
                     Interview Feedback - {candidate?.firstName} {candidate?.lastName}
                   </h2>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate('/interviews')}
-                    className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
                   >
                     ← Back to Interviews
                   </motion.button>
@@ -349,20 +346,44 @@ const ViewFeedback = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="mb-8 p-6 bg-gradient-to-r from-gray-50 to-teal-50 rounded-2xl border border-gray-200"
+                  className="mb-8 p-6 bg-gradient-to-r from-[#03624c] to-[#030f0f] rounded-2xl border border-gray-200"
                 >
-                  <h3 className="font-semibold text-lg mb-4 text-gray-800">📋 Interview Details</h3>
+                  <h3 className="font-semibold text-lg mb-4 text-white">📋 Interview Details</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <p><strong className="text-gray-700">Candidate:</strong> {candidate?.firstName} {candidate?.lastName}</p>
-                      <p><strong className="text-gray-700">Position:</strong> {candidate?.position}</p>
-                      <p><strong className="text-gray-700">Email:</strong> {candidate?.email}</p>
+                      <p>
+                        <strong className="text-[#00df82]">Candidate:</strong>{" "}
+                        <span className="text-white font-bold">
+                          {candidate?.firstName} {candidate?.lastName}
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#00df82]">Position:</strong>{" "}
+                        <span className="text-white font-bold">{candidate?.position}</span>
+                      </p>
+                      <p>
+                        <strong className="text-[#00df82]">Email:</strong>{" "}
+                        <span className="text-white font-bold">{candidate?.email}</span>
+                      </p>
                     </div>
+
                     <div className="space-y-3">
-                      <p><strong className="text-gray-700">Interview Date:</strong> {new Date(interviewDate).toLocaleString()}</p>
-                      <p><strong className="text-gray-700">Type:</strong> <span className="capitalize">{interviewType}</span></p>
-                      <p><strong className="text-gray-700">Interviewers:</strong> {interviewers?.join(', ')}</p>
+                      <p>
+                        <strong className="text-[#00df82]">Interview Date:</strong>{" "}
+                        <span className="text-white font-bold">
+                          {new Date(interviewDate).toLocaleString()}
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#00df82]">Type:</strong>{" "}
+                        <span className="text-white font-bold capitalize">{interviewType}</span>
+                      </p>
+                      <p>
+                        <strong className="text-[#00df82]">Interviewers:</strong>{" "}
+                        <span className="text-white font-bold">{interviewers?.join(", ")}</span>
+                      </p>
                     </div>
+
                   </div>
                 </motion.div>
 
@@ -378,12 +399,12 @@ const ViewFeedback = () => {
                     {/* Ratings */}
                     <div className="space-y-6">
                       {[
-                        { label: 'Technical Skills', value: feedback.technicalSkills, color: 'from-blue-500 to-blue-600' },
+                        { label: 'Technical Skills', value: feedback.technicalSkills, color: 'from-[#03624c] to-[#030f0f]' },
                         { label: 'Communication', value: feedback.communication, color: 'from-green-500 to-green-600' },
                         { label: 'Problem Solving', value: feedback.problemSolving, color: 'from-purple-500 to-purple-600' },
                         { label: 'Cultural Fit', value: feedback.culturalFit, color: 'from-orange-500 to-orange-600' }
                       ].map((item, index) => (
-                        <motion.div 
+                        <motion.div
                           key={item.label}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -400,33 +421,33 @@ const ViewFeedback = () => {
                         </motion.div>
                       ))}
                     </div>
-                    
+
                     {/* Overall Rating and Details */}
                     <div className="space-y-6">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.6 }}
-                        className="bg-gradient-to-br from-teal-50 to-blue-50 p-6 rounded-2xl border border-teal-200"
+                        className="bg-gradient-to-br from-[#03624c] to-[#030f0f] p-6 rounded-2xl border border-[#00df82]"
                       >
                         <div className="flex justify-between items-center mb-4">
-                          <span className="font-semibold text-gray-800">Overall Rating:</span>
-                          <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+                          <span className="font-semibold text-white">Overall Rating:</span>
+                          <span className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                             {feedback.overallRating}/5
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-                          <div 
-                            className="bg-gradient-to-r from-teal-600 to-blue-600 h-3 rounded-full transition-all duration-500" 
+                          <div
+                            className="bg-gradient-to-r from-[#03622c] to-[#030f0f] h-3 rounded-full transition-all duration-500"
                             style={{ width: `${(feedback.overallRating / 5) * 100}%` }}
                           ></div>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-600">
+                        <div className="flex justify-between text-sm text-gray-400">
                           <span>0</span>
                           <span>5</span>
                         </div>
                       </motion.div>
-                      
+
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -437,12 +458,12 @@ const ViewFeedback = () => {
                           <span className="font-medium text-gray-700 block mb-2">Outcome:</span>
                           {getOutcomeBadge(feedback.outcome)}
                         </div>
-                        
+
                         <div>
                           <span className="font-medium text-gray-700">Submitted By:</span>
                           <p className="mt-1 text-gray-600">{feedback.submittedBy}</p>
                         </div>
-                        
+
                         {feedback.submittedAt && (
                           <div>
                             <span className="font-medium text-gray-700">Submitted On:</span>
@@ -480,7 +501,7 @@ const ViewFeedback = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate(`/interviews/${interviewId}/feedback`)}
-                    className="bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-teal-700 hover:to-blue-700 font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
                   >
                     ✏️ Edit Feedback
                   </motion.button>
@@ -488,7 +509,7 @@ const ViewFeedback = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => window.print()}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold shadow-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
                   >
                     🖨️ Print Feedback
                   </motion.button>
