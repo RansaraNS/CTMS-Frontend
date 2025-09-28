@@ -11,6 +11,8 @@ const CandidateDetailsView = () => {
   const [interviews, setInterviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cvLoading, setCvLoading] = useState(false);
+  const [cvError, setCvError] = useState('');
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -38,6 +40,7 @@ const CandidateDetailsView = () => {
         if (response.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('role');
+          localStorage.removeItem('user');
           navigate('/');
           return;
         }
@@ -55,6 +58,91 @@ const CandidateDetailsView = () => {
       setError(error.message || 'Failed to load candidate details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to handle CV download
+  const handleDownloadCV = async () => {
+    if (!candidate?.cv) return;
+    
+    setCvLoading(true);
+    setCvError('');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/candidates/${id}/cv`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to download CV' }));
+        throw new Error(errorData.message || `Failed to download CV: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      
+      // Check if blob is valid
+      if (blob.size === 0) {
+        throw new Error('CV file is empty or corrupted');
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Extract filename from CV path or use candidate name
+      const filename = candidate.cv.split('/').pop() || 
+        `${candidate.firstName}_${candidate.lastName}_CV.pdf`;
+      
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading CV:', error);
+      setCvError(error.message);
+    } finally {
+      setCvLoading(false);
+    }
+  };
+
+  // Function to handle CV view
+  const handleViewCV = async () => {
+    if (!candidate?.cv) return;
+    
+    setCvLoading(true);
+    setCvError('');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/candidates/${id}/cv`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to load CV' }));
+        throw new Error(errorData.message || `Failed to load CV: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      
+      // Check if blob is valid
+      if (blob.size === 0) {
+        throw new Error('CV file is empty or corrupted');
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      // Don't revoke the URL immediately as it's being used in a new tab
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error('Error viewing CV:', error);
+      setCvError(error.message);
+    } finally {
+      setCvLoading(false);
     }
   };
 
@@ -149,6 +237,10 @@ const CandidateDetailsView = () => {
     navigate(path);
   };
 
+  const handleRetry = () => {
+    fetchCandidateDetails();
+  };
+
   if (loading) {
     return (
       <motion.div 
@@ -185,15 +277,25 @@ const CandidateDetailsView = () => {
             className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-2xl max-w-md text-center shadow-lg"
           >
             <p className="font-bold text-lg mb-2">Error</p>
-            <p>{error}</p>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleBack}
-              className="mt-4 bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
-            >
-              Back to Candidates
-            </motion.button>
+            <p className="mb-4">{error}</p>
+            <div className="flex gap-4 justify-center">
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleRetry}
+                className="bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
+              >
+                Retry
+              </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleBack}
+                className="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 shadow-lg"
+              >
+                Back to Candidates
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </motion.div>
@@ -274,7 +376,7 @@ const CandidateDetailsView = () => {
 
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
+          {/* Sidebar */}
           <motion.div 
             initial={{ x: -300 }}
             animate={{ x: 0 }}
@@ -398,41 +500,46 @@ const CandidateDetailsView = () => {
                           <label className="text-sm font-medium text-gray-500">Source</label>
                           <p className="text-gray-900 font-medium">{candidate.source || 'N/A'}</p>
                         </div>
+                        <div className="bg-gray-50 p-4 rounded-xl">
+                          <label className="text-sm font-medium text-gray-500">Status</label>
+                          <div className="mt-1">{getStatusBadge(candidate.status)}</div>
+                        </div>
                       </div>
                     </motion.div>
 
                     {/* Professional Information */}
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">💼</span> Professional Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Experience</label>
-                          <p className="text-gray-900 font-medium">{candidate.experience ? `${candidate.experience} years` : 'N/A'}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Current Company</label>
-                          <p className="text-gray-900 font-medium">{candidate.currentCompany || 'N/A'}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Expected Salary</label>
-                          <p className="text-gray-900 font-medium">{candidate.expectedSalary || 'N/A'}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Notice Period</label>
-                          <p className="text-gray-900 font-medium">{candidate.noticePeriod || 'N/A'}</p>
-                        </div>
-                      </div>
-                    </motion.div>
+
+                       {/* Skills */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                    className="mt-8"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                      <span className="mr-2">🛠️</span> Skills
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {candidate.skills?.length > 0 ? candidate.skills.map((skill, index) => (
+                        <motion.span 
+                          key={index} 
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="px-3 py-1 rounded-full bg-[#00df82] text-white text-sm font-medium shadow-sm"
+                        >
+                          {skill}
+                        </motion.span>
+                      )) : <p className="text-gray-600">No skills listed</p>}
+                    </div>
+                  </motion.div>
+                    
                   </div>
 
-                  {/* Skills */}
-                  {candidate.skills && candidate.skills.length > 0 && (
+               
+
+                  {/* Notes */}
+                  {candidate.notes && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -440,119 +547,124 @@ const CandidateDetailsView = () => {
                       className="mt-8"
                     >
                       <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">🛠️</span> Skills
-                      </h3>
-                      <div className="flex flex-wrap gap-3">
-                        {candidate.skills.map((skill, index) => (
-                          <motion.span 
-                            key={index}
-                            whileHover={{ scale: 1.05 }}
-                            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-[#00df82] px-4 py-2 rounded-full text-sm font-medium shadow-sm"
-                          >
-                            {skill}
-                          </motion.span>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Notes */}
-                  {candidate.notes && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="mt-8"
-                    >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                         <span className="mr-2">📝</span> Notes
                       </h3>
-                      <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl">
-                        <p className="text-gray-700 whitespace-pre-wrap">{candidate.notes}</p>
+                      <div className="bg-gray-50 p-4 rounded-xl">
+                        <p className="text-gray-900 font-medium whitespace-pre-wrap">{candidate.notes}</p>
                       </div>
                     </motion.div>
                   )}
 
-                  {/* Rejection/Termination Reason */}
-                  {(candidate.rejectionReason || candidate.terminationReason) && (
+                  {/* CV Section */}
+                  {candidate.cv && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 }}
+                      transition={{ delay: 0.45 }}
                       className="mt-8"
                     >
                       <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">⚠️</span> 
-                        {candidate.rejectionReason ? 'Rejection Reason' : 'Termination Reason'}
+                        <span className="mr-2">📄</span> Curriculum Vitae (CV)
                       </h3>
-                      <div className="bg-red-50 border border-red-200 p-4 rounded-xl">
-                        <p className="text-red-700">
-                          {candidate.rejectionReason || candidate.terminationReason}
-                        </p>
+                      <div className="bg-gray-50 p-4 rounded-xl">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex gap-4 flex-wrap">
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={handleViewCV}
+                              disabled={cvLoading}
+                              className="bg-[#03624c] text-white px-6 py-3 rounded-lg hover:bg-[#00df82] disabled:opacity-50 shadow-md flex items-center gap-2"
+                            >
+                              <span>👁️</span>
+                              {cvLoading ? 'Loading...' : 'View CV'}
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={handleDownloadCV}
+                              disabled={cvLoading}
+                              className="bg-[#00df82] text-white px-6 py-3 rounded-lg hover:bg-[#03624c] disabled:opacity-50 shadow-md flex items-center gap-2"
+                            >
+                              <span>📥</span>
+                              {cvLoading ? 'Downloading...' : 'Download CV'}
+                            </motion.button>
+                          </div>
+                          
+                          {cvError && (
+                            <motion.div 
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"
+                            >
+                              <p className="font-medium">CV Error:</p>
+                              <p className="text-sm">{cvError}</p>
+                              <button 
+                                onClick={() => setCvError('')}
+                                className="text-red-600 hover:text-red-800 text-sm mt-2"
+                              >
+                                Dismiss
+                              </button>
+                            </motion.div>
+                          )}
+                          
+                          <p className="text-sm text-gray-600 mt-2">
+                            <strong>File:</strong> {candidate.cv.split('/').pop()}
+                          </p>
+                        </div>
                       </div>
                     </motion.div>
                   )}
-                </div>
-              </motion.div>
 
-              {/* Interview History */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden"
-              >
-                <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] px-6 py-4 border-b">
-                  <h3 className="text-xl font-semibold text-white flex items-center">
-                    <span className="mr-2">📊</span> Interview History ({interviews.length})
-                  </h3>
-                </div>
-                <div className="p-6">
-                  {interviews.length === 0 ? (
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-center py-8"
-                    >
-                      <div className="text-6xl mb-4">📅</div>
-                      <p className="text-gray-500 text-lg">No interviews scheduled yet.</p>
-                    </motion.div>
-                  ) : (
-                    <div className="space-y-4">
-                      <AnimatePresence>
+                  {/* Interviews */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-8"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                      <span className="mr-2">📊</span> Interview History
+                    </h3>
+                    {interviews.length > 0 ? (
+                      <div className="space-y-4">
                         {interviews.map((interview, index) => (
                           <motion.div 
-                            key={interview._id}
-                            initial={{ opacity: 0, y: 20 }}
+                            key={interview._id || index} 
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            whileHover={{ y: -2 }}
-                            className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                            className="bg-gray-50 p-4 rounded-xl shadow-sm border-l-4 border-[#03624c]"
                           >
-                            <div className="flex justify-between items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <h4 className="font-semibold text-gray-900 text-lg">{interview.interviewType}</h4>
-                                <p className="text-gray-600">With {interview.interviewerName}</p>
-                                <p className="text-sm text-gray-500">{formatDate(interview.interviewDate)}</p>
+                                <p><strong>Date:</strong> {formatDate(interview.interviewDate || interview.date)}</p>
+                                <p><strong>Type:</strong> {interview.type || 'N/A'}</p>
+                                <p><strong>Status:</strong> {interview.status || 'N/A'}</p>
                               </div>
-                              <motion.span 
-                                whileHover={{ scale: 1.05 }}
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                  interview.status === 'scheduled' ? 'bg-[#03624c] text-white' :
-                                  interview.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                  interview.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                  'bg-gray-100 text-gray-800'
-                                } shadow-sm`}
-                              >
-                                {interview.status}
-                              </motion.span>
+                              <div>
+                                <p><strong>Interviewers:</strong> {interview.interviewers?.join(', ') || 'N/A'}</p>
+                                <p><strong>Round:</strong> {interview.round || 'N/A'}</p>
+                              </div>
                             </div>
                             {renderFeedback(interview.feedback)}
                           </motion.div>
                         ))}
-                      </AnimatePresence>
-                    </div>
-                  )}
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 p-6 rounded-xl text-center">
+                        <p className="text-gray-600">No interviews scheduled for this candidate</p>
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => navigateTo('/hr/schedule-interview')}
+                          className="mt-4 bg-[#03624c] text-white px-6 py-2 rounded-lg hover:bg-[#00df82]"
+                        >
+                          Schedule Interview
+                        </motion.button>
+                      </div>
+                    )}
+                  </motion.div>
                 </div>
               </motion.div>
             </motion.div>

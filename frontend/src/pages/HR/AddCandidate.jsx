@@ -63,58 +63,104 @@ const AddCandidate = () => {
     }
   };
 
-  const onSubmit = async (data) => {
-    if (existingCandidate) {
-      setSubmitMessage({ 
-        type: 'error', 
-        text: 'Cannot add candidate - already exists in system' 
-      });
-      return;
-    }
+  // const onSubmit = async (data) => {
+  //   if (existingCandidate) {
+  //     setSubmitMessage({ 
+  //       type: 'error', 
+  //       text: 'Cannot add candidate - already exists in system' 
+  //     });
+  //     return;
+  //   }
 
-    setIsSubmitting(true);
-    setSubmitMessage({ type: '', text: '' });
+  //   setIsSubmitting(true);
+  //   setSubmitMessage({ type: '', text: '' });
 
-    try {
-      const token = localStorage.getItem('token');
+  //   try {
+  //     const token = localStorage.getItem('token');
       
-      const response = await API.post('/candidates', data, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  //     const response = await API.post('/candidates', data, {
+  //       headers: {
+  //         'Authorization': `Bearer ${token}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
 
-      if (response.status === 201) {
-        setSubmitMessage({ 
-          type: 'success', 
-          text: 'Candidate added successfully!' 
-        });
-        reset();
-        setExistingCandidate(null);
+  //     if (response.status === 201) {
+  //       setSubmitMessage({ 
+  //         type: 'success', 
+  //         text: 'Candidate added successfully!' 
+  //       });
+  //       reset();
+  //       setExistingCandidate(null);
         
-        setTimeout(() => {
-          setSubmitMessage({ type: '', text: '' });
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error adding candidate:', error);
-      if (error.response?.status === 400 && error.response.data.existingCandidate) {
-        setExistingCandidate(error.response.data.existingCandidate);
-        setSubmitMessage({ 
-          type: 'error', 
-          text: `Candidate already exists: ${error.response.data.existingCandidate.name}` 
-        });
-      } else {
-        setSubmitMessage({ 
-          type: 'error', 
-          text: error.response?.data?.message || 'Failed to add candidate. Please try again.' 
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
+  //       setTimeout(() => {
+  //         setSubmitMessage({ type: '', text: '' });
+  //       }, 3000);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error adding candidate:', error);
+  //     if (error.response?.status === 400 && error.response.data.existingCandidate) {
+  //       setExistingCandidate(error.response.data.existingCandidate);
+  //       setSubmitMessage({ 
+  //         type: 'error', 
+  //         text: `Candidate already exists: ${error.response.data.existingCandidate.name}` 
+  //       });
+  //     } else {
+  //       setSubmitMessage({ 
+  //         type: 'error', 
+  //         text: error.response?.data?.message || 'Failed to add candidate. Please try again.' 
+  //       });
+  //     }
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+
+  const onSubmit = async (data) => {
+  if (existingCandidate) {
+    setSubmitMessage({ type: 'error', text: 'Cannot add candidate - already exists in system' });
+    return;
+  }
+
+  setIsSubmitting(true);
+  setSubmitMessage({ type: '', text: '' });
+
+  try {
+    const token = localStorage.getItem('token');
+
+    // Use FormData for file upload
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
+    });
+    if (data.cv && data.cv[0]) {
+      formData.append("cv", data.cv[0]); // attach file
     }
-  };
+
+    const response = await API.post("/candidates", formData, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.status === 201) {
+      setSubmitMessage({ type: 'success', text: 'Candidate added successfully!' });
+      reset();
+      setExistingCandidate(null);
+
+      setTimeout(() => setSubmitMessage({ type: '', text: '' }), 3000);
+    }
+  } catch (error) {
+    console.error("Error adding candidate:", error);
+    setSubmitMessage({ type: 'error', text: error.response?.data?.message || 'Failed to add candidate.' });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -495,6 +541,20 @@ const AddCandidate = () => {
                         </motion.p>
                       )}
                     </div>
+
+                    <div>
+  <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="cv">
+    Upload CV (PDF only)
+  </label>
+  <input
+    type="file"
+    id="cv"
+    accept="application/pdf"
+    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl"
+    {...register("cv")}
+  />
+</div>
+
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="source">
                         Source *
