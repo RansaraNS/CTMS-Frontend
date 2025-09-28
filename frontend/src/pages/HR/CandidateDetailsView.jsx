@@ -432,14 +432,14 @@ const CandidateDetailsView = () => {
                 >
                   ← Back to Candidates
                 </motion.button>
-                <motion.button 
+                {/* <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleEdit}
                   className="bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] shadow-lg font-medium"
                 >
                   ✏️ Edit Candidate
-                </motion.button>
+                </motion.button> */}
               </div>
 
               {/* Candidate Profile Card */}

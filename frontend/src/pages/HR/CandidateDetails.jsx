@@ -308,7 +308,7 @@ const CandidateDetails = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <motion.h2 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -316,7 +316,7 @@ const CandidateDetails = () => {
                 >
                   Manage Candidates
                 </motion.h2>
-              </div>
+              </div> */}
 
               {/* Filters Section */}
               <motion.div 
