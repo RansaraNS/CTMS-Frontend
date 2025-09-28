@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import API from '../../services/api';
 
 const AddCandidate = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const AddCandidate = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:5000/api/candidates/scan?email=${encodeURIComponent(emailValue)}`, {
+      const response = await API.get(`/candidates/scan?email=${encodeURIComponent(emailValue)}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -73,7 +74,7 @@ const AddCandidate = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await axios.post('http://localhost:5000/api/candidates', data, {
+      const response = await API.post('/candidates', data, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

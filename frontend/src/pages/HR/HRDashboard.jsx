@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import API from "../../services/api";
 
 const HRDashboard = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const HRDashboard = () => {
       }
 
       try {
-        const statsResponse = await axios.get("http://localhost:5000/api/candidates/dashboard/stats", {
+        const statsResponse = await API.get("/candidates/dashboard/stats", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStats(statsResponse.data);
@@ -58,7 +59,7 @@ const HRDashboard = () => {
       }
 
       try {
-        const candidatesResponse = await axios.get("http://localhost:5000/api/candidates?limit=5", {
+        const candidatesResponse = await API.get("/candidates?limit=5", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRecentCandidates(candidatesResponse.data.candidates || []);
@@ -68,7 +69,7 @@ const HRDashboard = () => {
       }
 
       try {
-        const interviewsResponse = await axios.get("http://localhost:5000/api/interviews/upcoming?limit=3", {
+        const interviewsResponse = await API.get("/interviews/upcoming?limit=3", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUpcomingInterviews(interviewsResponse.data.interviews || []);

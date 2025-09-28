@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import API from '../../services/api';
 
 const CandidateDetails = () => {
   const navigate = useNavigate();
@@ -28,12 +29,13 @@ const CandidateDetails = () => {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('http://localhost:5000/api/candidates', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+     const response = await fetch('http://localhost:5000/api/candidates', {         
+    headers: {           
+    'Authorization': `Bearer ${token}`,           
+    'Content-Type': 'application/json'         
+  }       
+});
+
       
       if (!response.ok) {
         if (response.status === 401) {
