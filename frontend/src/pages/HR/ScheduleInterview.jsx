@@ -509,10 +509,9 @@ const ScheduleInterview = () => {
                         value={formData.interviewType}
                         onChange={handleChange}
                       >
+                        <option value="First Round">First Round</option>
+                        <option value="Secound Round">Secound Round</option>
                         <option value="technical">Technical</option>
-                        <option value="behavioral">Behavioral</option>
-                        <option value="hr">HR</option>
-                        <option value="cultural">Cultural Fit</option>
                       </select>
                       {errors.interviewType && (
                         <motion.p
