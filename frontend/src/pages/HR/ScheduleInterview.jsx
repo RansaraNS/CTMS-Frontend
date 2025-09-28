@@ -471,16 +471,18 @@ const ScheduleInterview = () => {
                       <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewTime">
                         Interview Time *
                       </label>
-                      <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                        }`}
-                        id="interviewTime"
-                        type="time"
-                        value={formData.interviewTime}
-                        onChange={handleChange}
-                        min={formData.interviewDate === getMinDate() ? getMinTime() : undefined}
-                      />
+                   <input
+  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
+    errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+  }`}
+  id="interviewTime"
+  type="time"
+  value={formData.interviewTime}
+  onChange={handleChange}
+  min={formData.interviewDate === getMinDate() ? getMinTime() : "09:30"}
+  max="17:30"
+/>
+
                       {errors.interviewTime && (
                         <motion.p 
                           initial={{ opacity: 0 }}
