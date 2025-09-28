@@ -17,6 +17,7 @@ import CandidateDetailsView from './pages/HR/CandidateDetailsView';
 import ViewInterviews from './pages/Admin/ViewInterviews';
 import InterviewReport from './pages/Admin/InterviewReport';
 import InterviewDetail from './pages/HR/InterviewDetail';
+import RescheduleInterview from './pages/HR/RescheduleInterview';
 
 function App() {
   return (
@@ -135,6 +136,17 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+
+                <Route 
+          path="/interviews/:id/reschedule" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <RescheduleInterview />
+            </ProtectedRoute>
+          } 
+        />
+
 
 
 

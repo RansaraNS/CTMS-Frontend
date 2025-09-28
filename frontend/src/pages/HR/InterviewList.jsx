@@ -139,6 +139,8 @@ const InterviewList = () => {
     });
   };
 
+  
+
   const handleAddFeedback = (interviewId) => {
     navigate(`/interviews/${interviewId}/feedback`);
   };
@@ -147,9 +149,10 @@ const InterviewList = () => {
     navigate(`/interviews/${interviewId}/view-feedback`);
   };
 
-  const handleReschedule = (interviewId) => {
-    navigate(`/interviews/${interviewId}/reschedule`);
-  };
+const handleReschedule = (interviewId) => {
+  navigate(`/interviews/${interviewId}/reschedule`);
+};
+
 
   const handleCancelInterview = async (interviewId) => {
     if (window.confirm('Are you sure you want to cancel this interview?')) {
