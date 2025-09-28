@@ -13,10 +13,15 @@ const InterviewList = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('');
   const [error, setError] = useState('');
+  const [joinedInterviews, setJoinedInterviews] = useState([]); // Track joined meetings
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    // Load joined interviews from localStorage
+    const storedJoined = JSON.parse(localStorage.getItem('joinedInterviews')) || [];
+    setJoinedInterviews(storedJoined);
+
     fetchInterviews();
   }, []);
 
@@ -196,6 +201,15 @@ const InterviewList = () => {
     }
   };
 
+  const handleJoinMeeting = (interviewId) => {
+    // Mark this interview as joined and save to localStorage
+    setJoinedInterviews(prev => {
+      const updated = [...prev, interviewId];
+      localStorage.setItem('joinedInterviews', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const navigateTo = (path) => {
     navigate(path);
   };
@@ -204,6 +218,7 @@ const InterviewList = () => {
     localStorage.removeItem('role');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('joinedInterviews'); // clear joined interviews on logout
     navigate('/');
   };
 
@@ -238,7 +253,7 @@ const InterviewList = () => {
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
+        {/* Navbar */}
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
@@ -285,7 +300,7 @@ const InterviewList = () => {
 
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
+          {/* Sidebar */}
           <motion.div 
             initial={{ x: -300 }}
             animate={{ x: 0 }}
@@ -303,8 +318,7 @@ const InterviewList = () => {
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
               
-              {[
-                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
+              {[{ path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
                 { path: "/interviews", icon: "📊", label: "Manage Interviews" },
                 { path: "/candidates", icon: "🔍", label: "View Candidates" },
@@ -332,53 +346,25 @@ const InterviewList = () => {
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <div className="flex justify-between items-center">
-                <motion.h2 
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
-                >
+                <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">
                   Manage Interviews
                 </motion.h2>
               </div>
 
               {/* Filters Section */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-xl"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white p-6 rounded-2xl shadow-xl">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                   <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      placeholder="Search interviews by candidate name, email, or position..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
-                    />
+                    <input type="text" placeholder="Search interviews by candidate name, email, or position..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"/>
                     <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
                   </div>
                   
                   <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                    <input
-                      type="date"
-                      value={dateFilter}
-                      onChange={(e) => setDateFilter(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
-                    />
+                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"/>
                     
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"
-                    >
+                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm">
                       <option value="all">All Statuses</option>
                       <option value="scheduled">Scheduled</option>
                       <option value="completed">Completed</option>
@@ -390,49 +376,20 @@ const InterviewList = () => {
               </motion.div>
 
               {/* Statistics Cards */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="grid grid-cols-1 md:grid-cols-4 gap-6"
-              >
-                {[
-                  { title: "Total Interviews", value: interviews.length, color: "#03624c" },
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[{ title: "Total Interviews", value: interviews.length, color: "#03624c" },
                   { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, color: "#030f0f" },
                   { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, color: "#00df82" },
                   { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, color: "#e93b63ff" },
                 ].map((stat, index) => (
-                  <motion.div
-                    key={stat.title}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      y: -5,
-                      transition: { type: "spring", stiffness: 300 }
-                    }}
-                    className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}
-                  >
+                  <motion.div key={stat.title} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 + 0.3 }} whileHover={{ scale: 1.05, y: -5, transition: { type: "spring", stiffness: 300 } }} className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium opacity-90">{stat.title}</p>
-                        <motion.p 
-                          key={stat.value}
-                          initial={{ scale: 0.5 }}
-                          animate={{ scale: 1 }}
-                          className="text-3xl font-bold"
-                        >
-                          {stat.value}
-                        </motion.p>
+                        <motion.p key={stat.value} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-3xl font-bold">{stat.value}</motion.p>
                       </div>
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotate: 5 }}
-                        className="text-4xl"
-                      >
-                        {stat.title === "Total Interviews" ? "📊" : 
-                         stat.title === "Scheduled" ? "🗓️" :
-                         stat.title === "Completed" ? "✅" : "❌"}
+                      <motion.div whileHover={{ scale: 1.2, rotate: 5 }} className="text-4xl">
+                        {stat.title === "Total Interviews" ? "📊" : stat.title === "Scheduled" ? "🗓️" : stat.title === "Completed" ? "✅" : "❌"}
                       </motion.div>
                     </div>
                   </motion.div>
@@ -440,18 +397,9 @@ const InterviewList = () => {
               </motion.div>
 
               {/* Interviews Table */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl shadow-xl overflow-hidden">
                 {filteredInterviews.length === 0 ? (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center py-12"
-                  >
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
                     <div className="text-6xl mb-4">📋</div>
                     <p className="text-gray-500 text-lg">No interviews found matching your criteria.</p>
                   </motion.div>
@@ -460,18 +408,8 @@ const InterviewList = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gradient-to-r from-[#03624c] to-[#030f0f]">
                         <tr>
-                          {[
-                            "Candidate & Position",
-                            "Date & Time",
-                            "Type",
-                            "Interviewers",
-                            "Status",
-                            "Outcome",
-                            "Actions"
-                          ].map((header, index) => (
-                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">
-                              {header}
-                            </th>
+                          {["Candidate & Position","Date & Time","Type","Interviewers","Status","Outcome","Actions"].map(header => (
+                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">{header}</th>
                           ))}
                         </tr>
                       </thead>
@@ -479,101 +417,51 @@ const InterviewList = () => {
                         <AnimatePresence>
                           {filteredInterviews.map((interview, index) => {
                             const candidate = interview.candidate || {};
+                            const hasJoined = joinedInterviews.includes(interview._id); // Check if joined
                             return (
-                              <motion.tr 
-                                key={interview._id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-                                className="hover:bg-gray-50 transition-colors"
-                              >
+                              <motion.tr key={interview._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {candidate.firstName} {candidate.lastName}
-                                  </div>
+                                  <div className="text-sm font-medium text-gray-900">{candidate.firstName} {candidate.lastName}</div>
                                   <div className="text-sm text-gray-500">{candidate.position}</div>
                                   <div className="text-sm text-gray-400">{candidate.email}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {formatDate(interview.interviewDate)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                                  {interview.interviewType}
-                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(interview.interviewDate)}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{interview.interviewType}</td>
                                 <td className="px-6 py-4">
-                                  <div className="text-sm text-gray-900">
-                                    {interview.interviewers?.map((interviewer, index) => (
-                                      <div key={index}>{interviewer}</div>
-                                    )) || 'N/A'}
-                                  </div>
+                                  <div className="text-sm text-gray-900">{interview.interviewers?.map((i, idx) => <div key={idx}>{i}</div>) || 'N/A'}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  {getStatusBadge(interview.status)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  {getOutcomeBadge(interview.feedback?.outcome)}
-                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(interview.status)}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{getOutcomeBadge(interview.feedback?.outcome)}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                   <div className="flex flex-col space-y-2">
-                                    {interview.status === 'completed' ? (
-                                      <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleViewFeedback(interview._id)}
-                                        className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
-                                      >
+                                    {interview.status === 'completed' && (
+                                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleViewFeedback(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
                                         View Feedback
                                       </motion.button>
-                                    ) : interview.status === 'scheduled' && (
+                                    )}
+                                    
+                                    {interview.status === 'scheduled' && (
                                       <>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleAddFeedback(interview._id)}
-                                          className="text-green-600 hover:text-green-900 text-left font-medium"
-                                        >
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleAddFeedback(interview._id)} disabled={!hasJoined} className={`text-green-600 hover:text-green-900 text-left font-medium ${!hasJoined ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                           Add Feedback
                                         </motion.button>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleReschedule(interview._id)}
-                                          className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
-                                        >
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleReschedule(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
                                           Reschedule
                                         </motion.button>
-                                        <motion.button
-                                          whileHover={{ scale: 1.05 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          onClick={() => handleCancelInterview(interview._id)}
-                                          className="text-orange-600 hover:text-orange-900 text-left font-medium"
-                                        >
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleCancelInterview(interview._id)} className="text-orange-600 hover:text-orange-900 text-left font-medium">
                                           Cancel
                                         </motion.button>
                                       </>
                                     )}
-                                    
-                                    {/* Only show Delete button if no outcome is available */}
+
                                     {!interview.feedback?.outcome && (
-                                      <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleDeleteInterview(interview._id)}
-                                        className="text-red-600 hover:text-red-900 text-left font-medium"
-                                      >
+                                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleDeleteInterview(interview._id)} className="text-red-600 hover:text-red-900 text-left font-medium">
                                         Delete
                                       </motion.button>
                                     )}
                                     
                                     {interview.meetingLink && interview.status === 'scheduled' && (
-                                      <motion.a
-                                        whileHover={{ scale: 1.05 }}
-                                        href={interview.meetingLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-[#00df82] hover:text-[#03624c] text-left font-medium"
-                                      >
+                                      <motion.a whileHover={{ scale: 1.05 }} href={interview.meetingLink} target="_blank" rel="noopener noreferrer" onClick={() => handleJoinMeeting(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
                                         Join Meeting
                                       </motion.a>
                                     )}
