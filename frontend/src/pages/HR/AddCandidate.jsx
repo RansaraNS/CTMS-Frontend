@@ -49,9 +49,9 @@ const AddCandidate = () => {
 
       if (response.data.exists) {
         setExistingCandidate(response.data.candidate);
-        setSubmitMessage({ 
-          type: 'warning', 
-          text: `Candidate already exists: ${response.data.candidate.name} (${response.data.candidate.status})` 
+        setSubmitMessage({
+          type: 'warning',
+          text: `Candidate already exists: ${response.data.candidate.name} (${response.data.candidate.status})`
         });
       } else {
         setExistingCandidate(null);
@@ -77,7 +77,7 @@ const AddCandidate = () => {
 
   //   try {
   //     const token = localStorage.getItem('token');
-      
+
   //     const response = await API.post('/candidates', data, {
   //       headers: {
   //         'Authorization': `Bearer ${token}`,
@@ -92,7 +92,7 @@ const AddCandidate = () => {
   //       });
   //       reset();
   //       setExistingCandidate(null);
-        
+
   //       setTimeout(() => {
   //         setSubmitMessage({ type: '', text: '' });
   //       }, 3000);
@@ -118,47 +118,47 @@ const AddCandidate = () => {
 
 
   const onSubmit = async (data) => {
-  if (existingCandidate) {
-    setSubmitMessage({ type: 'error', text: 'Cannot add candidate - already exists in system' });
-    return;
-  }
-
-  setIsSubmitting(true);
-  setSubmitMessage({ type: '', text: '' });
-
-  try {
-    const token = localStorage.getItem('token');
-
-    // Use FormData for file upload
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]);
-    });
-    if (data.cv && data.cv[0]) {
-      formData.append("cv", data.cv[0]); // attach file
+    if (existingCandidate) {
+      setSubmitMessage({ type: 'error', text: 'Cannot add candidate - already exists in system' });
+      return;
     }
 
-    const response = await API.post("/candidates", formData, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    setIsSubmitting(true);
+    setSubmitMessage({ type: '', text: '' });
 
-    if (response.status === 201) {
-      setSubmitMessage({ type: 'success', text: 'Candidate added successfully!' });
-      reset();
-      setExistingCandidate(null);
+    try {
+      const token = localStorage.getItem('token');
 
-      setTimeout(() => setSubmitMessage({ type: '', text: '' }), 3000);
+      // Use FormData for file upload
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        formData.append(key, data[key]);
+      });
+      if (data.cv && data.cv[0]) {
+        formData.append("cv", data.cv[0]); // attach file
+      }
+
+      const response = await API.post("/candidates", formData, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 201) {
+        setSubmitMessage({ type: 'success', text: 'Candidate added successfully!' });
+        reset();
+        setExistingCandidate(null);
+
+        setTimeout(() => setSubmitMessage({ type: '', text: '' }), 3000);
+      }
+    } catch (error) {
+      console.error("Error adding candidate:", error);
+      setSubmitMessage({ type: 'error', text: error.response?.data?.message || 'Failed to add candidate.' });
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (error) {
-    console.error("Error adding candidate:", error);
-    setSubmitMessage({ type: 'error', text: error.response?.data?.message || 'Failed to add candidate.' });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
 
 
@@ -181,7 +181,7 @@ const AddCandidate = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -190,7 +190,7 @@ const AddCandidate = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Navbar */}
-        <motion.nav 
+        <motion.nav
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
@@ -227,7 +227,7 @@ const AddCandidate = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Sidebar */}
-          <motion.div 
+          <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
@@ -240,10 +240,10 @@ const AddCandidate = () => {
                 onClick={() => navigateTo("/hr/dashboard")}
                 className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
-                <span className="mr-3 text-xl">🏠</span> 
+                <span className="mr-3 text-xl">🏠</span>
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
-              
+
               {[
                 { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate", active: true },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
@@ -258,11 +258,10 @@ const AddCandidate = () => {
                   whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
-                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
-                    item.active 
-                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
+                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${item.active
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]"
                       : "hover:bg-white hover:bg-opacity-10"
-                  }`}
+                    }`}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   <span>{item.label}</span>
@@ -273,25 +272,25 @@ const AddCandidate = () => {
 
           {/* Main Content Area */}
           <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center items-start min-h-full"
             >
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
                 className="max-w-4xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
               >
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Add New Candidate
                 </motion.h2>
-                
+
                 {/* Success/Error Message */}
                 <AnimatePresence>
                   {submitMessage.text && (
@@ -299,13 +298,12 @@ const AddCandidate = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className={`mb-6 p-4 rounded-xl text-center border-2 ${
-                        submitMessage.type === 'success' 
-                          ? 'bg-green-50 text-green-800 border-green-200' 
+                      className={`mb-6 p-4 rounded-xl text-center border-2 ${submitMessage.type === 'success'
+                          ? 'bg-green-50 text-green-800 border-green-200'
                           : submitMessage.type === 'warning'
-                          ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
-                          : 'bg-red-50 text-red-800 border-red-200'
-                      }`}
+                            ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
+                            : 'bg-red-50 text-red-800 border-red-200'
+                        }`}
                     >
                       <div className="font-semibold">
                         {submitMessage.type === 'success' && '✅ '}
@@ -315,7 +313,7 @@ const AddCandidate = () => {
                       </div>
                       {existingCandidate && (
                         <div className="mt-3">
-                          <button 
+                          <button
                             onClick={clearExistingCandidate}
                             className="text-[#00df82] hover:text-[#03624c] font-medium underline transition duration-200"
                           >
@@ -358,11 +356,10 @@ const AddCandidate = () => {
                         First Name *
                       </label>
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.firstName
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.firstName
                             ? 'border-red-500 focus:ring-red-200'
                             : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
+                          }`}
                         id="firstName"
                         type="text"
                         placeholder="Enter first name"
@@ -375,7 +372,7 @@ const AddCandidate = () => {
                         })}
                       />
                       {errors.firstName && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"
@@ -389,11 +386,10 @@ const AddCandidate = () => {
                         Last Name *
                       </label>
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.lastName
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.lastName
                             ? 'border-red-500 focus:ring-red-200'
                             : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
+                          }`}
                         id="lastName"
                         type="text"
                         placeholder="Enter last name"
@@ -406,7 +402,7 @@ const AddCandidate = () => {
                         })}
                       />
                       {errors.lastName && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"
@@ -429,11 +425,10 @@ const AddCandidate = () => {
                         Email Address *
                       </label>
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.email
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.email
                             ? 'border-red-500 focus:ring-red-200'
                             : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
+                          }`}
                         id="email"
                         type="email"
                         placeholder="candidate@example.com"
@@ -446,7 +441,7 @@ const AddCandidate = () => {
                         })}
                       />
                       {errors.email && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"
@@ -461,11 +456,10 @@ const AddCandidate = () => {
                       </label>
                       <div className="flex space-x-3">
                         <input
-                          className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                            errors.phone
+                          className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.phone
                               ? 'border-red-500 focus:ring-red-200'
                               : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
+                            }`}
                           id="phone"
                           type="tel"
                           placeholder="Enter 10-digit phone number"
@@ -488,7 +482,7 @@ const AddCandidate = () => {
                         </motion.button>
                       </div>
                       {errors.phone && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"
@@ -511,28 +505,32 @@ const AddCandidate = () => {
                         Position *
                       </label>
                       <select
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.position
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.position
                             ? 'border-red-500 focus:ring-red-200'
                             : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
+                          }`}
                         id="position"
                         {...register('position', {
                           required: 'Position is required',
                         })}
                       >
                         <option value="">Select Position</option>
-                        <option value="Software Engineer">Software Engineer Intern</option>
-                        <option value="Frontend Developer">Frontend Developer Intern</option>
-                        <option value="Backend Developer">Backend Developer Intern</option>
-                        <option value="Full Stack Developer">Full Stack Developer Intern</option>
-                        <option value="Data Analyst">Data Analyst Intern</option>
-                        <option value="Project Manager">Project Manager Intern</option>
-                        <option value="UI/UX Designer">UI/UX Designer Intern</option>
-                        <option value="DevOps Engineer">DevOps Engineer Intern</option>
+                        <option value="Software Engineer Intern">Software Engineer Intern</option>
+                        <option value="Frontend Developer Intern">Frontend Developer Intern</option>
+                        <option value="Backend Developer Intern">Backend Developer Intern</option>
+                        <option value="Full Stack Developer Intern">Full Stack Developer Intern</option>
+                        <option value="Data Analyst Intern">Data Analyst Intern</option>
+                        <option value="Project Manager Intern">Project Manager Intern</option>
+                        <option value="UI/UX Designer Intern">UI/UX Designer Intern</option>
+                        <option value="DevOps Engineer Intern">DevOps Engineer Intern</option>
+                        <option value="Data Science Intern">Data Science Intern</option>
+                        <option value="Quality Assurance Intern">Quality Assurance Intern</option>
+
+
+
                       </select>
                       {errors.position && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"
@@ -543,28 +541,27 @@ const AddCandidate = () => {
                     </div>
 
                     <div>
-  <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="cv">
-    Upload CV (PDF only)
-  </label>
-  <input
-    type="file"
-    id="cv"
-    accept="application/pdf"
-    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl"
-    {...register("cv")}
-  />
-</div>
+                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="cv">
+                        Upload CV (PDF only)
+                      </label>
+                      <input
+                        type="file"
+                        id="cv"
+                        accept="application/pdf"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl"
+                        {...register("cv")}
+                      />
+                    </div>
 
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="source">
                         Source *
                       </label>
                       <select
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.source
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.source
                             ? 'border-red-500 focus:ring-red-200'
                             : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
+                          }`}
                         id="source"
                         {...register('source', {
                           required: 'Source is required',
@@ -580,7 +577,7 @@ const AddCandidate = () => {
                         <option value="Other">Other</option>
                       </select>
                       {errors.source && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600 font-medium"

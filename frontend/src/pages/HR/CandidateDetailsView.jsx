@@ -148,12 +148,10 @@ const CandidateDetailsView = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      new: { color: 'bg-gray-100 text-gray-800', label: 'New' },
-      contacted: { color: 'bg-[#03624c] text-white', label: 'Contacted' },
-      interviewed: { color: 'bg-yellow-100 text-yellow-800', label: 'Interviewed' },
-      hired: { color: 'bg-green-100 text-green-800', label: 'Hired' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      terminated: { color: 'bg-orange-100 text-orange-800', label: 'Terminated' }
+      new: { color: 'bg-[#82162fff] text-white', label: 'New' },
+      scheduled: { color: 'bg-[#03624c] text-white', label: 'scheduled' },
+      hired: { color: 'bg-[#00df82] text-white', label: 'Hired' },
+      rejected: { color: 'bg-red-500 text-white', label: 'Rejected' },
     };
 
     const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', label: status };
@@ -502,7 +500,7 @@ const CandidateDetailsView = () => {
                         </div>
                         <div className="bg-gray-50 p-4 rounded-xl">
                           <label className="text-sm font-medium text-gray-500">Status</label>
-                          <div className="mt-1">{getStatusBadge(candidate.status)}</div>
+                          <div className="mt-1  ">{getStatusBadge(candidate.status)}</div>
                         </div>
                       </div>
                     </motion.div>

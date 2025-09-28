@@ -151,14 +151,13 @@ const ViewFeedback = () => {
             animate={{ y: 0 }}
             className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
           >
-            <div className="flex items-center">
-              <motion.div
-                whileHover={{ rotate: 360 }}
+                <div className="flex items-center">
+              <motion.img
+                src="/GR.jpg"
+                alt="Company Logo"
                 transition={{ duration: 0.5 }}
-                className="text-3xl mr-3"
-              >
-                📊
-              </motion.div>
+                className="w-10 h-10 mr-3 object-contain"
+              />
               <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
                 Candidate Tracking Management System
               </h1>
@@ -222,18 +221,17 @@ const ViewFeedback = () => {
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-          <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
-          </div>
+               <div className="flex items-center">
+              <motion.img
+                src="/GR.jpg"
+                alt="Company Logo"
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 mr-3 object-contain"
+              />
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+                Candidate Tracking Management System
+              </h1>
+            </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
