@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import API from '../../services/api';
 
@@ -25,19 +24,24 @@ const AddCandidate = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Watch email field for quick scan
+  // Watch fields
   const emailValue = watch('email');
+  const phoneValue = watch('phone');
 
-  // Quick scan for existing candidate
+  // Quick scan for existing candidate by email or phone
   const handleQuickScan = async () => {
-    if (!emailValue || !emailValue.includes('@')) {
-      setSubmitMessage({ type: 'error', text: 'Please enter a valid email address for scanning' });
+    if ((!emailValue || !emailValue.includes('@')) && (!phoneValue || phoneValue.length < 7)) {
+      setSubmitMessage({ type: 'error', text: 'Please enter a valid email or phone number for scanning' });
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await API.get(`/candidates/scan?email=${encodeURIComponent(emailValue)}`, {
+      const response = await API.get(`/candidates/scan`, {
+        params: {
+          email: emailValue || undefined,
+          phone: phoneValue || undefined
+        },
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -127,6 +131,7 @@ const AddCandidate = () => {
     setExistingCandidate(null);
     setSubmitMessage({ type: '', text: '' });
     setValue('email', '');
+    setValue('phone', '');
   };
 
   return (
@@ -138,7 +143,7 @@ const AddCandidate = () => {
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
+        {/* Navbar */}
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
@@ -175,7 +180,7 @@ const AddCandidate = () => {
 
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
+          {/* Sidebar */}
           <motion.div 
             initial={{ x: -300 }}
             animate={{ x: 0 }}
@@ -268,7 +273,7 @@ const AddCandidate = () => {
                             onClick={clearExistingCandidate}
                             className="text-[#00df82] hover:text-[#03624c] font-medium underline transition duration-200"
                           >
-                            Use different email address
+                            Use different email/phone
                           </button>
                         </div>
                       )}
@@ -377,34 +382,23 @@ const AddCandidate = () => {
                       <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="email">
                         Email Address *
                       </label>
-                      <div className="flex space-x-3">
-                        <input
-                          className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                            errors.email
-                              ? 'border-red-500 focus:ring-red-200'
-                              : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                          id="email"
-                          type="email"
-                          placeholder="candidate@example.com"
-                          {...register('email', {
-                            required: 'Candidate email is required',
-                            pattern: {
-                              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                              message: 'Invalid email address',
-                            },
-                          })}
-                        />
-                        <motion.button
-                          type="button"
-                          onClick={handleQuickScan}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-6 py-3 bg-[#03624c] text-white font-semibold rounded-xl hover:bg-[#030f0f] transition duration-200 shadow-md"
-                        >
-                          Scan
-                        </motion.button>
-                      </div>
+                      <input
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
+                          errors.email
+                            ? 'border-red-500 focus:ring-red-200'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
+                        }`}
+                        id="email"
+                        type="email"
+                        placeholder="candidate@example.com"
+                        {...register('email', {
+                          required: 'Candidate email is required',
+                          pattern: {
+                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                            message: 'Invalid email address',
+                          },
+                        })}
+                      />
                       {errors.email && (
                         <motion.p 
                           initial={{ opacity: 0 }}
@@ -419,19 +413,34 @@ const AddCandidate = () => {
                       <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="phone">
                         Phone Number *
                       </label>
-                      <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
-                          errors.phone
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                        }`}
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter 10-digit phone number"
-                        {...register('phone', {
-                          required: 'Phone number is required',
-                        })}
-                      />
+                      <div className="flex space-x-3">
+                        <input
+                          className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${
+                            errors.phone
+                              ? 'border-red-500 focus:ring-red-200'
+                              : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
+                          }`}
+                          id="phone"
+                          type="tel"
+                          placeholder="Enter 10-digit phone number"
+                          {...register('phone', {
+                            required: 'Phone number is required',
+                            minLength: {
+                              value: 7,
+                              message: 'Phone number must be at least 7 digits',
+                            },
+                          })}
+                        />
+                        <motion.button
+                          type="button"
+                          onClick={handleQuickScan}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-6 py-3 bg-[#03624c] text-white font-semibold rounded-xl hover:bg-[#030f0f] transition duration-200 shadow-md"
+                        >
+                          Scan
+                        </motion.button>
+                      </div>
                       {errors.phone && (
                         <motion.p 
                           initial={{ opacity: 0 }}

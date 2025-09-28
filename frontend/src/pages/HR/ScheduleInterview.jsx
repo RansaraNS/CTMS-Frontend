@@ -43,11 +43,11 @@ const ScheduleInterview = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch candidates');
         }
-        
+
         const data = await response.json();
         setCandidates(Array.isArray(data) ? data : data.candidates || []);
       } catch (error) {
@@ -65,14 +65,14 @@ const ScheduleInterview = () => {
       ...prev,
       [id]: value
     }));
-    
+
     if (errors[id]) {
       setErrors(prev => ({
         ...prev,
         [id]: ''
       }));
     }
-    
+
     if (successMessage) {
       setSuccessMessage('');
     }
@@ -80,11 +80,11 @@ const ScheduleInterview = () => {
 
   const combineDateTime = (dateString, timeString) => {
     if (!dateString || !timeString) return null;
-    
+
     const date = new Date(dateString);
     const [hours, minutes] = timeString.split(':').map(Number);
     date.setHours(hours, minutes, 0, 0);
-    
+
     return date.toISOString();
   };
 
@@ -114,7 +114,7 @@ const ScheduleInterview = () => {
         const selectedTime = new Date();
         const [hours, minutes] = formData.interviewTime.split(':').map(Number);
         selectedTime.setHours(hours, minutes, 0, 0);
-        
+
         if (selectedTime <= now) {
           newErrors.interviewTime = 'Time must be in the future.';
         }
@@ -150,7 +150,7 @@ const ScheduleInterview = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -159,9 +159,9 @@ const ScheduleInterview = () => {
 
     try {
       const token = localStorage.getItem('token');
-      
+
       const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
-      
+
       if (!interviewDateTime) {
         throw new Error('Invalid date or time format');
       }
@@ -190,7 +190,7 @@ const ScheduleInterview = () => {
       }
 
       setSuccessMessage('Interview scheduled successfully!');
-      
+
       setFormData({
         candidateId: '',
         interviewDate: '',
@@ -199,13 +199,13 @@ const ScheduleInterview = () => {
         interviewers: '',
         meetingLink: ''
       });
-      
+
       setErrors({});
 
     } catch (error) {
       console.error('Error scheduling interview:', error);
-      setErrors({ 
-        submit: error.message || 'An error occurred while scheduling the interview. Please try again.' 
+      setErrors({
+        submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
       });
     } finally {
       setIsSubmitting(false);
@@ -226,7 +226,7 @@ const ScheduleInterview = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -235,7 +235,7 @@ const ScheduleInterview = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Enhanced Navbar */}
-        <motion.nav 
+        <motion.nav
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
@@ -272,7 +272,7 @@ const ScheduleInterview = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-          <motion.div 
+          <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
@@ -285,10 +285,10 @@ const ScheduleInterview = () => {
                 onClick={() => navigateTo("/hr/dashboard")}
                 className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
               >
-                <span className="mr-3 text-xl">🏠</span> 
+                <span className="mr-3 text-xl">🏠</span>
                 <span className="font-semibold">HR Dashboard</span>
               </motion.button>
-              
+
               {[
                 { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
                 { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
@@ -303,11 +303,10 @@ const ScheduleInterview = () => {
                   whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigateTo(item.path)}
-                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
-                    item.path === "/hr/schedule-interview" 
-                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]" 
+                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${item.path === "/hr/schedule-interview"
+                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]"
                       : "hover:bg-white hover:bg-opacity-10"
-                  }`}
+                    }`}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   <span>{item.label}</span>
@@ -318,25 +317,25 @@ const ScheduleInterview = () => {
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center items-start min-h-full"
             >
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
                 className="max-w-2xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
               >
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
                 >
                   Schedule Interview
                 </motion.h2>
-                
+
                 {/* Success Message */}
                 <AnimatePresence>
                   {successMessage && (
@@ -350,7 +349,7 @@ const ScheduleInterview = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                
+
                 {/* Error Messages */}
                 <AnimatePresence>
                   {errors.fetch && (
@@ -363,7 +362,7 @@ const ScheduleInterview = () => {
                       ❌ {errors.fetch}
                     </motion.div>
                   )}
-                  
+
                   {errors.submit && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
@@ -385,8 +384,8 @@ const ScheduleInterview = () => {
                   >
                     <p className="text-blue-700 flex items-center">
                       <span className="mr-2">ℹ️</span>
-                      No new candidates available for scheduling. 
-                      <button 
+                      No new candidates available for scheduling.
+                      <button
                         onClick={() => navigateTo("/hr/add-candidate")}
                         className="ml-2 text-[#00df82] hover:text-[#03624c] font-medium underline"
                       >
@@ -395,7 +394,7 @@ const ScheduleInterview = () => {
                     </p>
                   </motion.div>
                 )}
-                
+
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   {/* Candidate Selection */}
                   <motion.div
@@ -407,9 +406,8 @@ const ScheduleInterview = () => {
                       Select Candidate *
                     </label>
                     <select
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                        errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                        }`}
                       id="candidateId"
                       value={formData.candidateId}
                       onChange={handleChange}
@@ -425,7 +423,7 @@ const ScheduleInterview = () => {
                       ))}
                     </select>
                     {errors.candidateId && (
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="mt-2 text-sm text-red-600"
@@ -436,7 +434,7 @@ const ScheduleInterview = () => {
                   </motion.div>
 
                   {/* Date and Time */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
@@ -447,9 +445,8 @@ const ScheduleInterview = () => {
                         Interview Date *
                       </label>
                       <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                        }`}
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                          }`}
                         id="interviewDate"
                         type="date"
                         value={formData.interviewDate}
@@ -457,7 +454,7 @@ const ScheduleInterview = () => {
                         min={getMinDate()}
                       />
                       {errors.interviewDate && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600"
@@ -466,25 +463,24 @@ const ScheduleInterview = () => {
                         </motion.p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewTime">
                         Interview Time *
                       </label>
-                   <input
-  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-    errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-  }`}
-  id="interviewTime"
-  type="time"
-  value={formData.interviewTime}
-  onChange={handleChange}
-  min={formData.interviewDate === getMinDate() ? getMinTime() : "09:30"}
-  max="17:30"
-/>
+                      <input
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                          }`}
+                        id="interviewTime"
+                        type="time"
+                        value={formData.interviewTime}
+                        onChange={handleChange}
+                        min={formData.interviewDate === getMinDate() ? getMinTime() : "09:30"}
+                        max="17:30"
+                      />
 
                       {errors.interviewTime && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600"
@@ -496,7 +492,7 @@ const ScheduleInterview = () => {
                   </motion.div>
 
                   {/* Interview Type and Interviewers */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
@@ -507,9 +503,8 @@ const ScheduleInterview = () => {
                         Interview Type *
                       </label>
                       <select
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                        }`}
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                          }`}
                         id="interviewType"
                         value={formData.interviewType}
                         onChange={handleChange}
@@ -520,7 +515,7 @@ const ScheduleInterview = () => {
                         <option value="cultural">Cultural Fit</option>
                       </select>
                       {errors.interviewType && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600"
@@ -529,15 +524,14 @@ const ScheduleInterview = () => {
                         </motion.p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewers">
                         Interviewers (comma separated) *
                       </label>
                       <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                          errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                        }`}
+                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                          }`}
                         id="interviewers"
                         type="text"
                         placeholder="e.g., john@company.com, jane@company.com"
@@ -545,7 +539,7 @@ const ScheduleInterview = () => {
                         onChange={handleChange}
                       />
                       {errors.interviewers && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="mt-2 text-sm text-red-600"
@@ -566,9 +560,8 @@ const ScheduleInterview = () => {
                       Meeting Link *
                     </label>
                     <input
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${
-                        errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                        }`}
                       id="meetingLink"
                       type="url"
                       placeholder="https://meet.google.com/abc-def-ghi"
@@ -576,7 +569,7 @@ const ScheduleInterview = () => {
                       onChange={handleChange}
                     />
                     {errors.meetingLink && (
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="mt-2 text-sm text-red-600"
