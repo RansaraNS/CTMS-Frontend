@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import API from '../../services/api';
+import Sidebar from '../../components/Sidebar';
 
 const AddCandidate = () => {
   const navigate = useNavigate();
@@ -227,48 +228,8 @@ const AddCandidate = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Sidebar */}
-          <motion.div
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-          >
-            <nav className="flex flex-col h-full py-6">
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <span className="mr-3 text-xl">🏠</span>
-                <span className="font-semibold">HR Dashboard</span>
-              </motion.button>
-
-              {[
-                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate", active: true },
-                { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
-                { path: "/interviews", icon: "📊", label: "Manage Interviews" },
-                { path: "/candidates", icon: "🔍", label: "View Candidates" },
-              ].map((item, index) => (
-                <motion.button
-                  key={item.path}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigateTo(item.path)}
-                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${item.active
-                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]"
-                      : "hover:bg-white hover:bg-opacity-10"
-                    }`}
-                >
-                  <span className="mr-3 text-lg">{item.icon}</span>
-                  <span>{item.label}</span>
-                </motion.button>
-              ))}
-            </nav>
-          </motion.div>
+       
+          <Sidebar/>
 
           {/* Main Content Area */}
           <div className="flex-1 p-6 overflow-auto">
