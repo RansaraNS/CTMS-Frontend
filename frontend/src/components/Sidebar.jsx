@@ -4,6 +4,12 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { FiHome, FiUserPlus, FiUsers, FiEye } from 'react-icons/fi';
+import { GrSchedules } from "react-icons/gr";
+import { MdManageHistory } from "react-icons/md";
+
+
+
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -15,11 +21,11 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { path: "/hr/dashboard", icon: "🏠", label: "HR Dashboard" },
-    { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
-    { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
-    { path: "/interviews", icon: "📊", label: "Manage Interviews" },
-    { path: "/candidates", icon: "🔍", label: "View Candidates" },
+    { path: "/hr/dashboard", icon: <FiHome className="text-lg" />, label: "HR Dashboard" },
+    { path: "/hr/add-candidate", icon: <FiUserPlus className="text-lg" />, label: "Add Candidate" },
+    { path: "/hr/schedule-interview", icon: <GrSchedules  className="text-lg" />, label: "Schedule Interview" },
+    { path: "/interviews", icon: <MdManageHistory  className="text-lg" />, label: "Manage Interviews" },
+    { path: "/candidates", icon:<FiEye className="text-lg" />, label: "View Candidates" },
   ];
 
   const isActivePath = (path) => {

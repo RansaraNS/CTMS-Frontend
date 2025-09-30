@@ -132,15 +132,7 @@ const AdminDashboard = () => {
 
           <div className="flex-1 p-6 overflow-auto">
             <div className="space-y-10">
-              {/* Header */}
-              <motion.h2
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-4xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
-              >
-                Admin Dashboard
-              </motion.h2>
+             
 
               {/* Recent HR Section */}
               <motion.div

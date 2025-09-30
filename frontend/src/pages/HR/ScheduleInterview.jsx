@@ -149,70 +149,134 @@ const ScheduleInterview = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     const token = localStorage.getItem('token');
+
+  //     const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+
+  //     if (!interviewDateTime) {
+  //       throw new Error('Invalid date or time format');
+  //     }
+
+  //     const requestBody = {
+  //       candidateId: formData.candidateId,
+  //       interviewDate: interviewDateTime,
+  //       interviewType: formData.interviewType,
+  //       interviewers: formData.interviewers.split(',').map(i => i.trim()),
+  //       meetingLink: formData.meetingLink
+  //     };
+
+  //     const response = await fetch('http://localhost:5000/api/interviews', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${token}`
+  //       },
+  //       body: JSON.stringify(requestBody)
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
+  //     }
+
+  //     setSuccessMessage('Interview scheduled successfully!');
+
+  //     setFormData({
+  //       candidateId: '',
+  //       interviewDate: '',
+  //       interviewTime: '',
+  //       interviewType: 'technical',
+  //       interviewers: '',
+  //       meetingLink: ''
+  //     });
+
+  //     setErrors({});
+
+  //   } catch (error) {
+  //     console.error('Error scheduling interview:', error);
+  //     setErrors({
+  //       submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
+  if (!validateForm()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const token = localStorage.getItem('token');
+
+    const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+
+    if (!interviewDateTime) {
+      throw new Error('Invalid date or time format');
     }
 
-    setIsSubmitting(true);
+    const requestBody = {
+      candidateId: formData.candidateId,
+      interviewDate: interviewDateTime,
+      interviewType: formData.interviewType,
+      interviewers: formData.interviewers.split(',').map(i => i.trim()),
+      meetingLink: formData.meetingLink
+    };
 
-    try {
-      const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:5000/api/interviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(requestBody)
+    });
 
-      const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+    const data = await response.json();
 
-      if (!interviewDateTime) {
-        throw new Error('Invalid date or time format');
-      }
-
-      const requestBody = {
-        candidateId: formData.candidateId,
-        interviewDate: interviewDateTime,
-        interviewType: formData.interviewType,
-        interviewers: formData.interviewers.split(',').map(i => i.trim()),
-        meetingLink: formData.meetingLink
-      };
-
-      const response = await fetch('http://localhost:5000/api/interviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
-      }
-
-      setSuccessMessage('Interview scheduled successfully!');
-
-      setFormData({
-        candidateId: '',
-        interviewDate: '',
-        interviewTime: '',
-        interviewType: 'technical',
-        interviewers: '',
-        meetingLink: ''
-      });
-
-      setErrors({});
-
-    } catch (error) {
-      console.error('Error scheduling interview:', error);
-      setErrors({
-        submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
-      });
-    } finally {
-      setIsSubmitting(false);
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
     }
-  };
 
+    setSuccessMessage('Interview scheduled successfully! Emails sent to candidate and interviewers.');
+
+    setFormData({
+      candidateId: '',
+      interviewDate: '',
+      interviewTime: '',
+      interviewType: 'technical',
+      interviewers: '',
+      meetingLink: ''
+    });
+
+    setErrors({});
+
+  } catch (error) {
+    console.error('Error scheduling interview:', error);
+    setErrors({
+      submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const getMinDate = () => {
     return new Date().toISOString().split('T')[0];
   };
