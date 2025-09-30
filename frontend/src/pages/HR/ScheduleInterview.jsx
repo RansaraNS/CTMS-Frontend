@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
+import Sidebar from '../../components/Sidebar';
 
 const ScheduleInterview = () => {
   const navigate = useNavigate();
@@ -148,70 +149,134 @@ const ScheduleInterview = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     const token = localStorage.getItem('token');
+
+  //     const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+
+  //     if (!interviewDateTime) {
+  //       throw new Error('Invalid date or time format');
+  //     }
+
+  //     const requestBody = {
+  //       candidateId: formData.candidateId,
+  //       interviewDate: interviewDateTime,
+  //       interviewType: formData.interviewType,
+  //       interviewers: formData.interviewers.split(',').map(i => i.trim()),
+  //       meetingLink: formData.meetingLink
+  //     };
+
+  //     const response = await fetch('http://localhost:5000/api/interviews', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${token}`
+  //       },
+  //       body: JSON.stringify(requestBody)
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
+  //     }
+
+  //     setSuccessMessage('Interview scheduled successfully!');
+
+  //     setFormData({
+  //       candidateId: '',
+  //       interviewDate: '',
+  //       interviewTime: '',
+  //       interviewType: 'technical',
+  //       interviewers: '',
+  //       meetingLink: ''
+  //     });
+
+  //     setErrors({});
+
+  //   } catch (error) {
+  //     console.error('Error scheduling interview:', error);
+  //     setErrors({
+  //       submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
+  if (!validateForm()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const token = localStorage.getItem('token');
+
+    const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+
+    if (!interviewDateTime) {
+      throw new Error('Invalid date or time format');
     }
 
-    setIsSubmitting(true);
+    const requestBody = {
+      candidateId: formData.candidateId,
+      interviewDate: interviewDateTime,
+      interviewType: formData.interviewType,
+      interviewers: formData.interviewers.split(',').map(i => i.trim()),
+      meetingLink: formData.meetingLink
+    };
 
-    try {
-      const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:5000/api/interviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(requestBody)
+    });
 
-      const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+    const data = await response.json();
 
-      if (!interviewDateTime) {
-        throw new Error('Invalid date or time format');
-      }
-
-      const requestBody = {
-        candidateId: formData.candidateId,
-        interviewDate: interviewDateTime,
-        interviewType: formData.interviewType,
-        interviewers: formData.interviewers.split(',').map(i => i.trim()),
-        meetingLink: formData.meetingLink
-      };
-
-      const response = await fetch('http://localhost:5000/api/interviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
-      }
-
-      setSuccessMessage('Interview scheduled successfully!');
-
-      setFormData({
-        candidateId: '',
-        interviewDate: '',
-        interviewTime: '',
-        interviewType: 'technical',
-        interviewers: '',
-        meetingLink: ''
-      });
-
-      setErrors({});
-
-    } catch (error) {
-      console.error('Error scheduling interview:', error);
-      setErrors({
-        submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
-      });
-    } finally {
-      setIsSubmitting(false);
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
     }
-  };
 
+    setSuccessMessage('Interview scheduled successfully! Emails sent to candidate and interviewers.');
+
+    setFormData({
+      candidateId: '',
+      interviewDate: '',
+      interviewTime: '',
+      interviewType: 'technical',
+      interviewers: '',
+      meetingLink: ''
+    });
+
+    setErrors({});
+
+  } catch (error) {
+    console.error('Error scheduling interview:', error);
+    setErrors({
+      submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const getMinDate = () => {
     return new Date().toISOString().split('T')[0];
   };
@@ -272,48 +337,7 @@ const ScheduleInterview = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-          <motion.div
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-          >
-            <nav className="flex flex-col h-full py-6">
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <span className="mr-3 text-xl">🏠</span>
-                <span className="font-semibold">HR Dashboard</span>
-              </motion.button>
-
-              {[
-                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
-                { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
-                { path: "/interviews", icon: "📊", label: "Manage Interviews" },
-                { path: "/candidates", icon: "🔍", label: "View Candidates" },
-              ].map((item, index) => (
-                <motion.button
-                  key={item.path}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigateTo(item.path)}
-                  className={`flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${item.path === "/hr/schedule-interview"
-                      ? "bg-gradient-to-r from-[#03624c] to-[#030f0f]"
-                      : "hover:bg-white hover:bg-opacity-10"
-                    }`}
-                >
-                  <span className="mr-3 text-lg">{item.icon}</span>
-                  <span>{item.label}</span>
-                </motion.button>
-              ))}
-            </nav>
-          </motion.div>
+           <Sidebar/>
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">

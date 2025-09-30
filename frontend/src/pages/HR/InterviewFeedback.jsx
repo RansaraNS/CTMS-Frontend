@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Sidebar from '../../components/Sidebar';
 
 const InterviewFeedback = () => {
   const navigate = useNavigate();
@@ -14,13 +15,21 @@ const InterviewFeedback = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Initialize with proper default values
+  // Initialize with proper default values including new questions
   const [feedback, setFeedback] = useState({
     technicalSkills: 0,
     communication: 0,
     problemSolving: 0,
     culturalFit: 0,
     overallRating: 0,
+    
+    // New additional questions
+    ableToJoinImmediately: '',
+    noticePeriod: '',
+    okayWithOnsite: '',
+    salaryExpectation: '',
+    relocationRequired: '',
+    
     notes: '',
     submittedBy: user?.name || '',
     outcome: 'pending'
@@ -56,6 +65,14 @@ const InterviewFeedback = () => {
           problemSolving: existingFeedback.problemSolving || 0,
           culturalFit: existingFeedback.culturalFit || 0,
           overallRating: existingFeedback.overallRating || 0,
+          
+          // New additional questions
+          ableToJoinImmediately: existingFeedback.ableToJoinImmediately || '',
+          noticePeriod: existingFeedback.noticePeriod || '',
+          okayWithOnsite: existingFeedback.okayWithOnsite || '',
+          salaryExpectation: existingFeedback.salaryExpectation || '',
+          relocationRequired: existingFeedback.relocationRequired || '',
+          
           notes: existingFeedback.notes || '',
           submittedBy: existingFeedback.submittedBy || user?.name || '',
           outcome: existingFeedback.outcome || 'pending'
@@ -233,17 +250,17 @@ const InterviewFeedback = () => {
           animate={{ y: 0 }}
           className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
         >
-             <div className="flex items-center">
-                      <motion.img
-                        src="/GR.jpg"
-                        alt="Company Logo"
-                        transition={{ duration: 0.5 }}
-                        className="w-10 h-10 mr-3 object-contain"
-                      />
-                      <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-                        Candidate Tracking Management System
-                      </h1>
-                    </div>
+          <div className="flex items-center">
+            <motion.img
+              src="/GR.jpg"
+              alt="Company Logo"
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 mr-3 object-contain"
+            />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
+              Candidate Tracking Management System
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -265,45 +282,7 @@ const InterviewFeedback = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-          <motion.div 
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-          >
-            <nav className="flex flex-col h-full py-6">
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo("/hr/dashboard")}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <span className="mr-3 text-xl">🏠</span> 
-                <span className="font-semibold">HR Dashboard</span>
-              </motion.button>
-              
-              {[
-                { path: "/hr/add-candidate", icon: "👤", label: "Add Candidate" },
-                { path: "/hr/schedule-interview", icon: "🗓️", label: "Schedule Interview" },
-                { path: "/interviews", icon: "📊", label: "Manage Interviews" },
-                { path: "/candidates", icon: "🔍", label: "View Candidates" },
-              ].map((item, index) => (
-                <motion.button
-                  key={item.path}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 10, backgroundColor: "rgba(0,223,130,0.1)" }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigateTo(item.path)}
-                  className="flex items-center p-4 hover:bg-white hover:bg-opacity-10 mx-2 rounded-lg mb-1 transition-all duration-200"
-                >
-                  <span className="mr-3 text-lg">{item.icon}</span>
-                  <span>{item.label}</span>
-                </motion.button>
-              ))}
-            </nav>
-          </motion.div>
+          <Sidebar/>
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">
@@ -475,11 +454,134 @@ const InterviewFeedback = () => {
                     </div>
                   </motion.div>
 
-                  {/* Interview Outcome */}
+                  {/* Additional Questions Section */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
+                    className="space-y-6"
+                  >
+                    <h3 className="font-semibold text-2xl text-gray-800 mb-4">❓ Additional Questions</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Able to Join Immediately */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 shadow-sm"
+                      >
+                        <label className="block text-lg font-semibold text-gray-800 mb-4">
+                          ⏰ Able to Join Immediately?
+                        </label>
+                        <div className="space-y-3">
+                          {[
+                            { value: 'yes', label: 'Yes' },
+                            { value: 'no', label: 'No' },
+                            { value: 'with-notice', label: 'With Notice Period' }
+                          ].map((option) => (
+                            <label key={option.value} className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="ableToJoinImmediately"
+                                value={option.value}
+                                checked={feedback.ableToJoinImmediately === option.value}
+                                onChange={handleInputChange}
+                                className="w-4 h-4 text-[#03624c] focus:ring-[#03624c]"
+                              />
+                              <span className="text-gray-700 font-medium">{option.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                        
+                        {/* Notice Period Input (Conditional) */}
+                        {feedback.ableToJoinImmediately === 'with-notice' && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="mt-4"
+                          >
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Notice Period Duration:
+                            </label>
+                            <input
+                              type="text"
+                              name="noticePeriod"
+                              value={feedback.noticePeriod || ''}
+                              onChange={handleInputChange}
+                              placeholder="e.g., 2 weeks, 1 month"
+                              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent"
+                            />
+                          </motion.div>
+                        )}
+                      </motion.div>
+
+                      {/* Okay with Onsite */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 shadow-sm"
+                      >
+                        <label className="block text-lg font-semibold text-gray-800 mb-4">
+                          🏢 Okay with Onsite Work?
+                        </label>
+                        <div className="space-y-3">
+                          {[
+                            { value: 'yes', label: 'Yes' },
+                            { value: 'no', label: 'No' },
+                            { value: 'hybrid', label: 'Hybrid Preferred' }
+                          ].map((option) => (
+                            <label key={option.value} className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="okayWithOnsite"
+                                value={option.value}
+                                checked={feedback.okayWithOnsite === option.value}
+                                onChange={handleInputChange}
+                                className="w-4 h-4 text-[#03624c] focus:ring-[#03624c]"
+                              />
+                              <span className="text-gray-700 font-medium">{option.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </motion.div>
+
+
+                      {/* Relocation Required */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 shadow-sm"
+                      >
+                        <label className="block text-lg font-semibold text-gray-800 mb-4">
+                          🚗 Relocation Required?
+                        </label>
+                        <div className="space-y-3">
+                          {[
+                            { value: 'yes', label: 'Yes' },
+                            { value: 'no', label: 'No' }
+                          ].map((option) => (
+                            <label key={option.value} className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="relocationRequired"
+                                value={option.value}
+                                checked={feedback.relocationRequired === option.value}
+                                onChange={handleInputChange}
+                                className="w-4 h-4 text-[#03624c] focus:ring-[#03624c]"
+                              />
+                              <span className="text-gray-700 font-medium">{option.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+
+                  {/* Interview Outcome */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
                   >
                     <label className="block text-lg font-semibold text-gray-800 mb-4">
                       🎯 Interview Outcome:
@@ -502,7 +604,7 @@ const InterviewFeedback = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
+                    transition={{ delay: 0.9 }}
                   >
                     <label className="block text-lg font-semibold text-gray-800 mb-4">
                       ✍️ Submitted By:
@@ -522,7 +624,7 @@ const InterviewFeedback = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.9 }}
+                    transition={{ delay: 1.0 }}
                   >
                     <label className="block text-lg font-semibold text-gray-800 mb-4">
                       📝 Additional Notes:
@@ -541,7 +643,7 @@ const InterviewFeedback = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.0 }}
+                    transition={{ delay: 1.1 }}
                     className="flex space-x-4 pt-6 border-t border-gray-200"
                   >
                     <motion.button
