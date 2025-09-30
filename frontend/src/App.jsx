@@ -21,6 +21,9 @@ import RescheduleInterview from './pages/HR/RescheduleInterview';
 import ManageCandidates from './pages/Admin/ManageCandidates';
 import ViewCandidate from './pages/Admin/ViewCandidate';
 import CandidateReportAdmin from './pages/Admin/CandidateReportAdmin';
+import GenerateCandidatesReports from './pages/HR/GenerateCandidatesReports.jsx';
+import GenerateInterviewsReports from "./pages/HR/GenerateInterviewsReports.jsx";
+import ReportsHome from "./pages/HR/ReportsHome.jsx";
 
 function App() {
   return (
@@ -136,8 +139,7 @@ function App() {
           } 
         />
              
-
-               <Route 
+        <Route 
           path="/candidates/:id" 
           element={
             <ProtectedRoute allowedRoles={['hr']}>
@@ -164,8 +166,7 @@ function App() {
           } 
         />
 
-
-                <Route 
+        <Route 
           path="/interviews/:id/reschedule" 
           element={
             <ProtectedRoute allowedRoles={['hr']}>
@@ -173,9 +174,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-
-
-
 
           <Route 
           path="/interviews/:interviewId/feedback" 
@@ -195,14 +193,32 @@ function App() {
           } 
         />
 
-        
-        
+          <Route
+              path="/hr/candidates-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateCandidatesReports />
+                  </ProtectedRoute>
+              }
+          />
 
-        
+          <Route
+              path="/hr/interviews-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateInterviewsReports />
+                  </ProtectedRoute>
+              }
+          />
 
-        {/* <Route path="/interviews/:interviewId/feedback"
-         element={<InterviewFeedback />} /> */}
-
+          <Route
+              path="/hr/reports"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <ReportsHome />
+                  </ProtectedRoute>
+              }
+          />
         
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
