@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 const ManageCandidates = () => {
   const navigate = useNavigate();
@@ -82,7 +80,8 @@ const ManageCandidates = () => {
       interviewed: { color: 'bg-yellow-100 text-yellow-800', label: 'Interviewed' },
       hired: { color: 'bg-green-100 text-green-800', label: 'Hired' },
       rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      terminated: { color: 'bg-orange-100 text-orange-800', label: 'Terminated' }
+      terminated: { color: 'bg-orange-100 text-orange-800', label: 'Terminated' },
+      scheduled: { color: 'bg-blue-100 text-blue-800', label: 'Scheduled' }
     };
     const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', label: status };
    
@@ -97,101 +96,9 @@ const ManageCandidates = () => {
   };
   
   const handleGenerateReport = () => {
-    const doc = new jsPDF();
-    
-    // Get current date and time
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit' 
-    });
-    const timeStr = now.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit',
-      hour12: true 
-    });
-    
-    const pageWidth = doc.internal.pageSize.getWidth();
-    
-    // Add Company Logo
-    const logoImg = new Image();
-    logoImg.src = '/GR.jpg'; // Your company logo path
-    
-    // Add logo on the left side
-    try {
-      doc.addImage(logoImg, 'JPEG', 14, 10, 20, 20);
-    } catch (error) {
-      console.log('Logo not loaded, continuing without logo');
-    }
-    
-    // Company Name - Next to logo
-    doc.setFontSize(20);
-    doc.setFont(undefined, 'bold');
-    doc.text('Gamage Recruiters', 40, 20);
-    
-    // Report Title and Date
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'normal');
-    const reportTitle = 'Candidate Report';
-    const dateTime = `Date: ${dateStr} Time: ${timeStr}`;
-    
-    // Calculate positions for left-aligned title and right-aligned date
-    const titleX = 40;
-    const dateX = pageWidth - 14;
-    
-    doc.text(reportTitle, titleX, 28);
-    doc.text(dateTime, dateX, 28, { align: 'right' });
-    
-    // Line separator
-    doc.setLineWidth(0.5);
-    doc.line(14, 35, pageWidth - 14, 35);
-    
-    // Prepare table data
-    const tableData = filteredCandidates.map((candidate, index) => [
-      index + 1,
-      `${candidate.firstName} ${candidate.lastName}`,
-      candidate.email || 'N/A',
-      candidate.phone || 'N/A',
-      candidate.position || 'N/A',
-      candidate.status || 'N/A',
-      candidate.source || 'N/A'
-    ]);
-    
-    // Generate table
-    autoTable(doc, {
-      startY: 40,
-      head: [['No', 'Name', 'Email', 'Phone Number', 'Position', 'Status', 'Source']],
-      body: tableData,
-      theme: 'grid',
-      headStyles: {
-        fillColor: [3, 98, 76],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        halign: 'center'
-      },
-      styles: {
-        fontSize: 9,
-        cellPadding: 3,
-        overflow: 'linebreak'
-      },
-      columnStyles: {
-        0: { cellWidth: 15, halign: 'center' },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 40 },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 25 },
-        5: { cellWidth: 20, halign: 'center' },
-        6: { cellWidth: 20, halign: 'center' }
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245]
-      }
-    });
-    
-    // Save the PDF
-    doc.save(`candidates-report-${dateStr.replace(/\//g, '-')}.pdf`);
+    // Store filtered candidates in localStorage for the report page
+    localStorage.setItem('reportCandidates', JSON.stringify(filteredCandidates));
+    navigate('/admin/candidate-report');
   };
   
   const handleViewCandidate = (candidateId) => {
@@ -272,9 +179,7 @@ const ManageCandidates = () => {
       transition={{ duration: 0.5 }}
       className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
     >
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
@@ -309,9 +214,7 @@ const ManageCandidates = () => {
           </div>
         </motion.nav>
                
-        {/* Sidebar + Main Content */}
         <div className="flex flex-1">
-          {/* Sidebar */}
           <motion.div 
             initial={{ x: -300 }}
             animate={{ x: 0 }}
@@ -361,15 +264,13 @@ const ManageCandidates = () => {
               </motion.button>
             </nav>
           </motion.div>
-          
-          {/* Main Content */}
+
           <div className="flex-1 p-6 overflow-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {/* Filters Section */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -422,8 +323,7 @@ const ManageCandidates = () => {
                   </div>
                 </div>
               </motion.div>
-              
-              {/* Statistics Cards */}
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -435,6 +335,8 @@ const ManageCandidates = () => {
                   { title: "Interviewed", value: candidates.filter(c => c.status === 'interviewed').length, color: "#030f0f", icon: "📅" },
                   { title: "Hired", value: candidates.filter(c => c.status === 'hired').length, color: "#00df82", icon: "✅" },
                   { title: "Rejected", value: candidates.filter(c => c.status === 'rejected').length, color: "red", icon: "❌" },
+                   { title: "Scheduled", value: candidates.filter(c => c.status === 'scheduled').length, color: "#095555ff", icon: "📅" },
+                                { title: "New", value: candidates.filter(c => c.status === 'new').length, color: "#6e8511ff", icon: "👥" },
                 ].map((stat, index) => (
                   <motion.div
                     key={stat.title}
@@ -470,8 +372,7 @@ const ManageCandidates = () => {
                   </motion.div>
                 ))}
               </motion.div>
-              
-              {/* Candidates Table */}
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -511,7 +412,7 @@ const ManageCandidates = () => {
                             "Source",
                             "Last Updated",
                             "Actions"
-                          ].map((header, index) => (
+                          ].map((header) => (
                             <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">
                               {header}
                             </th>

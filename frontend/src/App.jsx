@@ -20,6 +20,7 @@ import InterviewDetail from './pages/HR/InterviewDetail';
 import RescheduleInterview from './pages/HR/RescheduleInterview';
 import ManageCandidates from './pages/Admin/ManageCandidates';
 import ViewCandidate from './pages/Admin/ViewCandidate';
+import CandidateReportAdmin from './pages/Admin/CandidateReportAdmin';
 
 function App() {
   return (
@@ -89,6 +90,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <InterviewReport />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidate-report" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <CandidateReportAdmin />
             </ProtectedRoute>
           } 
         />
