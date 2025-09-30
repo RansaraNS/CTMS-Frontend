@@ -419,7 +419,7 @@ const QuickActionsSection = ({ navigateTo }) => (
       {[
         { title: "Add Candidate", description: "Add a new candidate to the system", icon: "👤", path: "/hr/add-candidate", color: "#00df82" },
         { title: "Schedule Interview", description: "Schedule a new interview", icon: "🗓️", path: "/hr/schedule-interview", color: "#03624c" },
-        { title: "Generate Reports", description: "Create detailed analytics reports", icon: "📈", path: "/reports", color: "#030f0f" },
+        { title: "Generate Reports", description: "Create detailed analytics reports", icon: "📈", path: "/hr/reports", color: "#030f0f" },
       ].map((action, index) => (
         <ActionCard key={action.title} {...action} index={index} navigateTo={navigateTo} />
       ))}

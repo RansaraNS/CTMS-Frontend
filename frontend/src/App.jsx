@@ -18,6 +18,9 @@ import ViewInterviews from './pages/Admin/ViewInterviews';
 import InterviewReport from './pages/Admin/InterviewReport';
 import InterviewDetail from './pages/HR/InterviewDetail';
 import RescheduleInterview from './pages/HR/RescheduleInterview';
+import GenerateCandidatesReports from './pages/HR/GenerateCandidatesReports.jsx';
+import GenerateInterviewsReports from "./pages/HR/GenerateInterviewsReports.jsx";
+import ReportsHome from "./pages/HR/ReportsHome.jsx";
 
 function App() {
   return (
@@ -167,6 +170,33 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+          <Route
+              path="/hr/candidates-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateCandidatesReports />
+                  </ProtectedRoute>
+              }
+          />
+
+          <Route
+              path="/hr/interviews-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateInterviewsReports />
+                  </ProtectedRoute>
+              }
+          />
+
+          <Route
+              path="/hr/reports"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <ReportsHome />
+                  </ProtectedRoute>
+              }
+          />
 
         
         
