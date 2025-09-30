@@ -2,21 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut, FiUser } from 'react-icons/fi';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [latestHrs, setLatestHrs] = useState([]);
-  const currentDate = new Date('2025-09-26T22:18:00+0530').toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZoneName: 'short',
-    hour12: true,
-  });
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -48,29 +38,13 @@ const AdminDashboard = () => {
     fetchLatestHrs();
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.7,
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    },
-  };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
+      transition: { duration: 0.5, ease: "easeOut" }
     },
   };
 
@@ -79,10 +53,7 @@ const AdminDashboard = () => {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
+      transition: { duration: 0.6, ease: "easeOut" }
     },
   };
 
@@ -127,6 +98,7 @@ const AdminDashboard = () => {
 
         {/* Sidebar and Main Content */}
         <div className="flex flex-1">
+          {/* Sidebar */}
           <motion.div
             initial={{ x: -300 }}
             animate={{ x: 0 }}
@@ -138,7 +110,7 @@ const AdminDashboard = () => {
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 bg-gradient-to-r from-[#03624c] to-[#030f0f]"
               >
                 <FiHome className="mr-3 text-lg" /> Dashboard
               </motion.button>
@@ -146,7 +118,7 @@ const AdminDashboard = () => {
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)]"
               >
                 <FiUserPlus className="mr-3 text-lg" /> Create HR
               </motion.button>
@@ -154,7 +126,7 @@ const AdminDashboard = () => {
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)]"
               >
                 <FiUsers className="mr-3 text-lg" /> Manage HR
               </motion.button>
@@ -162,13 +134,22 @@ const AdminDashboard = () => {
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)]"
               >
                 <FiEye className="mr-3 text-lg" /> View Interviews
+              </motion.button>
+              <motion.button
+                whileHover={{ x: 10, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigateTo('/admin/manage-candidate')}
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)]"
+              >
+                <FiUsers className="mr-3 text-lg" /> Manage Candidates
               </motion.button>
             </nav>
           </motion.div>
 
+          {/* Main Panel */}
           <div className="flex-1 p-6 overflow-auto">
             <div className="space-y-10">
               {/* Header */}
@@ -176,7 +157,7 @@ const AdminDashboard = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-4xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
+                className="text-3xl font-bold text-white text-center bg-gradient-to-r from-[#03624c] to-[#00df82] bg-clip-text text-transparent"
               >
                 Admin Dashboard
               </motion.h2>
@@ -186,19 +167,20 @@ const AdminDashboard = () => {
                 initial="hidden"
                 animate="visible"
                 variants={cardVariants}
-                className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20"
+                className="bg-white/20 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/30"
               >
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-2xl font-semibold text-gray-800">Recent HR Personnel</h3>
+                  <h3 className="text-2xl font-semibold text-white">Recent HR Personnel</h3>
                   <motion.button
-                    whileHover={{ scale: 1.05, backgroundColor: '#00df82' }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigateTo('/admin/manage-hr')}
-                    className="bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] transition duration-300 font-semibold"
+                    className="bg-gradient-to-r from-[#00df82] to-[#03624c] text-white px-6 py-3 rounded-xl shadow-md font-semibold hover:opacity-90"
                   >
                     View All HRs
                   </motion.button>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <AnimatePresence>
                     {latestHrs.length > 0 ? (
@@ -209,25 +191,30 @@ const AdminDashboard = () => {
                           animate="visible"
                           exit="hidden"
                           variants={itemVariants}
-                          className="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:bg-[#00df82]/50 transition duration-300 shadow-md"
+                          whileHover={{ scale: 1.03, y: -4 }}
+                          className="bg-white/90 p-6 rounded-2xl shadow-lg border border-gray-200 flex flex-col items-start gap-2"
                         >
-                          <p className="text-gray-700 font-medium text-lg">Name: {hr.name}</p>
-                          <p className="text-gray-600 text-md">Email: {hr.email}</p>
-                          <p className="text-gray-600 text-md">Role: {hr.role}</p>
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-12 h-12 bg-[#00df82]/20 rounded-full flex items-center justify-center">
+                              <FiUser className="text-[#03624c] text-xl" />
+                            </div>
+                            <p className="text-gray-800 font-semibold text-lg">{hr.name}</p>
+                          </div>
+                          <p className="text-gray-600 text-sm">📧 {hr.email}</p>
+                          <p className="text-gray-600 text-sm">👔 Role: {hr.role}</p>
                         </motion.div>
                       ))
                     ) : (
                       <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-gray-500 text-center col-span-full text-lg"
+                        className="text-gray-200 text-center col-span-full text-lg"
                       >
                         No recent HR data available.
                       </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
-                <hr className="my-8 border-t border-gray-300" />
               </motion.div>
 
               {/* Quick Actions Section */}
@@ -235,25 +222,25 @@ const AdminDashboard = () => {
                 initial="hidden"
                 animate="visible"
                 variants={cardVariants}
-                className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20"
+                className="bg-white/20 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/30"
               >
-                <h3 className="text-2xl font-semibold text-gray-800 mb-8">Quick Actions</h3>
+                <h3 className="text-2xl font-semibold text-white mb-8">Quick Actions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 223, 130, 0.3)' }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigateTo('/admin/create-hr')}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-5 rounded-xl hover:from-[#00df82] hover:to-[#03624c] transition duration-300 flex items-center justify-center text-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-6 rounded-2xl shadow-lg flex items-center justify-center gap-3 text-lg"
                   >
-                    <FiUserPlus className="mr-3" /> Add New HR
+                    <FiUserPlus className="text-2xl" /> Add New HR
                   </motion.button>
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 223, 130, 0.3)' }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigateTo('/admin/view-interviews')}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-5 rounded-xl hover:from-[#00df82] hover:to-[#03624c] transition duration-300 flex items-center justify-center text-lg"
+                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-6 rounded-2xl shadow-lg flex items-center justify-center gap-3 text-lg"
                   >
-                    <FiEye className="mr-3" /> View All Interviews
+                    <FiEye className="text-2xl" /> View All Interviews
                   </motion.button>
                 </div>
               </motion.div>

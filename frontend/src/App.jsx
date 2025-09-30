@@ -18,6 +18,8 @@ import ViewInterviews from './pages/Admin/ViewInterviews';
 import InterviewReport from './pages/Admin/InterviewReport';
 import InterviewDetail from './pages/HR/InterviewDetail';
 import RescheduleInterview from './pages/HR/RescheduleInterview';
+import ManageCandidates from './pages/Admin/ManageCandidates';
+import ViewCandidate from './pages/Admin/ViewCandidate';
 
 function App() {
   return (
@@ -55,6 +57,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <ManageHR />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/manage-candidate" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageCandidates />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidates/:Id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ViewCandidate />
             </ProtectedRoute>
           } 
         />

@@ -144,7 +144,7 @@ const CreateHR = () => {
                 whileHover={{ x: 10, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 bg-gradient-to-r from-[#03624c] to-[#030f0f]"
               >
                 <FiUserPlus className="mr-3 text-lg" /> Create HR
               </motion.button>
@@ -164,6 +164,14 @@ const CreateHR = () => {
               >
                 <FiEye className="mr-3 text-lg" /> View Interviews
               </motion.button>
+              <motion.button
+                              whileHover={{ x: 10, scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => navigateTo('/admin/manage-candidate')}
+                              className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
+                            >
+                              <FiUsers className="mr-3 text-lg" /> Manage Candidates
+                            </motion.button>
             </nav>
           </motion.div>
 
