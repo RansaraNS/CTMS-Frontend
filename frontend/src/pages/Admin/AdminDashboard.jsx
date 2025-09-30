@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
+import AdminSidebar from '../../components/AdminSidebar';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -127,47 +128,7 @@ const AdminDashboard = () => {
 
         {/* Sidebar and Main Content */}
         <div className="flex flex-1">
-          <motion.div
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-          >
-            <nav className="flex flex-col h-full py-6">
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiHome className="mr-3 text-lg" /> Dashboard
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiUserPlus className="mr-3 text-lg" /> Create HR
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiUsers className="mr-3 text-lg" /> Manage HR
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiEye className="mr-3 text-lg" /> View Interviews
-              </motion.button>
-            </nav>
-          </motion.div>
+         <AdminSidebar/>
 
           <div className="flex-1 p-6 overflow-auto">
             <div className="space-y-10">

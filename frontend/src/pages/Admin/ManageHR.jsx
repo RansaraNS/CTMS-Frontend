@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion } from 'framer-motion';
 import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
+import AdminSidebar from '../../components/AdminSidebar';
 
 const ManageHR = () => {
   const navigate = useNavigate();
@@ -182,52 +183,12 @@ const ManageHR = () => {
 
         <div className="flex flex-1">
           {/* Sidebar */}
-          <motion.div 
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-          >
-            <nav className="flex flex-col h-full py-6">
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/dashboard')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiHome className="mr-3 text-lg" /> Dashboard
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/create-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiUserPlus className="mr-3 text-lg" /> Create HR
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/manage-hr')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiUsers className="mr-3 text-lg" /> Manage HR
-              </motion.button>
-              <motion.button
-                whileHover={{ x: 10, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateTo('/admin/view-interviews')}
-                className="flex items-center p-4 mx-2 rounded-lg mb-1 transition-all duration-200 hover:bg-[rgba(0,223,130,0.1)] hover:bg-opacity-10"
-              >
-                <FiEye className="mr-3 text-lg" /> View Interviews
-              </motion.button>
-            </nav>
-          </motion.div>
+          <AdminSidebar/>
 
           {/* Content */}
           <div className="flex-1 p-8 overflow-auto bg-gradient-to-br from-[#03624c]/10 to-[#00df82]/10">
             <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-8">
-              <h2 className="text-3xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">Manage HR</h2>
+              {/* <h2 className="text-3xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">Manage HR</h2> */}
               <div className="flex items-center space-x-6">
                 <motion.div variants={itemVariants} className="flex-1 relative">
                   <input
