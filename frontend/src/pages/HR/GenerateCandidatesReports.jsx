@@ -52,117 +52,152 @@ const GenerateCandidatesReport = () => {
         );
     }
 
-    return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-800">Candidates Report</h3>
-                
-                {/* Download Buttons */}
-                <div className="flex space-x-3">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={downloadPDF}
-                        className="bg-[#03624c] text-white px-6 py-2 rounded-lg hover:bg-[#024c3a] transition duration-200 flex items-center space-x-2"
-                    >
-                        <span>📄</span>
-                        <span>Download PDF</span>
-                    </motion.button>
+  return (
+    <div className="p-2 sm:p-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800">
+          Candidates Report
+        </h3>
 
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={downloadExcel}
-                        className="bg-[#00df82] text-gray-800 px-6 py-2 rounded-lg hover:bg-[#00c46b] transition duration-200 flex items-center space-x-2"
-                    >
-                        <span>📊</span>
-                        <span>Download Excel</span>
-                    </motion.button>
-                </div>
-            </div>
+        {/* Download Buttons */}
+        <div className="flex space-x-2 sm:space-x-3">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={downloadPDF}
+            className="bg-[#03624c] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#024c3a] transition duration-200 flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
+          >
+            <span>📄</span>
+            <span>PDF</span>
+          </motion.button>
 
-            {/* Table */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Interview Report
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {candidates.length === 0 ? (
-                                <tr>
-                                    <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
-                                        <div className="flex flex-col items-center justify-center">
-                                            <span className="text-4xl mb-2">👥</span>
-                                            <p className="text-lg">No candidates found</p>
-                                            <p className="text-sm text-gray-400">No candidate data available for reporting</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ) : (
-                                candidates.map((c, index) => (
-                                    <tr 
-                                        key={c._id}
-                                        className="hover:bg-gray-50 transition duration-150"
-                                    >
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{index + 1}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {c.firstName} {c.lastName}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.email || "N/A"}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.phone || "N/A"}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.position || "N/A"}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                c.status === 'new' 
-                                                    ? 'bg-blue-100 text-blue-800'
-                                                    : c.status === 'scheduled'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : c.status === 'interviewed'
-                                                    ? 'bg-purple-100 text-purple-800'
-                                                    : c.status === 'hired'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : c.status === 'rejected'
-                                                    ? 'bg-red-100 text-red-800'
-                                                    : 'bg-gray-100 text-gray-800'
-                                            }`}>
-                                                {c.status || "N/A"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.source || "N/A"}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                onClick={() => downloadInterviewReport(c._id)}
-                                                className="bg-[#03624c] text-white px-4 py-2 rounded-lg hover:bg-[#024c3a] transition duration-200 text-sm"
-                                            >
-                                                Download
-                                            </motion.button>
-                                        </td>
-
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={downloadExcel}
+            className="bg-[#00df82] text-gray-800 px-4 sm:px-6 py-2 rounded-lg hover:bg-[#00c46b] transition duration-200 flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
+          >
+            <span>📊</span>
+            <span>Excel</span>
+          </motion.button>
         </div>
-    );
+      </div>
+
+      {/* Responsive Table / Card */}
+      <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+        {candidates.length === 0 ? (
+          <div className="px-6 py-8 text-center text-gray-500">
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-4xl mb-2">👥</span>
+              <p className="text-lg">No candidates found</p>
+              <p className="text-sm text-gray-400">
+                No candidate data available for reporting
+              </p>
+            </div>
+          </div>
+        ) : (
+          <table className="min-w-full">
+            {/* Hide header on mobile */}
+            <thead className="hidden sm:table-header-group bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  No
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Phone
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Position
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Source
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Interview Report
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {candidates.map((c, index) => (
+                <tr
+                  key={c._id}
+                  className="block sm:table-row p-4 sm:p-0 hover:bg-gray-50 transition duration-150"
+                >
+                  {/* Mobile stacked view */}
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm text-gray-900">
+                    <span className="sm:hidden font-medium">No: </span>
+                    {index + 1}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm font-medium text-gray-900">
+                    <span className="sm:hidden font-medium">Name: </span>
+                    {c.firstName} {c.lastName}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm text-gray-500">
+                    <span className="sm:hidden font-medium">Email: </span>
+                    {c.email || "N/A"}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm text-gray-500">
+                    <span className="sm:hidden font-medium">Phone: </span>
+                    {c.phone || "N/A"}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm text-gray-500">
+                    <span className="sm:hidden font-medium">Position: </span>
+                    {c.position || "N/A"}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4">
+                    <span className="sm:hidden font-medium">Status: </span>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        c.status === "new"
+                          ? "bg-blue-100 text-blue-800"
+                          : c.status === "scheduled"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : c.status === "interviewed"
+                          ? "bg-purple-100 text-purple-800"
+                          : c.status === "hired"
+                          ? "bg-green-100 text-green-800"
+                          : c.status === "rejected"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {c.status || "N/A"}
+                    </span>
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4 text-sm text-gray-500">
+                    <span className="sm:hidden font-medium">Source: </span>
+                    {c.source || "N/A"}
+                  </td>
+                  <td className="block sm:table-cell px-6 py-2 sm:py-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => downloadInterviewReport(c._id)}
+                      className="bg-[#03624c] text-white px-4 py-2 rounded-lg hover:bg-[#024c3a] transition duration-200 text-sm w-full sm:w-auto"
+                    >
+                      Download
+                    </motion.button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
 };
+
 
 export default GenerateCandidatesReport;
