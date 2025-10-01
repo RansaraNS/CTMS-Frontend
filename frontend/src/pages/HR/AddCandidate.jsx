@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import API from '../../services/api';
 import Sidebar from '../../components/Sidebar';
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const AddCandidate = () => {
   const navigate = useNavigate();
@@ -28,6 +29,44 @@ const AddCandidate = () => {
   // Watch fields
   const emailValue = watch('email');
   const phoneValue = watch('phone');
+
+  // Validation function for names (no numbers allowed)
+  const validateName = (value) => {
+    if (!value) return true; // Let required validation handle empty values
+    
+    const hasNumbers = /\d/.test(value);
+    if (hasNumbers) {
+      return 'Names cannot contain numbers';
+    }
+    
+    // Allow only letters, spaces, hyphens, and apostrophes
+    const isValidFormat = /^[a-zA-Z\s\-']+$/.test(value);
+    if (!isValidFormat) {
+      return 'Names can only contain letters, spaces, hyphens, and apostrophes';
+    }
+    
+    return true;
+  };
+
+  // Validation function for CV file
+  const validateCV = (files) => {
+    if (!files || files.length === 0) {
+      return 'CV is required';
+    }
+    
+    const file = files[0];
+    if (file.type !== 'application/pdf') {
+      return 'Only PDF files are allowed';
+    }
+    
+    // Optional: Check file size (e.g., 5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      return 'File size must be less than 5MB';
+    }
+    
+    return true;
+  };
 
   // Quick scan for existing candidate by email or phone
   const handleQuickScan = async () => {
@@ -64,60 +103,6 @@ const AddCandidate = () => {
     }
   };
 
-  // const onSubmit = async (data) => {
-  //   if (existingCandidate) {
-  //     setSubmitMessage({ 
-  //       type: 'error', 
-  //       text: 'Cannot add candidate - already exists in system' 
-  //     });
-  //     return;
-  //   }
-
-  //   setIsSubmitting(true);
-  //   setSubmitMessage({ type: '', text: '' });
-
-  //   try {
-  //     const token = localStorage.getItem('token');
-
-  //     const response = await API.post('/candidates', data, {
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     if (response.status === 201) {
-  //       setSubmitMessage({ 
-  //         type: 'success', 
-  //         text: 'Candidate added successfully!' 
-  //       });
-  //       reset();
-  //       setExistingCandidate(null);
-
-  //       setTimeout(() => {
-  //         setSubmitMessage({ type: '', text: '' });
-  //       }, 3000);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error adding candidate:', error);
-  //     if (error.response?.status === 400 && error.response.data.existingCandidate) {
-  //       setExistingCandidate(error.response.data.existingCandidate);
-  //       setSubmitMessage({ 
-  //         type: 'error', 
-  //         text: `Candidate already exists: ${error.response.data.existingCandidate.name}` 
-  //       });
-  //     } else {
-  //       setSubmitMessage({ 
-  //         type: 'error', 
-  //         text: error.response?.data?.message || 'Failed to add candidate. Please try again.' 
-  //       });
-  //     }
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
-
   const onSubmit = async (data) => {
     if (existingCandidate) {
       setSubmitMessage({ type: 'error', text: 'Cannot add candidate - already exists in system' });
@@ -133,11 +118,12 @@ const AddCandidate = () => {
       // Use FormData for file upload
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        formData.append(key, data[key]);
+        if (key === 'cv' && data[key][0]) {
+          formData.append("cv", data.cv[0]); // attach file
+        } else {
+          formData.append(key, data[key]);
+        }
       });
-      if (data.cv && data.cv[0]) {
-        formData.append("cv", data.cv[0]); // attach file
-      }
 
       const response = await API.post("/candidates", formData, {
         headers: {
@@ -160,8 +146,6 @@ const AddCandidate = () => {
       setIsSubmitting(false);
     }
   };
-
-
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -228,7 +212,6 @@ const AddCandidate = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Sidebar */}
-       
           <Sidebar/>
 
           {/* Main Content Area */}
@@ -330,6 +313,7 @@ const AddCandidate = () => {
                             value: 2,
                             message: 'First name must be at least 2 characters',
                           },
+                          validate: validateName
                         })}
                       />
                       {errors.firstName && (
@@ -360,6 +344,7 @@ const AddCandidate = () => {
                             value: 2,
                             message: 'Last name must be at least 2 characters',
                           },
+                          validate: validateName
                         })}
                       />
                       {errors.lastName && (
@@ -486,9 +471,6 @@ const AddCandidate = () => {
                         <option value="DevOps Engineer Intern">DevOps Engineer Intern</option>
                         <option value="Data Science Intern">Data Science Intern</option>
                         <option value="Quality Assurance Intern">Quality Assurance Intern</option>
-
-
-
                       </select>
                       {errors.position && (
                         <motion.p
@@ -503,15 +485,33 @@ const AddCandidate = () => {
 
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="cv">
-                        Upload CV (PDF only)
+                        Upload CV (PDF only) *
                       </label>
                       <input
                         type="file"
                         id="cv"
                         accept="application/pdf"
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl"
-                        {...register("cv")}
+                        className={`w-full px-4 py-3 border-2 rounded-xl ${errors.cv
+                            ? 'border-red-500 focus:ring-red-200'
+                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
+                          }`}
+                        {...register("cv", {
+                          required: 'CV is required',
+                          validate: validateCV
+                        })}
                       />
+                      {errors.cv && (
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="mt-2 text-sm text-red-600 font-medium"
+                        >
+                          {errors.cv.message}
+                        </motion.p>
+                      )}
+                      <p className="mt-1 text-sm text-gray-500">
+                        Only PDF files are accepted. Maximum file size: 5MB
+                      </p>
                     </div>
 
                     <div>
