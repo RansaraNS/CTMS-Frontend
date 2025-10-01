@@ -38,6 +38,12 @@ const GenerateCandidatesReport = () => {
         window.open("http://localhost:5000/api/report/candidates/excel", "_blank");
     };
 
+    // ✅ Add this function above the return()
+    const downloadInterviewReport = (candidateId) => {
+        window.open(`http://localhost:5000/api/report/candidate/${candidateId}`, "_blank");
+    };
+
+
     if (loading) {
         return (
             <div className="flex justify-center items-center py-8">
@@ -88,6 +94,9 @@ const GenerateCandidatesReport = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Interview Report
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -132,6 +141,17 @@ const GenerateCandidatesReport = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.source || "N/A"}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => downloadInterviewReport(c._id)}
+                                                className="bg-[#03624c] text-white px-4 py-2 rounded-lg hover:bg-[#024c3a] transition duration-200 text-sm"
+                                            >
+                                                Download
+                                            </motion.button>
+                                        </td>
+
                                     </tr>
                                 ))
                             )}
