@@ -126,7 +126,7 @@ const CreateHR = () => {
 
         {/* Sidebar and Main Content */}
         <div className="flex flex-1">
-         <AdminSidebar/>
+          <AdminSidebar/>
 
           <div className="flex-1 p-10 overflow-auto">
             <motion.div 
@@ -135,19 +135,6 @@ const CreateHR = () => {
               variants={formVariants} 
               className="max-w-3xl mx-auto"
             >
-              {/* Hero Section */}
-              {/* <motion.div 
-                initial={{ opacity: 0, y: -20 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="bg-gradient-to-r from-[#03624c] via-[#030f0f] to-[#00df82] rounded-3xl p-2 mb-12 text-white shadow-2xl"
-              >
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold mb-4">Create New HR</h1>
-                  <p className="text-white">Add a new Human Resource professional to your team</p>
-                </div>
-              </motion.div> */}
-
               {/* Form Card */}
               <motion.div 
                 initial="hidden" 
@@ -184,37 +171,38 @@ const CreateHR = () => {
                     )}
                   </motion.div>
 
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <label className="block text-gray-700 text-sm font-semibold" htmlFor="email">
-                      Email Address
-                      <span className="text-[#00df82] ml-1">★</span>
-                    </label>
-                    <input
-                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
-                        errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
-                      }`}
-                      id="email"
-                      type="email"
-                      placeholder="Enter email (e.g., john.doe@company.com)"
-                      {...register('email', { 
-                        required: 'Email is required', 
-                        pattern: { 
-                          value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
-                          message: 'Invalid email address' 
-                        } 
-                      })}
-                    />
-                    {errors.email && (
-                      <motion.p 
-                        initial={{ opacity: 0, x: -10 }} 
-                        animate={{ opacity: 1, x: 0 }} 
-                        className="text-sm text-red-600 flex items-center"
-                      >
-                        <span className="mr-1">⚠️</span> {errors.email.message}
-                      </motion.p>
-                    )}
-                  </motion.div>
-
+                 <motion.div variants={itemVariants} className="space-y-6">
+  <label className="block text-gray-700 text-sm font-semibold" htmlFor="email">
+    Email Address
+    <span className="text-[#00df82] ml-1">★</span>
+  </label>
+  <input
+    className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
+      errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
+    }`}
+    id="email"
+    type="email"
+    placeholder="Enter email (e.g., john.doe@hr.gamagerecruiters.lk)"
+    {...register('email', { 
+      required: 'Email is required',
+      validate: {
+        validFormat: (value) => {
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@hr\.gamagerecruiters\.lk$/;
+          return emailRegex.test(value) || 'Email must end with @hr.gamagerecruiters.lk';
+        }
+      }
+    })}
+  />
+  {errors.email && (
+    <motion.p 
+      initial={{ opacity: 0, x: -10 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      className="text-sm text-red-600 flex items-center"
+    >
+      <span className="mr-1">⚠️</span> {errors.email.message}
+    </motion.p>
+  )}
+</motion.div>
                   <motion.div variants={itemVariants} className="space-y-6">
                     <label className="block text-gray-700 text-sm font-semibold" htmlFor="password">
                       Password

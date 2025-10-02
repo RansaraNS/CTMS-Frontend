@@ -19,6 +19,7 @@ const AdminSidebar = () => {
     { path: "/admin/create-hr", icon: <FiUserPlus className="text-lg" />, label: "Create HR" },
     { path: "/admin/manage-hr", icon: <FiUsers className="text-lg" />, label: "Manage HR" },
     { path: "/admin/view-interviews", icon: <FiEye className="text-lg" />, label: "View Interviews" },
+    { path: "/admin/manage-candidate", icon: <FiUsers className="text-lg" />, label: "Manage Candidate" },
   ];
 
   const isActivePath = (path) => {

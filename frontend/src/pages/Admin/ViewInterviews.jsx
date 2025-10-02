@@ -204,7 +204,6 @@ const ViewInterviews = () => {
 
           <div className="flex-1 p-10 overflow-auto">
             <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-10">
-              {/* <h2 className="text-4xl font-bold text-gray-800 text-center bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">View Interviews</h2> */}
               <motion.div variants={itemVariants} >
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">
                   <div className="flex-1 relative">
@@ -239,25 +238,26 @@ const ViewInterviews = () => {
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
-                  <div className="text-3xl font-bold text-[#03624c]">{interviews.length}</div>
-                  <div className="text-md text-gray-500">Total Interviews</div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
-                  <div className="text-3xl font-bold text-[#00df82]">{interviews.filter(i => i.status === 'scheduled').length}</div>
-                  <div className="text-md text-gray-500">Scheduled</div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
-                  <div className="text-3xl font-bold text-[#00df82]">{interviews.filter(i => i.status === 'completed').length}</div>
-                  <div className="text-md text-gray-500">Completed</div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-xl text-center bg-gradient-to-br from-[#03624c]/10 to-[#030f0f]/10">
-                  <div className="text-3xl font-bold text-red-600">{interviews.filter(i => i.status === 'cancelled').length}</div>
-                  <div className="text-md text-gray-500">Cancelled</div>
-                </div>
-              </motion.div>
-
+              {/* Statistics Cards */}
+                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                              {[{ title: "Total Interviews", value: interviews.length, color: "#03624c" },
+                                { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, color: "#030f0f" },
+                                { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, color: "#00df82" },
+                                { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, color: "#e93b63ff" },
+                              ].map((stat, index) => (
+                                <motion.div key={stat.title} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 + 0.3 }} whileHover={{ scale: 1.05, y: -5, transition: { type: "spring", stiffness: 300 } }} className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}>
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="text-sm font-medium opacity-90">{stat.title}</p>
+                                      <motion.p key={stat.value} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-3xl font-bold">{stat.value}</motion.p>
+                                    </div>
+                                    <motion.div whileHover={{ scale: 1.2, rotate: 5 }} className="text-4xl">
+                                      {stat.title === "Total Interviews" ? "📊" : stat.title === "Scheduled" ? "🗓️" : stat.title === "Completed" ? "✅" : "❌"}
+                                    </motion.div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                            </motion.div>
               <motion.div variants={itemVariants} className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/20">
                 {filteredInterviews.length === 0 ? (
                   <div className="text-center py-10">

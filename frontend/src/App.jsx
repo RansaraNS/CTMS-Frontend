@@ -18,6 +18,9 @@ import ViewInterviews from './pages/Admin/ViewInterviews';
 import InterviewReport from './pages/Admin/InterviewReport';
 import InterviewDetail from './pages/HR/InterviewDetail';
 import RescheduleInterview from './pages/HR/RescheduleInterview';
+import ManageCandidates from './pages/Admin/ManageCandidates';
+import ViewCandidate from './pages/Admin/ViewCandidate';
+import CandidateReportAdmin from './pages/Admin/CandidateReportAdmin';
 import GenerateCandidatesReports from './pages/HR/GenerateCandidatesReports.jsx';
 import GenerateInterviewsReports from "./pages/HR/GenerateInterviewsReports.jsx";
 import ReportsHome from "./pages/HR/ReportsHome.jsx";
@@ -62,6 +65,22 @@ function App() {
           } 
         />
         <Route 
+          path="/admin/manage-candidate" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageCandidates />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidates/:Id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ViewCandidate />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/admin/view-interviews" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
@@ -74,6 +93,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <InterviewReport />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidate-report" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <CandidateReportAdmin />
             </ProtectedRoute>
           } 
         />
@@ -112,8 +139,7 @@ function App() {
           } 
         />
              
-
-               <Route 
+        <Route 
           path="/candidates/:id" 
           element={
             <ProtectedRoute allowedRoles={['hr']}>
@@ -140,8 +166,7 @@ function App() {
           } 
         />
 
-
-                <Route 
+        <Route 
           path="/interviews/:id/reschedule" 
           element={
             <ProtectedRoute allowedRoles={['hr']}>
@@ -149,9 +174,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-
-
-
 
           <Route 
           path="/interviews/:interviewId/feedback" 
@@ -197,15 +219,6 @@ function App() {
                   </ProtectedRoute>
               }
           />
-
-        
-        
-
-        
-
-        {/* <Route path="/interviews/:interviewId/feedback"
-         element={<InterviewFeedback />} /> */}
-
         
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
