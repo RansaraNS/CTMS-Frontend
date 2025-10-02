@@ -14,6 +14,17 @@ const CandidateDetails = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [error, setError] = useState('');
+  
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    type: '', // 'delete', 'success', 'error'
+    title: '',
+    message: '',
+    candidateId: null,
+    candidateName: '',
+    onConfirm: null
+  });
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -30,14 +41,13 @@ const CandidateDetails = () => {
         throw new Error('No authentication token found');
       }
 
-     const response = await fetch('http://localhost:5000/api/candidates', {         
-    headers: {           
-    'Authorization': `Bearer ${token}`,           
-    'Content-Type': 'application/json'         
-  }       
-});
+      const response = await fetch('http://localhost:5000/api/candidates', {         
+        headers: {           
+          'Authorization': `Bearer ${token}`,           
+          'Content-Type': 'application/json'         
+        }       
+      });
 
-      
       if (!response.ok) {
         if (response.status === 401) {
           localStorage.removeItem('token');
@@ -80,6 +90,95 @@ const CandidateDetails = () => {
     }
 
     setFilteredCandidates(filtered);
+  };
+
+  // Modal functions
+  const showConfirmationModal = (type, candidateId, candidateName) => {
+    const modalConfigs = {
+      delete: {
+        title: 'Delete Candidate',
+        message: `Are you sure you want to delete ${candidateName}? This action cannot be undone.`,
+        type: 'delete'
+      }
+    };
+
+    setModalConfig({
+      ...modalConfigs[type],
+      candidateId,
+      candidateName,
+      onConfirm: () => handleConfirmAction(type, candidateId)
+    });
+    setShowModal(true);
+  };
+
+  const showResultModal = (type, title, message) => {
+    setModalConfig({
+      type,
+      title,
+      message,
+      candidateId: null,
+      candidateName: '',
+      onConfirm: () => setShowModal(false)
+    });
+    setShowModal(true);
+  };
+
+  const handleConfirmAction = async (type, candidateId) => {
+    try {
+      const token = localStorage.getItem('token');
+      let response;
+
+      if (type === 'delete') {
+        response = await fetch(`http://localhost:5000/api/candidates/${candidateId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to ${type} candidate`);
+      }
+
+      // Remove candidate from local state
+      setCandidates(candidates.filter(c => c._id !== candidateId));
+      
+      // Show success message
+      showResultModal(
+        'success', 
+        'Deleted Successfully', 
+        'Candidate has been deleted successfully.'
+      );
+      
+    } catch (error) {
+      console.error(`Error ${type}ing candidate:`, error);
+      
+      // Show error message
+      showResultModal(
+        'error', 
+        'Failed to Delete', 
+        error.message || 'Failed to delete candidate. Please try again.'
+      );
+    }
+  };
+
+  const handleDeleteCandidate = (candidateId, candidateName) => {
+    showConfirmationModal('delete', candidateId, candidateName);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalConfig({
+      type: '',
+      title: '',
+      message: '',
+      candidateId: null,
+      candidateName: '',
+      onConfirm: null
+    });
   };
 
   const getStatusBadge = (status) => {
@@ -133,32 +232,6 @@ const CandidateDetails = () => {
     navigate(`/candidates/${candidateId}`);
   };
 
-  const handleDeleteCandidate = async (candidateId, candidateName) => {
-    if (window.confirm(`Are you sure you want to delete ${candidateName}?`)) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/candidates/${candidateId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          setCandidates(candidates.filter(c => c._id !== candidateId));
-          alert('Candidate deleted successfully');
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to delete candidate');
-        }
-      } catch (error) {
-        console.error('Error deleting candidate:', error);
-        alert(error.message || 'Failed to delete candidate');
-      }
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('role');
     localStorage.removeItem('token');
@@ -177,6 +250,87 @@ const CandidateDetails = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  // Modal Component
+  const Modal = () => {
+    if (!showModal) return null;
+
+    const getModalStyles = () => {
+      switch (modalConfig.type) {
+        case 'success':
+          return {
+            border: 'border-green-500',
+            button: 'bg-green-600 hover:bg-green-700',
+            icon: '✅'
+          };
+        case 'error':
+          return {
+            border: 'border-red-500',
+            button: 'bg-red-600 hover:bg-red-700',
+            icon: '❌'
+          };
+        case 'delete':
+          return {
+            border: 'border-red-500',
+            button: 'bg-red-600 hover:bg-red-700',
+            icon: '🗑️'
+          };
+        default:
+          return {
+            border: 'border-gray-500',
+            button: 'bg-[#03624c] hover:bg-[#024a3a]',
+            icon: 'ℹ️'
+          };
+      }
+    };
+
+    const styles = getModalStyles();
+    const isConfirmation = modalConfig.type === 'delete';
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        onClick={closeModal}
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          className="bg-white rounded-2xl shadow-xl max-w-md w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={`p-6 border-t-4 ${styles.border}`}>
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">{styles.icon}</span>
+              <h3 className="text-xl font-bold text-gray-900">{modalConfig.title}</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">{modalConfig.message}</p>
+            
+            <div className="flex justify-end space-x-3">
+              {isConfirmation && (
+                <button
+                  onClick={closeModal}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                onClick={modalConfig.onConfirm || closeModal}
+                className={`px-6 py-2 text-white font-medium rounded-lg transition-colors ${styles.button}`}
+              >
+                {isConfirmation ? 'Confirm' : 'OK'}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
   };
 
   if (loading) {
@@ -266,16 +420,6 @@ const CandidateDetails = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {/* <div className="flex justify-between items-center">
-                <motion.h2 
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
-                >
-                  Manage Candidates
-                </motion.h2>
-              </div> */}
-
               {/* Filters Section */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -500,6 +644,11 @@ const CandidateDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom Modal */}
+      <AnimatePresence>
+        {showModal && <Modal />}
+      </AnimatePresence>
     </motion.div>
   );
 };

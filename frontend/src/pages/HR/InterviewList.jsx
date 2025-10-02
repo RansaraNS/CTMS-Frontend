@@ -14,15 +14,23 @@ const InterviewList = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('');
   const [error, setError] = useState('');
-  const [joinedInterviews, setJoinedInterviews] = useState([]); // Track joined meetings
+  const [joinedInterviews, setJoinedInterviews] = useState([]);
+  
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    type: '', // 'cancel', 'delete', 'success', 'error'
+    title: '',
+    message: '',
+    interviewId: null,
+    onConfirm: null
+  });
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    // Load joined interviews from localStorage
     const storedJoined = JSON.parse(localStorage.getItem('joinedInterviews')) || [];
     setJoinedInterviews(storedJoined);
-
     fetchInterviews();
   }, []);
 
@@ -85,6 +93,112 @@ const InterviewList = () => {
     setFilteredInterviews(filtered);
   };
 
+  // Modal functions
+  const showConfirmationModal = (type, interviewId, interviewDetails = {}) => {
+    const candidate = interviewDetails.candidate || {};
+    const candidateName = `${candidate.firstName || ''} ${candidate.lastName || ''}`.trim() || 'this interview';
+    
+    const modalConfigs = {
+      cancel: {
+        title: 'Cancel Interview',
+        message: `Are you sure you want to cancel the interview with ${candidateName}?`,
+        type: 'cancel'
+      },
+      delete: {
+        title: 'Delete Interview',
+        message: `Are you sure you want to permanently delete the interview with ${candidateName}? This action cannot be undone.`,
+        type: 'delete'
+      }
+    };
+
+    setModalConfig({
+      ...modalConfigs[type],
+      interviewId,
+      onConfirm: () => handleConfirmAction(type, interviewId)
+    });
+    setShowModal(true);
+  };
+
+  const showResultModal = (type, title, message) => {
+    setModalConfig({
+      type,
+      title,
+      message,
+      interviewId: null,
+      onConfirm: () => setShowModal(false)
+    });
+    setShowModal(true);
+  };
+
+  const handleConfirmAction = async (type, interviewId) => {
+    try {
+      const token = localStorage.getItem('token');
+      let response;
+
+      if (type === 'cancel') {
+        response = await fetch(`http://localhost:5000/api/interviews/${interviewId}/cancel`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      } else if (type === 'delete') {
+        response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${type} interview`);
+      }
+
+      await fetchInterviews();
+      
+      // Show success message
+      showResultModal(
+        'success', 
+        `${type === 'cancel' ? 'Cancelled' : 'Deleted'} Successfully`, 
+        `Interview has been ${type === 'cancel' ? 'cancelled' : 'deleted'} successfully.`
+      );
+      
+    } catch (error) {
+      console.error(`Error ${type}ing interview:`, error);
+      
+      // Show error message
+      showResultModal(
+        'error', 
+        `Failed to ${type === 'cancel' ? 'Cancel' : 'Delete'}`, 
+        `Failed to ${type} the interview. Please try again.`
+      );
+    }
+  };
+
+  const handleCancelInterview = (interviewId) => {
+    const interview = interviews.find(i => i._id === interviewId);
+    showConfirmationModal('cancel', interviewId, interview);
+  };
+
+  const handleDeleteInterview = (interviewId) => {
+    const interview = interviews.find(i => i._id === interviewId);
+    showConfirmationModal('delete', interviewId, interview);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalConfig({
+      type: '',
+      title: '',
+      message: '',
+      interviewId: null,
+      onConfirm: null
+    });
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       scheduled: { color: 'bg-[#03624c] text-white', label: 'Scheduled' },
@@ -140,8 +254,6 @@ const InterviewList = () => {
     });
   };
 
-  
-
   const handleAddFeedback = (interviewId) => {
     navigate(`/interviews/${interviewId}/feedback`);
   };
@@ -150,63 +262,11 @@ const InterviewList = () => {
     navigate(`/interviews/${interviewId}/view-feedback`);
   };
 
-const handleReschedule = (interviewId) => {
-  navigate(`/interviews/${interviewId}/reschedule`);
-};
-
-
-  const handleCancelInterview = async (interviewId) => {
-    if (window.confirm('Are you sure you want to cancel this interview?')) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}/cancel`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to cancel interview');
-        }
-        
-        await fetchInterviews();
-        alert('Interview cancelled successfully');
-      } catch (error) {
-        console.error('Error cancelling interview:', error);
-        alert('Failed to cancel interview');
-      }
-    }
-  };
-
-  const handleDeleteInterview = async (interviewId) => {
-    if (window.confirm('Are you sure you want to permanently delete this interview? This action cannot be undone.')) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/interviews/${interviewId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to delete interview');
-        }
-        
-        await fetchInterviews();
-        alert('Interview deleted successfully');
-      } catch (error) {
-        console.error('Error deleting interview:', error);
-        alert('Failed to delete interview');
-      }
-    }
+  const handleReschedule = (interviewId) => {
+    navigate(`/interviews/${interviewId}/reschedule`);
   };
 
   const handleJoinMeeting = (interviewId) => {
-    // Mark this interview as joined and save to localStorage
     setJoinedInterviews(prev => {
       const updated = [...prev, interviewId];
       localStorage.setItem('joinedInterviews', JSON.stringify(updated));
@@ -222,8 +282,94 @@ const handleReschedule = (interviewId) => {
     localStorage.removeItem('role');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('joinedInterviews'); // clear joined interviews on logout
+    localStorage.removeItem('joinedInterviews');
     navigate('/');
+  };
+
+  const Modal = () => {
+    if (!showModal) return null;
+
+    const getModalStyles = () => {
+      switch (modalConfig.type) {
+        case 'success':
+          return {
+            border: 'border-green-500',
+            button: 'bg-green-600 hover:bg-green-700',
+            icon: '✅'
+          };
+        case 'error':
+          return {
+            border: 'border-red-500',
+            button: 'bg-red-600 hover:bg-red-700',
+            icon: '❌'
+          };
+        case 'cancel':
+          return {
+            border: 'border-orange-500',
+            button: 'bg-orange-600 hover:bg-orange-700',
+            icon: '⚠️'
+          };
+        case 'delete':
+          return {
+            border: 'border-red-500',
+            button: 'bg-red-600 hover:bg-red-700',
+            icon: '🗑️'
+          };
+        default:
+          return {
+            border: 'border-gray-500',
+            button: 'bg-[#03624c] hover:bg-[#024a3a]',
+            icon: 'ℹ️'
+          };
+      }
+    };
+
+    const styles = getModalStyles();
+    const isConfirmation = modalConfig.type === 'cancel' || modalConfig.type === 'delete';
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        onClick={closeModal}
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          className="bg-white rounded-2xl shadow-xl max-w-md w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={`p-6 border-t-4 ${styles.border}`}>
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">{styles.icon}</span>
+              <h3 className="text-xl font-bold text-gray-900">{modalConfig.title}</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">{modalConfig.message}</p>
+            
+            <div className="flex justify-end space-x-3">
+              {isConfirmation && (
+                <button
+                  onClick={closeModal}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                onClick={modalConfig.onConfirm || closeModal}
+                className={`px-6 py-2 text-white font-medium rounded-lg transition-colors ${styles.button}`}
+              >
+                {isConfirmation ? 'Confirm' : 'OK'}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
   };
 
   if (loading) {
@@ -308,14 +454,8 @@ const handleReschedule = (interviewId) => {
           <Sidebar/>
 
           {/* Main Content */}
-          <div className="flex-1 p-6 overflow-auto">
+          <div className="flex-1 p-5 overflow-hidden">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              <div className="flex justify-between items-center">
-                {/* <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">
-                  Manage Interviews
-                </motion.h2> */}
-              </div>
-
               {/* Filters Section */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white p-6 rounded-2xl shadow-xl">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
@@ -360,7 +500,7 @@ const handleReschedule = (interviewId) => {
               </motion.div>
 
               {/* Interviews Table */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl shadow-xl overflow-y-auto">
                 {filteredInterviews.length === 0 ? (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
                     <div className="text-6xl mb-4">📋</div>
@@ -376,11 +516,11 @@ const handleReschedule = (interviewId) => {
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-white divide-y divide-gray-200 ">
                         <AnimatePresence>
                           {filteredInterviews.map((interview, index) => {
                             const candidate = interview.candidate || {};
-                            const hasJoined = joinedInterviews.includes(interview._id); // Check if joined
+                            const hasJoined = joinedInterviews.includes(interview._id);
                             return (
                               <motion.tr key={interview._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4">
@@ -443,6 +583,11 @@ const handleReschedule = (interviewId) => {
           </div>
         </div>
       </div>
+
+      {/* Custom Modal */}
+      <AnimatePresence>
+        {showModal && <Modal />}
+      </AnimatePresence>
     </motion.div>
   );
 };
