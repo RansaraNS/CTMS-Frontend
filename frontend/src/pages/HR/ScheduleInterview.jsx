@@ -16,6 +16,7 @@ const ScheduleInterview = () => {
     meetingLink: ''
   });
   const [errors, setErrors] = useState({});
+  const [warnings, setWarnings] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [candidates, setCandidates] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
@@ -77,6 +78,37 @@ const ScheduleInterview = () => {
     if (successMessage) {
       setSuccessMessage('');
     }
+
+    // Enhanced validation for meeting link
+    if (id === 'meetingLink' && value.trim() !== '') {
+      if (isValidUrl(value)) {
+        const url = new URL(value);
+        const meetingDomains = [
+          'meet.google.com',
+          'zoom.us',
+          'teams.microsoft.com',
+          'webex.com',
+          'gotomeet.me',
+          'gotomeeting.com'
+        ];
+        
+        const isKnownMeetingPlatform = meetingDomains.some(domain => 
+          url.hostname.includes(domain)
+        );
+        
+        if (!isKnownMeetingPlatform) {
+          setWarnings(prev => ({
+            ...prev,
+            meetingLink: 'This may not be a standard meeting platform. Please double-check the URL.'
+          }));
+        } else {
+          setWarnings(prev => ({
+            ...prev,
+            meetingLink: ''
+          }));
+        }
+      }
+    }
   };
 
   const combineDateTime = (dateString, timeString) => {
@@ -87,6 +119,37 @@ const ScheduleInterview = () => {
     date.setHours(hours, minutes, 0, 0);
 
     return date.toISOString();
+  };
+
+  const isValidUrl = (string) => {
+    try {
+      const url = new URL(string);
+      
+      // Check if it's a valid URL
+      if (!url.protocol || !url.host) {
+        return false;
+      }
+      
+      // Additional check for common meeting platforms
+      const meetingDomains = [
+        'meet.google.com',
+        'zoom.us',
+        'teams.microsoft.com',
+        'webex.com',
+        'gotomeet.me',
+        'gotomeeting.com'
+      ];
+      
+      const isMeetingLink = meetingDomains.some(domain => 
+        url.hostname.includes(domain)
+      );
+      
+      // Allow any valid URL, but show warning for non-meeting domains
+      return true;
+      
+    } catch (_) {
+      return false;
+    }
   };
 
   const validateForm = () => {
@@ -130,153 +193,103 @@ const ScheduleInterview = () => {
       newErrors.interviewers = 'Interviewers are required.';
     }
 
-    if (!formData.meetingLink) {
-      newErrors.meetingLink = 'Meeting link is required.';
+    // Enhanced meeting link validation
+    if (!formData.meetingLink || formData.meetingLink.trim() === '') {
+      newErrors.meetingLink = 'Meeting link is required for scheduling interviews.';
     } else if (!isValidUrl(formData.meetingLink)) {
-      newErrors.meetingLink = 'Please enter a valid URL.';
+      newErrors.meetingLink = 'Please enter a valid meeting URL (e.g., https://meet.google.com/abc-def-ghi)';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const isValidUrl = (string) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
+      const token = localStorage.getItem('token');
+
+      const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
+
+      if (!interviewDateTime) {
+        throw new Error('Invalid date or time format');
+      }
+
+      // Enhanced validation for meeting link - double check
+      if (!formData.meetingLink || formData.meetingLink.trim() === '') {
+        setErrors(prev => ({
+          ...prev,
+          meetingLink: 'Meeting link is required for scheduling interviews.'
+        }));
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate URL format - double check
+      if (!isValidUrl(formData.meetingLink)) {
+        setErrors(prev => ({
+          ...prev,
+          meetingLink: 'Please enter a valid meeting URL (e.g., https://meet.google.com/abc-def-ghi)'
+        }));
+        setIsSubmitting(false);
+        return;
+      }
+
+      const requestBody = {
+        candidateId: formData.candidateId,
+        interviewDate: interviewDateTime,
+        interviewType: formData.interviewType,
+        interviewers: formData.interviewers.split(',').map(i => i.trim()),
+        meetingLink: formData.meetingLink
+      };
+
+      const response = await fetch('http://localhost:5000/api/interviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
+      }
+
+      setSuccessMessage('Interview scheduled successfully! Emails sent to candidate and interviewers.');
+
+      // Reset form
+      setFormData({
+        candidateId: '',
+        interviewDate: '',
+        interviewTime: '',
+        interviewType: 'technical',
+        interviewers: '',
+        meetingLink: ''
+      });
+
+      setErrors({});
+      setWarnings({});
+
+    } catch (error) {
+      console.error('Error scheduling interview:', error);
+      setErrors({
+        submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!validateForm()) {
-  //     return;
-  //   }
-
-  //   setIsSubmitting(true);
-
-  //   try {
-  //     const token = localStorage.getItem('token');
-
-  //     const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
-
-  //     if (!interviewDateTime) {
-  //       throw new Error('Invalid date or time format');
-  //     }
-
-  //     const requestBody = {
-  //       candidateId: formData.candidateId,
-  //       interviewDate: interviewDateTime,
-  //       interviewType: formData.interviewType,
-  //       interviewers: formData.interviewers.split(',').map(i => i.trim()),
-  //       meetingLink: formData.meetingLink
-  //     };
-
-  //     const response = await fetch('http://localhost:5000/api/interviews', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${token}`
-  //       },
-  //       body: JSON.stringify(requestBody)
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
-  //     }
-
-  //     setSuccessMessage('Interview scheduled successfully!');
-
-  //     setFormData({
-  //       candidateId: '',
-  //       interviewDate: '',
-  //       interviewTime: '',
-  //       interviewType: 'technical',
-  //       interviewers: '',
-  //       meetingLink: ''
-  //     });
-
-  //     setErrors({});
-
-  //   } catch (error) {
-  //     console.error('Error scheduling interview:', error);
-  //     setErrors({
-  //       submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
-  //     });
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!validateForm()) {
-    return;
-  }
-
-  setIsSubmitting(true);
-
-  try {
-    const token = localStorage.getItem('token');
-
-    const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
-
-    if (!interviewDateTime) {
-      throw new Error('Invalid date or time format');
-    }
-
-    const requestBody = {
-      candidateId: formData.candidateId,
-      interviewDate: interviewDateTime,
-      interviewType: formData.interviewType,
-      interviewers: formData.interviewers.split(',').map(i => i.trim()),
-      meetingLink: formData.meetingLink
-    };
-
-    const response = await fetch('http://localhost:5000/api/interviews', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || `Failed to schedule interview: ${response.status}`);
-    }
-
-    setSuccessMessage('Interview scheduled successfully! Emails sent to candidate and interviewers.');
-
-    setFormData({
-      candidateId: '',
-      interviewDate: '',
-      interviewTime: '',
-      interviewType: 'technical',
-      interviewers: '',
-      meetingLink: ''
-    });
-
-    setErrors({});
-
-  } catch (error) {
-    console.error('Error scheduling interview:', error);
-    setErrors({
-      submit: error.message || 'An error occurred while scheduling the interview. Please try again.'
-    });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
   const getMinDate = () => {
     return new Date().toISOString().split('T')[0];
   };
@@ -337,7 +350,7 @@ const ScheduleInterview = () => {
         {/* Sidebar + Main Content */}
         <div className="flex flex-1">
           {/* Enhanced Sidebar */}
-           <Sidebar/>
+          <Sidebar/>
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-auto">
@@ -598,6 +611,16 @@ const ScheduleInterview = () => {
                         className="mt-2 text-sm text-red-600"
                       >
                         {errors.meetingLink}
+                      </motion.p>
+                    )}
+                    {/* Warning for non-standard meeting platforms */}
+                    {warnings.meetingLink && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-2 text-sm text-yellow-600 bg-yellow-50 p-2 rounded"
+                      >
+                        ⚠️ {warnings.meetingLink}
                       </motion.p>
                     )}
                   </motion.div>
