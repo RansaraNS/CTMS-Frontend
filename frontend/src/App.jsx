@@ -1,0 +1,230 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import HRDashboard from './pages/HR/HRDashboard';
+import CreateHR from './pages/Admin/CreateHR';
+import AddCandidate from './pages/HR/AddCandidate';
+import CandidateDetails from './pages/HR/CandidateDetails';
+import ScheduleInterview from './pages/HR/ScheduleInterview';
+import InterviewList from './pages/HR/InterviewList';
+import ManageHR from './pages/Admin/ManageHR';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import { isAuthenticated } from './context/auth';
+import InterviewFeedback from './pages/HR/InterviewFeedback';
+import ViewFeedback from './pages/HR/ViewFeedback';
+import CandidateDetailsView from './pages/HR/CandidateDetailsView';
+import ViewInterviews from './pages/Admin/ViewInterviews';
+import InterviewReport from './pages/Admin/InterviewReport';
+import InterviewDetail from './pages/HR/InterviewDetail';
+import RescheduleInterview from './pages/HR/RescheduleInterview';
+import ManageCandidates from './pages/Admin/ManageCandidates';
+import ViewCandidate from './pages/Admin/ViewCandidate';
+import CandidateReportAdmin from './pages/Admin/CandidateReportAdmin';
+import GenerateCandidatesReports from './pages/HR/GenerateCandidatesReports.jsx';
+import GenerateInterviewsReports from "./pages/HR/GenerateInterviewsReports.jsx";
+import ReportsHome from "./pages/HR/ReportsHome.jsx";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            isAuthenticated() ? 
+            <Navigate to={localStorage.getItem('role') === 'admin' ? '/admin/dashboard' : '/hr/dashboard'} replace /> : 
+            <Login />
+          } 
+        />
+        <Route path="/login" element={<Login />} />
+        
+        {/* Admin Routes */}
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/create-hr" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <CreateHR />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/manage-hr" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageHR />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/manage-candidate" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageCandidates />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidates/:Id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ViewCandidate />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/view-interviews" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ViewInterviews />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/:interviewId/report-interviews" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <InterviewReport />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/candidate-report" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <CandidateReportAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* HR Routes */}
+        <Route 
+          path="/hr/dashboard" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <HRDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/hr/add-candidate" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <AddCandidate />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/hr/schedule-interview" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <ScheduleInterview />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/candidates" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <CandidateDetails />
+            </ProtectedRoute>
+          } 
+        />
+             
+        <Route 
+          path="/candidates/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <CandidateDetailsView />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/interviews" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <InterviewList />
+            </ProtectedRoute>
+          } 
+        />
+
+         <Route 
+          path="/interviews/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <InterviewDetail />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/interviews/:id/reschedule" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <RescheduleInterview />
+            </ProtectedRoute>
+          } 
+        />
+
+          <Route 
+          path="/interviews/:interviewId/feedback" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <InterviewFeedback />
+            </ProtectedRoute>
+          } 
+        />
+
+          <Route 
+          path="/interviews/:interviewId/view-feedback" 
+          element={
+            <ProtectedRoute allowedRoles={['hr']}>
+              <ViewFeedback />
+            </ProtectedRoute>
+          } 
+        />
+
+          <Route
+              path="/hr/candidates-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateCandidatesReports />
+                  </ProtectedRoute>
+              }
+          />
+
+          <Route
+              path="/hr/interviews-report"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <GenerateInterviewsReports />
+                  </ProtectedRoute>
+              }
+          />
+
+          <Route
+              path="/hr/reports"
+              element={
+                  <ProtectedRoute allowedRoles={['hr']}>
+                      <ReportsHome />
+                  </ProtectedRoute>
+              }
+          />
+        
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
