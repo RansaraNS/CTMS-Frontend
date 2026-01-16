@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
+import { LogOut, User, Briefcase, Mail, Lock, Shield, AlertCircle, UserPlus } from 'lucide-react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 const CreateHR = () => {
@@ -14,8 +13,10 @@ const CreateHR = () => {
     formState: { errors },
     reset,
   } = useForm({ mode: 'onBlur' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       const response = await fetch('http://localhost:5000/api/auth/register-hr', {
         method: 'POST',
@@ -34,6 +35,8 @@ const CreateHR = () => {
       }
     } catch (error) {
       alert('An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -44,252 +47,224 @@ const CreateHR = () => {
     navigate('/');
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.7, 
-        staggerChildren: 0.1,
-        delayChildren: 0.2 
-      } 
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      scale: 1, 
-      transition: { 
-        duration: 0.5, 
-        ease: "easeOut" 
-      } 
-    },
-  };
-
-  const formVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      transition: { 
-        duration: 0.6, 
-        ease: "easeOut" 
-      } 
-    },
-  };
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans overflow-hidden">
-      <div className="flex flex-1 flex-col w-full">
-        {/* Navbar */}
-        <motion.nav 
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <AdminSidebar />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Create HR Personnel</h1>
+              <p className="text-sm text-gray-600">Add new human resources staff member</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, Admin</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, Admin</span>
+            </div>
+            <button
               onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
             >
-              <FiLogOut className="mr-2" /> Logout
-            </motion.button>
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
-        </motion.nav>
+        </header>
 
-        {/* Sidebar and Main Content */}
-        <div className="flex flex-1">
-          <AdminSidebar/>
+        {/* Form Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl p-8 shadow-md border border-gray-100">
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-xl flex items-center justify-center">
+                    <UserPlus className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-[#050C9C]">New HR Registration</h2>
+                    <p className="text-sm text-gray-600">Fill in the details to create a new HR account</p>
+                  </div>
+                </div>
+              </div>
 
-          <div className="flex-1 p-10 overflow-auto">
-            <motion.div 
-              initial="hidden" 
-              animate="visible" 
-              variants={formVariants} 
-              className="max-w-3xl mx-auto"
-            >
-              {/* Form Card */}
-              <motion.div 
-                initial="hidden" 
-                animate="visible" 
-                variants={containerVariants}
-                className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20"
-              >
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <label className="block text-gray-700 text-sm font-semibold" htmlFor="name">
-                      Full Name
-                      <span className="text-[#00df82] ml-1">★</span>
-                    </label>
+              <div className="space-y-6">
+                {/* Full Name */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-gray-400" />
+                    </div>
                     <input
-                      className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
-                        errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
-                      }`}
                       id="name"
                       type="text"
-                      placeholder="Enter full name (e.g., John Doe)"
+                      placeholder="Enter full name (e.g., Saman Gunawardena)"
                       {...register('name', { 
                         required: 'Full name is required', 
                         minLength: { value: 2, message: 'Name must be at least 2 characters' } 
                       })}
+                      className={`w-full pl-12 pr-4 py-3 border rounded-xl bg-gray-50 focus:bg-white transition-colors duration-200 outline-none ${
+                        errors.name
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
                     />
-                    {errors.name && (
-                      <motion.p 
-                        initial={{ opacity: 0, x: -10 }} 
-                        animate={{ opacity: 1, x: 0 }} 
-                        className="text-sm text-red-600 flex items-center"
-                      >
-                        <span className="mr-1">⚠️</span> {errors.name.message}
-                      </motion.p>
-                    )}
-                  </motion.div>
+                  </div>
+                  {errors.name && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
 
-                 <motion.div variants={itemVariants} className="space-y-6">
-  <label className="block text-gray-700 text-sm font-semibold" htmlFor="email">
-    Email Address
-    <span className="text-[#00df82] ml-1">★</span>
-  </label>
-  <input
-    className={`w-full px-6 py-5 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
-      errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
-    }`}
-    id="email"
-    type="email"
-    placeholder="Enter email (e.g., john.doe@hr.gamagerecruiters.lk)"
-    {...register('email', { 
-      required: 'Email is required',
-      validate: {
-        validFormat: (value) => {
-          const emailRegex = /^[a-zA-Z0-9._%+-]+@hr\.gamagerecruiters\.lk$/;
-          return emailRegex.test(value) || 'Email must end with @hr.gamagerecruiters.lk';
-        }
-      }
-    })}
-  />
-  {errors.email && (
-    <motion.p 
-      initial={{ opacity: 0, x: -10 }} 
-      animate={{ opacity: 1, x: 0 }} 
-      className="text-sm text-red-600 flex items-center"
-    >
-      <span className="mr-1">⚠️</span> {errors.email.message}
-    </motion.p>
-  )}
-</motion.div>
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <label className="block text-gray-700 text-sm font-semibold" htmlFor="password">
-                      Password
-                      <span className="text-[#00df82] ml-1">★</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
-                          errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
-                        }`}
-                        id="password"
-                        type="password"
-                        placeholder="Enter secure password (minimum 6 characters)"
-                        {...register('password', { 
-                          required: 'Password is required', 
-                          minLength: { value: 6, message: 'Password must be at least 6 characters' } 
-                        })}
-                      />
-                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                      </div>
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
                     </div>
-                    {errors.password && (
-                      <motion.p 
-                        initial={{ opacity: 0, x: -10 }} 
-                        animate={{ opacity: 1, x: 0 }} 
-                        className="text-sm text-red-600 flex items-center"
-                      >
-                        <span className="mr-1">⚠️</span> {errors.password.message}
-                      </motion.p>
-                    )}
-                  </motion.div>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="saman.g@hr.gamagerecruiters.lk"
+                      {...register('email', { 
+                        required: 'Email is required',
+                        validate: {
+                          validFormat: (value) => {
+                            const emailRegex = /^[a-zA-Z0-9._%+-]+@hr\.gamagerecruiters\.lk$/;
+                            return emailRegex.test(value) || 'Email must end with @hr.gamagerecruiters.lk';
+                          }
+                        }
+                      })}
+                      className={`w-full pl-12 pr-4 py-3 border rounded-xl bg-gray-50 focus:bg-white transition-colors duration-200 outline-none ${
+                        errors.email
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.email.message}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-gray-500">
+                    Email must end with @hr.gamagerecruiters.lk
+                  </p>
+                </div>
 
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <label className="block text-gray-700 text-sm font-semibold" htmlFor="role">
-                      Role
-                      <span className="text-[#00df82] ml-1">★</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className={`w-full px-6 py-5 pr-14 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82]/20 transition-all duration-300 shadow-md ${
-                          errors.role ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-[#03624c]'
-                        }`}
-                        id="role"
-                        type="text"
-                        placeholder="Enter role (e.g., HR)"
-                        {...register('role', { 
-                          required: 'Role is required', 
-                          pattern: { value: /^(hr)$/i, message: 'Role must be "hr"' } 
-                        })}
-                      />
-                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                        <span className="text-sm bg-gray-100 px-3 py-2 rounded-full">HR</span>
-                      </div>
+                {/* Password */}
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
                     </div>
-                    {errors.role && (
-                      <motion.p 
-                        initial={{ opacity: 0, x: -10 }} 
-                        animate={{ opacity: 1, x: 0 }} 
-                        className="text-sm text-red-600 flex items-center"
-                      >
-                        <span className="mr-1">⚠️</span> {errors.role.message}
-                      </motion.p>
-                    )}
-                  </motion.div>
+                    <input
+                      id="password"
+                      type="password"
+                      placeholder="Enter secure password (minimum 6 characters)"
+                      {...register('password', { 
+                        required: 'Password is required', 
+                        minLength: { value: 6, message: 'Password must be at least 6 characters' } 
+                      })}
+                      className={`w-full pl-12 pr-4 py-3 border rounded-xl bg-gray-50 focus:bg-white transition-colors duration-200 outline-none ${
+                        errors.password
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
+                    />
+                  </div>
+                  {errors.password && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
 
-                  <motion.button 
-                    variants={itemVariants} 
-                    whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 223, 130, 0.3)' }} 
-                    whileTap={{ scale: 0.98 }} 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition duration-300 focus:ring-2 focus:ring-[#00df82]/50"
-                  >
-                    <span className="inline-flex items-center">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                {/* Role */}
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Role <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Shield className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="role"
+                      type="text"
+                      placeholder="Enter role (e.g., HR)"
+                      {...register('role', { 
+                        required: 'Role is required', 
+                        pattern: { value: /^(hr)$/i, message: 'Role must be "hr"' } 
+                      })}
+                      className={`w-full pl-12 pr-20 py-3 border rounded-xl bg-gray-50 focus:bg-white transition-colors duration-200 outline-none ${
+                        errors.role
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                      <span className="text-xs bg-[#A7E6FF] text-[#050C9C] px-3 py-1 rounded-lg font-medium">
+                        HR
+                      </span>
+                    </div>
+                  </div>
+                  {errors.role && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.role.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                  className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white py-4 px-6 rounded-xl font-semibold shadow-lg shadow-[#3572EF]/30 transition-all duration-200 ${
+                    isSubmitting
+                      ? 'opacity-60 cursor-not-allowed'
+                      : 'hover:shadow-xl hover:shadow-[#3572EF]/40 hover:-translate-y-0.5 active:translate-y-0'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
+                      Creating HR...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-5 h-5" />
                       Create New HR
-                    </span>
-                  </motion.button>
-                </form>
-              </motion.div>
-            </motion.div>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

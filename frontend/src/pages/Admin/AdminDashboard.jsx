@@ -1,13 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut, FiUser } from 'react-icons/fi';
+import { LogOut, UserPlus, Eye, User, Briefcase, Users, Calendar } from 'lucide-react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [latestHrs, setLatestHrs] = useState([]);
+  const [stats] = useState({
+    totalHRs: 12,
+    totalCandidates: 45,
+    activeInterviews: 8,
+    pendingReviews: 15
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('role');
@@ -39,157 +44,126 @@ const AdminDashboard = () => {
     fetchLatestHrs();
   }, []);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
-    },
-  };
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#A7E6FF]">
+      {/* Sidebar */}
+      <AdminSidebar />
+
       {/* Main Content */}
-      <div className="flex flex-1 flex-col w-full">
-        {/* Navbar */}
-        <motion.nav
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking System
-            </h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, Admin</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
-            >
-              <FiLogOut className="mr-2" /> Logout
-            </motion.button>
-          </div>
-        </motion.nav>
-
-        {/* Sidebar and Main Content */}
-        <div className="flex flex-1">
-          <AdminSidebar/>
-
-          {/* Main Panel */}
-          <div className="flex-1 p-6 overflow-auto">
-            <div className="space-y-10">
-
-              {/* Recent HR Section */}
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={cardVariants}
-                className="bg-white/20 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/30"
-              >
-                <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-2xl font-semibold text-white">Recent HR Personnel</h3>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigateTo('/admin/manage-hr')}
-                    className="bg-gradient-to-r from-[#00df82] to-[#03624c] text-white px-6 py-3 rounded-xl shadow-md font-semibold hover:opacity-90"
-                  >
-                    View All HRs
-                  </motion.button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <AnimatePresence>
-                    {latestHrs.length > 0 ? (
-                      latestHrs.map((hr) => (
-                        <motion.div
-                          key={hr._id}
-                          initial="hidden"
-                          animate="visible"
-                          exit="hidden"
-                          variants={itemVariants}
-                          whileHover={{ scale: 1.03, y: -4 }}
-                          className="bg-white/90 p-6 rounded-2xl shadow-lg border border-gray-200 flex flex-col items-start gap-2"
-                        >
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-12 h-12 bg-[#00df82]/20 rounded-full flex items-center justify-center">
-                              <FiUser className="text-[#03624c] text-xl" />
-                            </div>
-                            <p className="text-gray-800 font-semibold text-lg">{hr.name}</p>
-                          </div>
-                          <p className="text-gray-600 text-sm">📧 {hr.email}</p>
-                          <p className="text-gray-600 text-sm">👔 Role: {hr.role}</p>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-gray-200 text-center col-span-full text-lg"
-                      >
-                        No recent HR data available.
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-
-              {/* Quick Actions Section */}
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={cardVariants}
-                className="bg-white/20 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/30"
-              >
-                <h3 className="text-2xl font-semibold text-white mb-8">Quick Actions</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigateTo('/admin/create-hr')}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-6 rounded-2xl shadow-lg flex items-center justify-center gap-3 text-lg"
-                  >
-                    <FiUserPlus className="text-2xl" /> Add New HR
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigateTo('/admin/view-interviews')}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white font-bold py-6 rounded-2xl shadow-lg flex items-center justify-center gap-3 text-lg"
-                  >
-                    <FiEye className="text-2xl" /> View All Interviews
-                  </motion.button>
-                </div>
-              </motion.div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Admin Dashboard</h1>
+              <p className="text-sm text-gray-600">Candidate Tracking Management System</p>
             </div>
           </div>
-        </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, Admin</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        </header>
+
+        {/* Main Panel */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { label: 'Total HR Personnel', value: stats.totalHRs, icon: Users, color: 'from-[#3572EF] to-[#3ABEF9]' },
+                { label: 'Total Candidates', value: stats.totalCandidates, icon: User, color: 'from-[#050C9C] to-[#3572EF]' },
+                { label: 'Active Interviews', value: stats.activeInterviews, icon: Calendar, color: 'from-[#3ABEF9] to-[#A7E6FF]' },
+                { label: 'Pending Reviews', value: stats.pendingReviews, icon: Eye, color: 'from-[#3572EF] to-[#3ABEF9]' },
+              ].map((stat, index) => (
+                <div key={index} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                      <stat.icon className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-3xl font-bold text-[#050C9C] mb-1">{stat.value}</p>
+                  <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Recent HR Personnel */}
+            <div className="bg-white rounded-2xl p-8 shadow-md border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-[#050C9C]">Recent HR Personnel</h2>
+                <button
+                  onClick={() => navigateTo('/admin/manage-hr')}
+                  className="px-4 py-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+                >
+                  View All HRs
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {latestHrs.length > 0 ? (
+                  latestHrs.map((hr) => (
+                    <div
+                      key={hr._id}
+                      className="bg-gray-50 rounded-xl p-5 border border-gray-200 hover:border-[#3ABEF9] hover:shadow-md transition-all duration-200"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-xl flex items-center justify-center flex-shrink-0">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[#050C9C] mb-1 truncate">{hr.name}</p>
+                          <p className="text-sm text-gray-600 mb-1 truncate">{hr.email}</p>
+                          <div className="inline-flex items-center px-2 py-1 bg-[#A7E6FF] rounded-lg">
+                            <span className="text-xs font-medium text-[#050C9C]">{hr.role}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">No recent HR data available.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl p-8 shadow-md border border-gray-100">
+              <h2 className="text-xl font-semibold text-[#050C9C] mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  onClick={() => navigateTo('/admin/create-hr')}
+                  className="flex items-center justify-center gap-3 p-6 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-200"
+                >
+                  <UserPlus className="w-6 h-6" />
+                  Add New HR Personnel
+                </button>
+                <button
+                  onClick={() => navigateTo('/admin/view-interviews')}
+                  className="flex items-center justify-center gap-3 p-6 bg-gradient-to-r from-[#050C9C] to-[#3572EF] text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-200"
+                >
+                  <Eye className="w-6 h-6" />
+                  View All Interviews
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );

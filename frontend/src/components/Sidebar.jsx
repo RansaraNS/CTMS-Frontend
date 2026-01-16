@@ -1,15 +1,7 @@
 /* eslint-disable no-unused-vars */
- 
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiHome, FiUserPlus, FiUsers, FiEye } from 'react-icons/fi';
-import { GrSchedules } from "react-icons/gr";
-import { MdManageHistory } from "react-icons/md";
-
-
-
+import { Home, UserPlus, Calendar, History, Eye, Briefcase } from 'lucide-react';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -21,11 +13,11 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { path: "/hr/dashboard", icon: <FiHome className="text-lg" />, label: "HR Dashboard" },
-    { path: "/hr/add-candidate", icon: <FiUserPlus className="text-lg" />, label: "Add Candidate" },
-    { path: "/hr/schedule-interview", icon: <GrSchedules  className="text-lg" />, label: "Schedule Interview" },
-    { path: "/interviews", icon: <MdManageHistory  className="text-lg" />, label: "Manage Interviews" },
-    { path: "/candidates", icon:<FiEye className="text-lg" />, label: "View Candidates" },
+    { path: "/hr/dashboard", icon: Home, label: "HR Dashboard" },
+    { path: "/hr/add-candidate", icon: UserPlus, label: "Add Candidate" },
+    { path: "/hr/schedule-interview", icon: Calendar, label: "Schedule Interview" },
+    { path: "/interviews", icon: History, label: "Manage Interviews" },
+    { path: "/candidates", icon: Eye, label: "View Candidates" },
   ];
 
   const isActivePath = (path) => {
@@ -33,73 +25,65 @@ const Sidebar = () => {
   };
 
   return (
-    <motion.div
-      initial={{ x: -300 }}
-      animate={{ x: 0 }}
-      transition={{ type: "spring", stiffness: 100 }}
-      className="w-64 bg-gradient-to-b from-[#030f0f] to-[#03624c] text-white h-full shadow-2xl"
-    >
-      <nav className="flex flex-col h-full py-6">
- 
-
-        {/* Navigation Items */}
-        <div className="flex-1">
-          {menuItems.map((item, index) => (
-            <motion.button
-              key={item.path}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ 
-                x: 10, 
-                backgroundColor: "rgba(0,223,130,0.1)",
-                transition: { type: "spring", stiffness: 300 }
-              }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigateTo(item.path)}
-              className={`flex items-center w-[245px] p-4 mx-2 rounded-lg mb-1 transition-all duration-200 ${
-                isActivePath(item.path)
-                  ? "bg-gradient-to-r from-[#03624c] to-[#030f0f] shadow-lg"
-                  : "hover:bg-white hover:bg-opacity-10"
-              }`}
-            >
-              <span className={`mr-3 text-lg ${
-                isActivePath(item.path) ? "text-[#00df82]" : "text-gray-300"
-              }`}>
-                {item.icon}
-              </span>
-              <span className={`font-medium ${
-                isActivePath(item.path) ? "text-white font-semibold" : "text-gray-300"
-              }`}>
-                {item.label}
-              </span>
-              
-              {/* Active indicator dot */}
-              {isActivePath(item.path) && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="ml-auto w-2 h-2 bg-[#00df82] rounded-full"
-                />
-              )}
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="px-4 pt-4 border-t border-gray-700"
-        >
-          <div className="text-center text-xs text-gray-400">
-            <p>Candidate Tracking</p>
-            <p>Management System</p>
+    <div className="w-64 bg-[#050C9C] text-white h-screen flex flex-col shadow-xl">
+      {/* Header */}
+      <div className="px-6 py-6 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-xl flex items-center justify-center shadow-lg">
+            <Briefcase className="w-5 h-5 text-white" />
           </div>
-        </motion.div>
+          <div>
+            <h1 className="text-lg font-semibold text-white">CTMS HR</h1>
+            <p className="text-xs text-white/60">Human Resources</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        <div className="space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = isActivePath(item.path);
+            
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigateTo(item.path)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                  isActive
+                    ? "bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] shadow-lg shadow-[#3572EF]/30"
+                    : "hover:bg-white/5 active:bg-white/10"
+                }`}
+              >
+                <Icon 
+                  className={`w-5 h-5 transition-colors ${
+                    isActive ? "text-white" : "text-white/60 group-hover:text-white/80"
+                  }`}
+                />
+                <span className={`font-medium transition-colors ${
+                  isActive ? "text-white" : "text-white/70 group-hover:text-white/90"
+                }`}>
+                  {item.label}
+                </span>
+                
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </nav>
-    </motion.div>
+
+      {/* Footer */}
+      <div className="px-6 py-4 border-t border-white/10">
+        <div className="text-center">
+          <p className="text-xs font-medium text-white/60">Candidate Tracking</p>
+          <p className="text-xs text-white/40 mt-1">Management System</p>
+        </div>
+      </div>
+    </div>
   );
 };
 

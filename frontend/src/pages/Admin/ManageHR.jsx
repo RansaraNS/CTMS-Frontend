@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { motion } from 'framer-motion';
-import { FiHome, FiUserPlus, FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
+import { LogOut, User, Briefcase, Search, FileText, Edit, Trash2, X, Mail, Lock, Shield } from 'lucide-react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 const ManageHR = () => {
@@ -35,7 +34,6 @@ const ManageHR = () => {
     try {
       const doc = new jsPDF();
       
-      // Get current date and time
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -51,36 +49,30 @@ const ManageHR = () => {
       
       const pageWidth = doc.internal.pageSize.getWidth();
       
-      // Add Company Logo
       const logoImg = new Image();
-      logoImg.src = '/GR.jpg'; // Your company logo path
+      logoImg.src = '/GR.jpg';
       
-      // Add logo on the left side
       try {
         doc.addImage(logoImg, 'JPEG', 14, 10, 20, 20);
       } catch (error) {
         console.log('Logo not loaded, continuing without logo');
       }
       
-      // Company Name - Next to logo
       doc.setFontSize(20);
       doc.setFont(undefined, 'bold');
       doc.text('Gamage Recruiters', 40, 20);
       
-      // Report Title and Date
       doc.setFontSize(12);
       doc.setFont(undefined, 'normal');
       const reportTitle = 'HR Report';
       const dateTime = `Date: ${dateStr} Time: ${timeStr}`;
       
-      // Calculate positions for left-aligned title and right-aligned date
       const titleX = 40;
       const dateX = pageWidth - 14;
       
       doc.text(reportTitle, titleX, 28);
       doc.text(dateTime, dateX, 28, { align: 'right' });
       
-      // Line separator
       doc.setLineWidth(0.5);
       doc.line(14, 35, pageWidth - 14, 35);
 
@@ -93,7 +85,7 @@ const ManageHR = () => {
         startY: 40,
         theme: 'grid',
         headStyles: {
-          fillColor: [3, 98, 76],
+          fillColor: [5, 12, 156], // #050C9C
           textColor: [255, 255, 255],
           fontStyle: 'bold',
           halign: 'center'
@@ -175,212 +167,216 @@ const ManageHR = () => {
     navigate('/');
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
   const filteredHrs = hrs.filter(hr =>
     hr.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hr.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, staggerChildren: 0.2 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
-  };
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#03624c] via-[#030f0f] to-[#00df82] font-sans relative">
-      <div className="flex-1 flex flex-col transition-all duration-300">
-        {/* Navbar */}
-        <motion.nav 
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking System
-            </h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, Admin</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium flex items-center justify-center"
-            >
-              <FiLogOut className="mr-2" /> Logout
-            </motion.button>
-          </div>
-        </motion.nav>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <AdminSidebar />
 
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <AdminSidebar/>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Manage HR Personnel</h1>
+              <p className="text-sm text-gray-600">View, edit, and manage HR staff members</p>
+            </div>
+          </div>
 
-          {/* Content */}
-          <div className="flex-1 p-8 overflow-auto bg-gradient-to-br from-[#03624c]/10 to-[#00df82]/10">
-            <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-8">
-              <div className="flex items-center space-x-6">
-                <motion.div variants={itemVariants} className="flex-1 relative">
-                  <input
-                    type="text"
-                    placeholder="Search HR by name or email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border-0 rounded-xl bg-white/80 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-[#00df82] shadow-lg"
-                  />
-                  <span className="absolute left-3 top-3.5 text-gray-500">🔍</span>
-                </motion.div>
-                <motion.button 
-                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  onClick={handleGenerateReport}
-                  className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-2 focus:ring-[#00df82]/50 transition duration-300 font-semibold"
-                >
-                  Generate Report
-                </motion.button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
               </div>
-
-              <motion.div variants={itemVariants} className="mt-8">
-                <div className="bg-white rounded-xl shadow-xl overflow-hidden">
-                  <table className="w-full divide-y divide-gray-200">
-                    <thead className="bg-gradient-to-r from-[#03624c]/50 to-[#030f0f]/50">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Full Name</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Email</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Role</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                      {filteredHrs.map((hr) => (
-                        <motion.tr key={hr._id} variants={itemVariants} className="hover:bg-[#00df82]/10 transition duration-200">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{hr.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{hr.email}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{hr.role}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <motion.button 
-                              whileHover={{ scale: 1.1, color: '#00df82' }} whileTap={{ scale: 0.95 }}
-                              onClick={() => handleUpdate(hr)}
-                              className="text-[#03624c] hover:text-[#00df82] mr-4"
-                            >
-                              ✏️ Edit
-                            </motion.button>
-                            <motion.button 
-                              whileHover={{ scale: 1.1, color: '#dc2626' }} whileTap={{ scale: 0.95 }}
-                              onClick={() => handleDelete(hr._id)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              🗑️ Delete
-                            </motion.button>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </motion.div>
-            </motion.div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, Admin</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
-        </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Search and Actions Bar */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search HR by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                />
+              </div>
+              <button
+                onClick={handleGenerateReport}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+              >
+                <FileText className="w-5 h-5" />
+                Generate Report
+              </button>
+            </div>
+
+            {/* HR Table */}
+            <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gradient-to-r from-[#050C9C] to-[#3572EF] text-white">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">Full Name</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">Role</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {filteredHrs.length > 0 ? (
+                      filteredHrs.map((hr) => (
+                        <tr key={hr._id} className="hover:bg-gray-50 transition-colors duration-150">
+                          <td className="px-6 py-4 text-sm font-medium text-[#050C9C]">{hr.name}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{hr.email}</td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center px-3 py-1 rounded-lg bg-[#A7E6FF] text-[#050C9C] text-xs font-medium">
+                              {hr.role}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleUpdate(hr)}
+                                className="p-2 text-[#3572EF] hover:bg-[#3572EF]/10 rounded-lg transition-colors duration-200"
+                                title="Edit"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(hr._id)}
+                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
+                          No HR personnel found matching your search.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
 
-      {/* Popup Form */}
+      {/* Edit Modal */}
       {isModalOpen && selectedHr && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.2)",
-            backdropFilter: "blur(2px)",
-          }}
-        >
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: 50 }}
-            className="bg-white p-6 rounded-2xl shadow-2xl w-96 z-50 border border-gray-200"
-          >
-            <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] rounded-t-xl p-4 mb-6">
-              <h3 className="text-xl font-bold text-white">Update HR</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="bg-gradient-to-r from-[#050C9C] to-[#3572EF] px-6 py-4 rounded-t-2xl flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-white">Update HR Personnel</h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors duration-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <form onSubmit={handleSaveUpdate} className="space-y-6">
+
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-name">Full Name</label>
-                <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
-                  id="update-name"
-                  type="text"
-                  value={selectedHr.name}
-                  onChange={(e) => setSelectedHr({ ...selectedHr, name: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={selectedHr.name}
+                    onChange={(e) => setSelectedHr({ ...selectedHr, name: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-email">Email</label>
-                <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
-                  id="update-email"
-                  type="email"
-                  value={selectedHr.email}
-                  onChange={(e) => setSelectedHr({ ...selectedHr, email: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    value={selectedHr.email}
+                    onChange={(e) => setSelectedHr({ ...selectedHr, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-password">Password</label>
-                <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
-                  id="update-password"
-                  type="password"
-                  value={selectedHr.password || ''}
-                  onChange={(e) => setSelectedHr({ ...selectedHr, password: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="password"
+                    value={selectedHr.password || ''}
+                    onChange={(e) => setSelectedHr({ ...selectedHr, password: e.target.value })}
+                    placeholder="Leave blank to keep current password"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="update-role">Role</label>
-                <input
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00df82] transition duration-200"
-                  id="update-role"
-                  type="text"
-                  value={selectedHr.role}
-                  onChange={(e) => setSelectedHr({ ...selectedHr, role: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                  Role <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={selectedHr.role}
+                    onChange={(e) => setSelectedHr({ ...selectedHr, role: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                  />
+                </div>
               </div>
-              <div className="flex justify-end space-x-6">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  type="button" 
+
+              <div className="flex gap-3 pt-4">
+                <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-200"
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors duration-200"
                 >
                   Cancel
-                </motion.button>
-                <motion.button 
-                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  type="submit" 
-                  className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-4 py-2 rounded-lg hover:from-[#00df82] hover:to-[#03624c] transition duration-200"
+                </button>
+                <button
+                  onClick={handleSaveUpdate}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
                 >
-                  Save
-                </motion.button>
+                  Save Changes
+                </button>
               </div>
-            </form>
-          </motion.div>
+            </div>
+          </div>
         </div>
       )}
     </div>
