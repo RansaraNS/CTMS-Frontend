@@ -84,7 +84,7 @@ const AdminSidebar = () => {
       <div className="px-6 py-4 border-t border-white/10">
         <div className="text-center">
           <p className="text-xs font-medium text-white/60">Developed by</p>
-          <p className="text-xs text-white/40 mt-1">GR IT Solutions</p>
+          <p className="text-xs text-white/40 mt-1">GR IT Solutions. All rights reserved.</p>
         </div>
       </div>
     </div>
