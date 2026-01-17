@@ -277,7 +277,7 @@ const Login = () => {
 
           <div className="mt-12 pt-8 border-t border-white/20">
             <p className="text-sm text-white/60">
-              Developed by GR IT Solutions.
+              Developed by GR IT Solutions. All rights reserved.
             </p>
           </div>
         </div>
