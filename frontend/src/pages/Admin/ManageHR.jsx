@@ -32,81 +32,179 @@ const ManageHR = () => {
 
   const handleGenerateReport = () => {
     try {
-      const doc = new jsPDF();
-      
+      const doc = new jsPDF('portrait', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      // Get current date and time
       const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', { 
+      const date = now.toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: '2-digit', 
         day: '2-digit' 
       });
-      const timeStr = now.toLocaleTimeString('en-US', { 
+      const time = now.toLocaleTimeString('en-US', { 
         hour: '2-digit', 
         minute: '2-digit', 
         second: '2-digit',
         hour12: true 
       });
-      
-      const pageWidth = doc.internal.pageSize.getWidth();
-      
-      const logoImg = new Image();
-      logoImg.src = '/GR.jpg';
-      
+      const year = now.getFullYear();
+
+      // Add logo if available
       try {
+        const logoImg = new Image();
+        logoImg.src = '/GR.jpg';
         doc.addImage(logoImg, 'JPEG', 14, 10, 20, 20);
       } catch (error) {
         console.log('Logo not loaded, continuing without logo');
       }
+
+      // Add company name
+      doc.setFontSize(22);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 0, 0);
+      doc.text('Gamage Recruiters (PVT) Ltd.', 37, 18);
+
+      // Add company details
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 0, 0);
+      doc.text('612A, Galle Road, Panadura, Sri Lanka. | gamagerecruiters@gmail.com', 38, 24);
       
-      doc.setFontSize(20);
-      doc.setFont(undefined, 'bold');
-      doc.text('Gamage Recruiters', 40, 20);
+      // Add report title
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 0, 0);
+      doc.text('Human Resources Management Report', 38, 30);
+
+      // Add summary box on the right
+      const summaryX = pageWidth - 50;
       
-      doc.setFontSize(12);
-      doc.setFont(undefined, 'normal');
-      const reportTitle = 'HR Report';
-      const dateTime = `Date: ${dateStr} Time: ${timeStr}`;
+      doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Report Summary', summaryX, 12);
       
-      const titleX = 40;
-      const dateX = pageWidth - 14;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(`Generated: ${date}`, summaryX, 18);
+      doc.text(`Time: ${time}`, summaryX, 23);
+      doc.text(`Total HR Staff: ${hrs.length}`, summaryX, 28);
+
+      // Add decorative header lines
+      doc.setDrawColor(5, 12, 156); // #050C9C
+      doc.setLineWidth(1);
+      doc.line(14, 36, pageWidth - 14, 36);
       
-      doc.text(reportTitle, titleX, 28);
-      doc.text(dateTime, dateX, 28, { align: 'right' });
-      
+      doc.setDrawColor(58, 190, 249); // #3ABEF9
       doc.setLineWidth(0.5);
-      doc.line(14, 35, pageWidth - 14, 35);
+      doc.line(14, 37, pageWidth - 14, 37);
 
-      const tableColumn = ["Full Name", "Email", "Role"];
-      const tableRows = hrs.map(hr => [hr.name, hr.email, hr.role]);
+      // Calculate role distribution
+      const roleCounts = hrs.reduce((acc, hr) => {
+        acc[hr.role] = (acc[hr.role] || 0) + 1;
+        return acc;
+      }, {});
 
+      // Add role statistics
+      let statsY = 40;
+
+      // Prepare table data with row numbers
+      const tableData = hrs.map((hr, index) => [
+        index + 1,
+        hr.name,
+        hr.email,
+        hr.role
+      ]);
+
+      // Add table with enhanced styling
       autoTable(doc, {
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
+        startY: statsY + 8,
+        head: [['No', 'Full Name', 'Email Address', 'Role']],
+        body: tableData,
         theme: 'grid',
         headStyles: {
-          fillColor: [5, 12, 156], // #050C9C
-          textColor: [255, 255, 255],
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
           fontStyle: 'bold',
-          halign: 'center'
-        },
-        styles: {
+          halign: 'center',
           fontSize: 10,
           cellPadding: 3,
-          overflow: 'linebreak'
+          lineColor: [53, 114, 239], // #3572EF
+          lineWidth: 0.5
+        },
+        bodyStyles: {
+          textColor: [31, 41, 55],
+          fontSize: 9,
+          cellPadding: 4,
+          lineColor: [150, 150, 150],
+          lineWidth: 0.5
         },
         alternateRowStyles: {
-          fillColor: [245, 245, 245]
-        }
+          fillColor: [247, 250, 252]
+        },
+        columnStyles: {
+          0: { 
+            cellWidth: 15, 
+            halign: 'center',
+            fillColor: [167, 230, 255], // #A7E6FF
+            textColor: [5, 12, 156], // #050C9C
+            fontStyle: 'bold'
+          },
+          1: { 
+            cellWidth: 55, 
+            halign: 'left', 
+            fontStyle: 'bold',
+            textColor: [0, 0, 0]
+          },
+          2: { 
+            cellWidth: 75, 
+            halign: 'left' 
+          },
+          3: { 
+            cellWidth: 35, 
+            halign: 'center',
+            fontStyle: 'bold',
+            textColor: [53, 114, 239] // #3572EF
+          }
+        },
+        margin: { left: 14, right: 14 },
       });
 
-      const pageHeight = doc.internal.pageSize.height;
-      doc.setFontSize(10);
-      doc.text("Generated by Candidate Tracking Management System", 105, pageHeight - 10, { align: "center" });
-      doc.save(`hr-report-${dateStr.replace(/\//g, '-')}.pdf`);
+      // Footer decorative line
+      doc.setDrawColor(58, 190, 249); // #3ABEF9
+      doc.setLineWidth(0.5);
+      doc.line(14, pageHeight - 25, pageWidth - 14, pageHeight - 25);
+
+      // Footer text
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(107, 114, 128);
+      doc.text(
+        'Generated by Candidate Tracking Management System',
+        pageWidth / 2,
+        pageHeight - 15,
+        { align: 'center' }
+      );
+
+      // Company tagline
+      doc.setFontSize(7);
+      doc.setTextColor(156, 163, 175);
+      doc.text(
+        `© ${year} GR IT Solutions. All rights reserved.`,
+        pageWidth / 2,
+        pageHeight - 10,
+        { align: 'center' }
+      );
+
+      // Save the PDF with formatted filename
+      const fileName = `HR-Report-${date.replace(/\//g, '-')}_${time.replace(/:/g, '-')}.pdf`;
+      doc.save(fileName);
+
     } catch (error) {
       console.error("PDF generation error:", error);
-      alert("PDF generation failed. Check console for details.");
+      alert("Failed to generate PDF report. Please try again.");
     }
   };
 
