@@ -2,8 +2,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '../../components/Sidebar';
+import { 
+  LogOut, User, Briefcase, Search, Calendar, Filter, 
+  Eye, Edit, Trash2, XCircle, Video, Clock, CheckCircle,
+  AlertCircle, Users, FileText, TrendingUp
+} from 'lucide-react';
 
 const InterviewList = () => {
   const navigate = useNavigate();
@@ -16,10 +20,9 @@ const InterviewList = () => {
   const [error, setError] = useState('');
   const [joinedInterviews, setJoinedInterviews] = useState([]);
   
-  // Modal states
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    type: '', // 'cancel', 'delete', 'success', 'error'
+    type: '',
     title: '',
     message: '',
     interviewId: null,
@@ -93,7 +96,6 @@ const InterviewList = () => {
     setFilteredInterviews(filtered);
   };
 
-  // Modal functions
   const showConfirmationModal = (type, interviewId, interviewDetails = {}) => {
     const candidate = interviewDetails.candidate || {};
     const candidateName = `${candidate.firstName || ''} ${candidate.lastName || ''}`.trim() || 'this interview';
@@ -159,7 +161,6 @@ const InterviewList = () => {
 
       await fetchInterviews();
       
-      // Show success message
       showResultModal(
         'success', 
         `${type === 'cancel' ? 'Cancelled' : 'Deleted'} Successfully`, 
@@ -169,7 +170,6 @@ const InterviewList = () => {
     } catch (error) {
       console.error(`Error ${type}ing interview:`, error);
       
-      // Show error message
       showResultModal(
         'error', 
         `Failed to ${type === 'cancel' ? 'Cancel' : 'Delete'}`, 
@@ -201,21 +201,20 @@ const InterviewList = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      scheduled: { color: 'bg-[#03624c] text-white', label: 'Scheduled' },
-      completed: { color: 'bg-green-100 text-green-800', label: 'Completed' },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
-      'no-show': { color: 'bg-orange-100 text-orange-800', label: 'No Show' }
+      scheduled: { color: 'bg-blue-100 text-blue-800', label: 'Scheduled', icon: Clock },
+      completed: { color: 'bg-green-100 text-green-800', label: 'Completed', icon: CheckCircle },
+      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled', icon: XCircle },
+      'no-show': { color: 'bg-orange-100 text-orange-800', label: 'No Show', icon: AlertCircle }
     };
 
-    const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', label: status };
+    const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', label: status, icon: Clock };
+    const Icon = config.icon;
     
     return (
-      <motion.span 
-        whileHover={{ scale: 1.05 }}
-        className={`px-3 py-1 rounded-full text-xs font-medium ${config.color} shadow-sm`}
-      >
+      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium ${config.color}`}>
+        <Icon className="w-3 h-3" />
         {config.label}
-      </motion.span>
+      </span>
     );
   };
 
@@ -223,7 +222,7 @@ const InterviewList = () => {
     if (!outcome) return null;
     
     const outcomeConfig = {
-      passed: { color: 'bg-green-100 text-green-800', label: 'Passed' },
+      passed: { color: 'bg-[#3ABEF9]/20 text-[#050C9C]', label: 'Passed' },
       failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
       pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
       'recommended-next-round': { color: 'bg-purple-100 text-purple-800', label: 'Next Round' }
@@ -232,12 +231,9 @@ const InterviewList = () => {
     const config = outcomeConfig[outcome] || { color: 'bg-gray-100 text-gray-800', label: outcome };
     
     return (
-      <motion.span 
-        whileHover={{ scale: 1.05 }}
-        className={`px-3 py-1 rounded-full text-xs font-medium ${config.color} shadow-sm`}
-      >
+      <span className={`px-3 py-1 rounded-lg text-xs font-medium ${config.color}`}>
         {config.label}
-      </motion.span>
+      </span>
     );
   };
 
@@ -274,10 +270,6 @@ const InterviewList = () => {
     });
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('role');
     localStorage.removeItem('token');
@@ -293,181 +285,233 @@ const InterviewList = () => {
       switch (modalConfig.type) {
         case 'success':
           return {
-            border: 'border-green-500',
-            button: 'bg-green-600 hover:bg-green-700',
-            icon: '✅'
+            icon: CheckCircle,
+            iconColor: 'text-green-500',
+            button: 'bg-green-600 hover:bg-green-700'
           };
         case 'error':
           return {
-            border: 'border-red-500',
-            button: 'bg-red-600 hover:bg-red-700',
-            icon: '❌'
+            icon: AlertCircle,
+            iconColor: 'text-red-500',
+            button: 'bg-red-600 hover:bg-red-700'
           };
         case 'cancel':
           return {
-            border: 'border-orange-500',
-            button: 'bg-orange-600 hover:bg-orange-700',
-            icon: '⚠️'
+            icon: AlertCircle,
+            iconColor: 'text-orange-500',
+            button: 'bg-orange-600 hover:bg-orange-700'
           };
         case 'delete':
           return {
-            border: 'border-red-500',
-            button: 'bg-red-600 hover:bg-red-700',
-            icon: '🗑️'
+            icon: Trash2,
+            iconColor: 'text-red-500',
+            button: 'bg-red-600 hover:bg-red-700'
           };
         default:
           return {
-            border: 'border-gray-500',
-            button: 'bg-[#03624c] hover:bg-[#024a3a]',
-            icon: 'ℹ️'
+            icon: AlertCircle,
+            iconColor: 'text-gray-500',
+            button: 'bg-[#3572EF] hover:bg-[#050C9C]'
           };
       }
     };
 
     const styles = getModalStyles();
+    const Icon = styles.icon;
     const isConfirmation = modalConfig.type === 'cancel' || modalConfig.type === 'delete';
 
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
         onClick={closeModal}
       >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-xl max-w-md w-full"
+        <div
+          className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className={`p-6 border-t-4 ${styles.border}`}>
-            <div className="flex items-center mb-4">
-              <span className="text-2xl mr-3">{styles.icon}</span>
-              <h3 className="text-xl font-bold text-gray-900">{modalConfig.title}</h3>
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`w-12 h-12 rounded-xl bg-${modalConfig.type === 'success' ? 'green' : modalConfig.type === 'error' ? 'red' : modalConfig.type === 'cancel' ? 'orange' : 'red'}-100 flex items-center justify-center`}>
+                <Icon className={`w-6 h-6 ${styles.iconColor}`} />
+              </div>
+              <h3 className="text-xl font-bold text-[#050C9C]">{modalConfig.title}</h3>
             </div>
             
-            <p className="text-gray-600 mb-6">{modalConfig.message}</p>
+            <p className="text-gray-600 mb-6 ml-15">{modalConfig.message}</p>
             
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end gap-3">
               {isConfirmation && (
                 <button
                   onClick={closeModal}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors duration-200"
                 >
                   Cancel
                 </button>
               )}
               <button
                 onClick={modalConfig.onConfirm || closeModal}
-                className={`px-6 py-2 text-white font-medium rounded-lg transition-colors ${styles.button}`}
+                className={`px-6 py-2 text-white font-medium rounded-xl transition-colors duration-200 ${styles.button}`}
               >
                 {isConfirmation ? 'Confirm' : 'OK'}
               </button>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     );
   };
 
+  const stats = [
+    { title: "Total Interviews", value: interviews.length, icon: TrendingUp, color: "from-[#050C9C] to-[#3572EF]" },
+    { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, icon: Clock, color: "from-[#3572EF] to-[#3ABEF9]" },
+    { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, icon: CheckCircle, color: "from-green-500 to-green-600" },
+    { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, icon: XCircle, color: "from-red-500 to-red-600" },
+  ];
+
   if (loading) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <motion.div
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1.5, repeat: Infinity }
-          }}
-          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
-        ></motion.div>
-      </motion.div>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            {/* Animated container with pulsing effect */}
+            <div className="relative mb-6">
+              {/* Outer rotating ring */}
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3572EF] border-t-transparent rounded-full animate-spin mx-auto"></div>
+              
+              {/* Middle rotating ring - slower */}
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3ABEF9] border-b-transparent rounded-full animate-spin mx-auto" style={{ animationDuration: '1.5s' }}></div>
+              
+              {/* Inner glow effect */}
+              <div className="absolute inset-0 w-32 h-32 bg-gradient-to-br from-[#3572EF]/20 to-[#3ABEF9]/20 rounded-full animate-pulse mx-auto"></div>
+              
+              {/* Company Logo */}
+              <div className="relative w-32 h-32 flex items-center justify-center mx-auto">
+                <img 
+                  src="/GRW.png" 
+                  alt="Gamage Recruiters" 
+                  className="w-20 h-20 object-contain animate-pulse"
+                  style={{ animationDuration: '2s' }}
+                />
+              </div>
+            </div>
+            
+            {/* Loading text with animated dots */}
+            <p className="text-[#050C9C] font-semibold text-lg mb-2">
+              Loading Interviews
+              <span className="inline-flex ml-1">
+                <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
+                <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
+                <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+              </span>
+            </p>
+            
+            {/* Subtitle */}
+            <p className="text-[#3572EF] text-sm font-medium">
+              Please wait while we prepare your data
+            </p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-    >
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <motion.nav 
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Manage Interviews</h1>
+              <p className="text-sm text-gray-600">View and manage all scheduled interviews</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
-            >
-              Logout
-            </motion.button>
-          </div>
-        </motion.nav>
 
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        </header>
+
+        {/* Error Alert */}
         {error && (
-          <motion.div 
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4"
-          >
-            <strong>Note:</strong> {error}
-          </motion.div>
+          <div className="bg-yellow-50 border-l-4 border-yellow-500 px-8 py-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-yellow-800">Note</p>
+                <p className="text-sm text-yellow-700">{error}</p>
+              </div>
+            </div>
+          </div>
         )}
 
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <Sidebar/>
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-8xl mx-auto space-y-6">
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 font-medium mb-1">{stat.title}</p>
+                    <p className="text-3xl font-bold text-[#050C9C]">{stat.value}</p>
+                  </div>
+                );
+              })}
+            </div>
 
-          {/* Main Content */}
-          <div className="flex-1 p-5 overflow-hidden">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              {/* Filters Section */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white p-6 rounded-2xl shadow-xl">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                  <div className="flex-1 relative">
-                    <input type="text" placeholder="Search interviews by candidate name, email, or position..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"/>
-                    <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
+            {/* Filters */}
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search interviews by candidate name, email, or position..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                  />
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                    <input
+                      type="date"
+                      value={dateFilter}
+                      onChange={(e) => setDateFilter(e.target.value)}
+                      className="pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
+                    />
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm"/>
-                    
-                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00df82] focus:border-transparent shadow-sm">
+                  <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="pl-10 pr-8 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200 appearance-none"
+                    >
                       <option value="all">All Statuses</option>
                       <option value="scheduled">Scheduled</option>
                       <option value="completed">Completed</option>
@@ -476,119 +520,145 @@ const InterviewList = () => {
                     </select>
                   </div>
                 </div>
-              </motion.div>
+              </div>
+            </div>
 
-              {/* Statistics Cards */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[{ title: "Total Interviews", value: interviews.length, color: "#03624c" },
-                  { title: "Scheduled", value: interviews.filter(i => i.status === 'scheduled').length, color: "#030f0f" },
-                  { title: "Completed", value: interviews.filter(i => i.status === 'completed').length, color: "#00df82" },
-                  { title: "Cancelled", value: interviews.filter(i => i.status === 'cancelled').length, color: "#e93b63ff" },
-                ].map((stat, index) => (
-                  <motion.div key={stat.title} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 + 0.3 }} whileHover={{ scale: 1.05, y: -5, transition: { type: "spring", stiffness: 300 } }} className={`bg-gradient-to-br from-[${stat.color}] to-[${stat.color}] text-white p-6 rounded-2xl shadow-lg cursor-pointer`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium opacity-90">{stat.title}</p>
-                        <motion.p key={stat.value} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-3xl font-bold">{stat.value}</motion.p>
-                      </div>
-                      <motion.div whileHover={{ scale: 1.2, rotate: 5 }} className="text-4xl">
-                        {stat.title === "Total Interviews" ? "📊" : stat.title === "Scheduled" ? "🗓️" : stat.title === "Completed" ? "✅" : "❌"}
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              {/* Interviews Table */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl shadow-xl overflow-y-auto">
-                {filteredInterviews.length === 0 ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-                    <div className="text-6xl mb-4">📋</div>
-                    <p className="text-gray-500 text-lg">No interviews found matching your criteria.</p>
-                  </motion.div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gradient-to-r from-[#03624c] to-[#030f0f]">
-                        <tr>
-                          {["Candidate & Position","Date & Time","Type","Interviewers","Status","Outcome","Actions"].map(header => (
-                            <th key={header} className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">{header}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200 ">
-                        <AnimatePresence>
-                          {filteredInterviews.map((interview, index) => {
-                            const candidate = interview.candidate || {};
-                            const hasJoined = joinedInterviews.includes(interview._id);
-                            return (
-                              <motion.tr key={interview._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-6 py-4">
-                                  <div className="text-sm font-medium text-gray-900">{candidate.firstName} {candidate.lastName}</div>
-                                  <div className="text-sm text-gray-500">{candidate.position}</div>
-                                  <div className="text-sm text-gray-400">{candidate.email}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(interview.interviewDate)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{interview.interviewType}</td>
-                                <td className="px-6 py-4">
-                                  <div className="text-sm text-gray-900">{interview.interviewers?.map((i, idx) => <div key={idx}>{i}</div>) || 'N/A'}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(interview.status)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{getOutcomeBadge(interview.feedback?.outcome)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  <div className="flex flex-col space-y-2">
-                                    {interview.status === 'completed' && (
-                                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleViewFeedback(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
-                                        View Feedback
-                                      </motion.button>
-                                    )}
-                                    
-                                    {interview.status === 'scheduled' && (
-                                      <>
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleAddFeedback(interview._id)} disabled={!hasJoined} className={`text-green-600 hover:text-green-900 text-left font-medium ${!hasJoined ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                          Add Feedback
-                                        </motion.button>
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleReschedule(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
-                                          Reschedule
-                                        </motion.button>
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleCancelInterview(interview._id)} className="text-orange-600 hover:text-orange-900 text-left font-medium">
-                                          Cancel
-                                        </motion.button>
-                                      </>
-                                    )}
-
-                                    {!interview.feedback?.outcome && (
-                                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleDeleteInterview(interview._id)} className="text-red-600 hover:text-red-900 text-left font-medium">
-                                        Delete
-                                      </motion.button>
-                                    )}
-                                    
-                                    {interview.meetingLink && interview.status === 'scheduled' && (
-                                      <motion.a whileHover={{ scale: 1.05 }} href={interview.meetingLink} target="_blank" rel="noopener noreferrer" onClick={() => handleJoinMeeting(interview._id)} className="text-[#00df82] hover:text-[#03624c] text-left font-medium">
-                                        Join Meeting
-                                      </motion.a>
-                                    )}
+            {/* Interviews Table */}
+            <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+              {filteredInterviews.length === 0 ? (
+                <div className="text-center py-16">
+                  <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No interviews found matching your criteria.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-[#050C9C] to-[#3572EF] text-white">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Candidate & Position</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Date & Time</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Type</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Interviewers</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Outcome</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {filteredInterviews.map((interview) => {
+                        const candidate = interview.candidate || {};
+                        const hasJoined = joinedInterviews.includes(interview._id);
+                        return (
+                          <tr key={interview._id} className="hover:bg-gray-50 transition-colors duration-150">
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-semibold text-[#050C9C]">
+                                {candidate.firstName} {candidate.lastName}
+                              </div>
+                              <div className="text-sm text-gray-600">{candidate.position}</div>
+                              <div className="text-xs text-gray-500">{candidate.email}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                              {formatDate(interview.interviewDate)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="inline-flex items-center px-3 py-1 rounded-lg bg-[#A7E6FF] text-[#050C9C] text-xs font-medium capitalize">
+                                {interview.interviewType}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-gray-700">
+                                {interview.interviewers?.map((i, idx) => (
+                                  <div key={idx} className="flex items-center gap-1 mb-1">
+                                    <User className="w-3 h-3 text-gray-400" />
+                                    {i}
                                   </div>
-                                </td>
-                              </motion.tr>
-                            );
-                          })}
-                        </AnimatePresence>
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </motion.div>
-            </motion.div>
+                                )) || 'N/A'}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {getStatusBadge(interview.status)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {getOutcomeBadge(interview.feedback?.outcome)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                {interview.status === 'completed' && (
+                                  <button
+                                    onClick={() => handleViewFeedback(interview._id)}
+                                    className="p-2 text-[#3572EF] hover:bg-[#3572EF]/10 rounded-lg transition-colors duration-200"
+                                    title="View Feedback"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                )}
+                                
+                                {interview.status === 'scheduled' && (
+                                  <>
+                                    <button
+                                      onClick={() => handleAddFeedback(interview._id)}
+                                      disabled={!hasJoined}
+                                      className={`p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200 ${!hasJoined ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                      title="Add Feedback"
+                                    >
+                                      <FileText className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => handleReschedule(interview._id)}
+                                      className="p-2 text-[#3572EF] hover:bg-[#3572EF]/10 rounded-lg transition-colors duration-200"
+                                      title="Reschedule"
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => handleCancelInterview(interview._id)}
+                                      className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors duration-200"
+                                      title="Cancel"
+                                    >
+                                      <XCircle className="w-4 h-4" />
+                                    </button>
+                                  </>
+                                )}
+
+                                {!interview.feedback?.outcome && (
+                                  <button
+                                    onClick={() => handleDeleteInterview(interview._id)}
+                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                                    title="Delete"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                                
+                                {interview.meetingLink && interview.status === 'scheduled' && (
+                                  <a
+                                    href={interview.meetingLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => handleJoinMeeting(interview._id)}
+                                    className="p-2 text-[#3572EF] hover:bg-[#3572EF]/10 rounded-lg transition-colors duration-200"
+                                    title="Join Meeting"
+                                  >
+                                    <Video className="w-4 h-4" />
+                                  </a>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
 
-      {/* Custom Modal */}
-      <AnimatePresence>
-        {showModal && <Modal />}
-      </AnimatePresence>
-    </motion.div>
+      {/* Modal */}
+      {showModal && <Modal />}
+    </div>
   );
 };
 

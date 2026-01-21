@@ -2,9 +2,13 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import API from '../../services/api';
 import Sidebar from '../../components/Sidebar';
+import { 
+  LogOut, User, Briefcase, Mail, Phone, FileText, Tag, 
+  Upload, AlertCircle, CheckCircle, Search, UserPlus, MessageSquare
+} from 'lucide-react';
+
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const AddCandidate = () => {
@@ -26,20 +30,17 @@ const AddCandidate = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Watch fields
   const emailValue = watch('email');
   const phoneValue = watch('phone');
 
-  // Validation function for names (no numbers allowed)
   const validateName = (value) => {
-    if (!value) return true; // Let required validation handle empty values
+    if (!value) return true;
     
     const hasNumbers = /\d/.test(value);
     if (hasNumbers) {
       return 'Names cannot contain numbers';
     }
     
-    // Allow only letters, spaces, hyphens, and apostrophes
     const isValidFormat = /^[a-zA-Z\s\-']+$/.test(value);
     if (!isValidFormat) {
       return 'Names can only contain letters, spaces, hyphens, and apostrophes';
@@ -48,7 +49,6 @@ const AddCandidate = () => {
     return true;
   };
 
-  // Validation function for CV file
   const validateCV = (files) => {
     if (!files || files.length === 0) {
       return 'CV is required';
@@ -59,8 +59,7 @@ const AddCandidate = () => {
       return 'Only PDF files are allowed';
     }
     
-    // Optional: Check file size (e.g., 5MB limit)
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       return 'File size must be less than 5MB';
     }
@@ -68,7 +67,6 @@ const AddCandidate = () => {
     return true;
   };
 
-  // Quick scan for existing candidate by email or phone
   const handleQuickScan = async () => {
     if ((!emailValue || !emailValue.includes('@')) && (!phoneValue || phoneValue.length < 7)) {
       setSubmitMessage({ type: 'error', text: 'Please enter a valid email or phone number for scanning' });
@@ -114,12 +112,11 @@ const AddCandidate = () => {
 
     try {
       const token = localStorage.getItem('token');
-
-      // Use FormData for file upload
       const formData = new FormData();
+      
       Object.keys(data).forEach((key) => {
         if (key === 'cv' && data[key][0]) {
-          formData.append("cv", data.cv[0]); // attach file
+          formData.append("cv", data.cv[0]);
         } else {
           formData.append(key, data[key]);
         }
@@ -136,7 +133,6 @@ const AddCandidate = () => {
         setSubmitMessage({ type: 'success', text: 'Candidate added successfully!' });
         reset();
         setExistingCandidate(null);
-
         setTimeout(() => setSubmitMessage({ type: '', text: '' }), 3000);
       }
     } catch (error) {
@@ -154,10 +150,6 @@ const AddCandidate = () => {
     navigate('/');
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
   const clearExistingCandidate = () => {
     setExistingCandidate(null);
     setSubmitMessage({ type: '', text: '' });
@@ -166,216 +158,160 @@ const AddCandidate = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-    >
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <motion.nav
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Add New Candidate</h1>
+              <p className="text-sm text-gray-600">Register a new candidate in the system</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+            </div>
+            <button
               onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
             >
+              <LogOut className="w-4 h-4" />
               Logout
-            </motion.button>
+            </button>
           </div>
-        </motion.nav>
+        </header>
 
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <Sidebar/>
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+              {/* Success/Error Messages */}
+              {submitMessage.text && (
+                <div className={`mb-6 p-4 rounded-xl border-l-4 flex items-start gap-3 ${
+                  submitMessage.type === 'success'
+                    ? 'bg-green-50 border-green-500'
+                    : submitMessage.type === 'warning'
+                    ? 'bg-yellow-50 border-yellow-500'
+                    : 'bg-red-50 border-red-500'
+                }`}>
+                  {submitMessage.type === 'success' && <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />}
+                  {submitMessage.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />}
+                  {submitMessage.type === 'error' && <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />}
+                  <div className="flex-1">
+                    <p className={`font-medium ${
+                      submitMessage.type === 'success' ? 'text-green-800' :
+                      submitMessage.type === 'warning' ? 'text-yellow-800' :
+                      'text-red-800'
+                    }`}>
+                      {submitMessage.text}
+                    </p>
+                    {existingCandidate && (
+                      <button
+                        onClick={clearExistingCandidate}
+                        className="text-[#3572EF] hover:text-[#050C9C] font-medium text-sm mt-2 underline"
+                      >
+                        Use different email/phone
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
-          {/* Main Content Area */}
-          <div className="flex-1 p-6 overflow-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center items-start min-h-full"
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="max-w-4xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
-              >
-                <motion.h2
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
-                >
-                  Add New Candidate
-                </motion.h2>
-
-                {/* Success/Error Message */}
-                <AnimatePresence>
-                  {submitMessage.text && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className={`mb-6 p-4 rounded-xl text-center border-2 ${submitMessage.type === 'success'
-                          ? 'bg-green-50 text-green-800 border-green-200'
-                          : submitMessage.type === 'warning'
-                            ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
-                            : 'bg-red-50 text-red-800 border-red-200'
-                        }`}
-                    >
-                      <div className="font-semibold">
-                        {submitMessage.type === 'success' && '✅ '}
-                        {submitMessage.type === 'warning' && '⚠️ '}
-                        {submitMessage.type === 'error' && '❌ '}
-                        {submitMessage.text}
-                      </div>
-                      {existingCandidate && (
-                        <div className="mt-3">
-                          <button
-                            onClick={clearExistingCandidate}
-                            className="text-[#00df82] hover:text-[#03624c] font-medium underline transition duration-200"
-                          >
-                            Use different email/phone
-                          </button>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Existing Candidate Info */}
-                <AnimatePresence>
-                  {existingCandidate && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mb-6 p-4 bg-orange-50 border-2 border-orange-200 rounded-xl"
-                    >
-                      <h3 className="font-bold text-orange-800 text-lg mb-2">⚠️ Candidate Already Exists</h3>
-                      <div className="text-orange-700 space-y-1">
+              {/* Existing Candidate Warning */}
+              {existingCandidate && (
+                <div className="mb-6 p-5 bg-orange-50 border-l-4 border-orange-500 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-bold text-orange-800 mb-2">Candidate Already Exists</h3>
+                      <div className="text-orange-700 space-y-1 text-sm">
                         <p><strong>Name:</strong> {existingCandidate.name}</p>
                         <p><strong>Status:</strong> <span className="capitalize">{existingCandidate.status}</span></p>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                  {/* Name Section */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="firstName">
-                        First Name *
-                      </label>
+              {/* Form */}
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Name Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      First Name <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.firstName
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                        id="firstName"
                         type="text"
                         placeholder="Enter first name"
                         {...register('firstName', {
                           required: 'First name is required',
-                          minLength: {
-                            value: 2,
-                            message: 'First name must be at least 2 characters',
-                          },
+                          minLength: { value: 2, message: 'First name must be at least 2 characters' },
                           validate: validateName
                         })}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.firstName
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       />
-                      {errors.firstName && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.firstName.message}
-                        </motion.p>
-                      )}
                     </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="lastName">
-                        Last Name *
-                      </label>
+                    {errors.firstName && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Last Name <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.lastName
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                        id="lastName"
                         type="text"
                         placeholder="Enter last name"
                         {...register('lastName', {
                           required: 'Last name is required',
-                          minLength: {
-                            value: 2,
-                            message: 'Last name must be at least 2 characters',
-                          },
+                          minLength: { value: 2, message: 'Last name must be at least 2 characters' },
                           validate: validateName
                         })}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.lastName
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       />
-                      {errors.lastName && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.lastName.message}
-                        </motion.p>
-                      )}
                     </div>
-                  </motion.div>
+                    {errors.lastName && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-                  {/* Contact Section */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="email">
-                        Email Address *
-                      </label>
+                {/* Contact Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.email
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                        id="email"
                         type="email"
                         placeholder="candidate@example.com"
                         {...register('email', {
@@ -385,148 +321,110 @@ const AddCandidate = () => {
                             message: 'Invalid email address',
                           },
                         })}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.email
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       />
-                      {errors.email && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.email.message}
-                        </motion.p>
-                      )}
                     </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="phone">
-                        Phone Number *
-                      </label>
-                      <div className="flex space-x-3">
+                    {errors.email && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
-                          className={`flex-1 px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.phone
-                              ? 'border-red-500 focus:ring-red-200'
-                              : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                            }`}
-                          id="phone"
                           type="tel"
-                          placeholder="Enter 10-digit phone number"
+                          placeholder="Enter phone number"
                           {...register('phone', {
                             required: 'Phone number is required',
-                            minLength: {
-                              value: 7,
-                              message: 'Phone number must be at least 7 digits',
-                            },
+                            minLength: { value: 7, message: 'Phone number must be at least 7 digits' },
                           })}
-                        />
-                        <motion.button
-                          type="button"
-                          onClick={handleQuickScan}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-6 py-3 bg-[#03624c] text-white font-semibold rounded-xl hover:bg-[#030f0f] transition duration-200 shadow-md"
-                        >
-                          Scan
-                        </motion.button>
-                      </div>
-                      {errors.phone && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.phone.message}
-                        </motion.p>
-                      )}
-                    </div>
-                  </motion.div>
-
-                  {/* Position and Source Section */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="position">
-                        Position *
-                      </label>
-                      <select
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.position
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
+                          className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                            errors.phone
+                              ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                              : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
                           }`}
-                        id="position"
-                        {...register('position', {
-                          required: 'Position is required',
-                        })}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleQuickScan}
+                        className="px-4 py-3 bg-gradient-to-r from-[#050C9C] to-[#3572EF] text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                      >
+                        <Search className="w-4 h-4" />
+                        Scan
+                      </button>
+                    </div>
+                    {errors.phone && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.phone.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Position, CV, Source */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Position <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                      <select
+                        {...register('position', { required: 'Position is required' })}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 appearance-none ${
+                          errors.position
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       >
                         <option value="">Select Position</option>
                         <option value="Software Engineer Intern">Software Engineer Intern</option>
                         <option value="Frontend Developer Intern">Frontend Developer Intern</option>
                         <option value="Backend Developer Intern">Backend Developer Intern</option>
                         <option value="Full Stack Developer Intern">Full Stack Developer Intern</option>
-                        <option value="Data Analyst Intern">Data Analyst Intern</option>
+                        <option value="Business Analyst Intern">Business Analyst Intern</option>
                         <option value="Project Manager Intern">Project Manager Intern</option>
                         <option value="UI/UX Designer Intern">UI/UX Designer Intern</option>
                         <option value="DevOps Engineer Intern">DevOps Engineer Intern</option>
                         <option value="Data Science Intern">Data Science Intern</option>
                         <option value="Quality Assurance Intern">Quality Assurance Intern</option>
                       </select>
-                      {errors.position && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.position.message}
-                        </motion.p>
-                      )}
                     </div>
-
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="cv">
-                        Upload CV (PDF only) *
-                      </label>
-                      <input
-                        type="file"
-                        id="cv"
-                        accept="application/pdf"
-                        className={`w-full px-4 py-3 border-2 rounded-xl ${errors.cv
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                        {...register("cv", {
-                          required: 'CV is required',
-                          validate: validateCV
-                        })}
-                      />
-                      {errors.cv && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.cv.message}
-                        </motion.p>
-                      )}
-                      <p className="mt-1 text-sm text-gray-500">
-                        Only PDF files are accepted. Maximum file size: 5MB
+                    {errors.position && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.position.message}
                       </p>
-                    </div>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="source">
-                        Source *
-                      </label>
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Source <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                       <select
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 transition duration-200 ${errors.source
-                            ? 'border-red-500 focus:ring-red-200'
-                            : 'border-gray-300 focus:ring-[#00df82] focus:border-[#03624c]'
-                          }`}
-                        id="source"
-                        {...register('source', {
-                          required: 'Source is required',
-                        })}
+                        {...register('source', { required: 'Source is required' })}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 appearance-none ${
+                          errors.source
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       >
                         <option value="">Select Source</option>
                         <option value="LinkedIn">LinkedIn</option>
@@ -537,66 +435,88 @@ const AddCandidate = () => {
                         <option value="Recruitment Agency">Recruitment Agency</option>
                         <option value="Other">Other</option>
                       </select>
-                      {errors.source && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600 font-medium"
-                        >
-                          {errors.source.message}
-                        </motion.p>
-                      )}
                     </div>
-                  </motion.div>
+                    {errors.source && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.source.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-                  {/* Notes Section */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <label className="block text-gray-700 text-sm font-bold mb-3" htmlFor="notes">
-                      Additional Notes
-                    </label>
+                {/* CV Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Upload CV (PDF only) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      {...register("cv", {
+                        required: 'CV is required',
+                        validate: validateCV
+                      })}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                        errors.cv
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
+                    />
+                  </div>
+                  {errors.cv && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.cv.message}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-gray-500">
+                    Only PDF files are accepted. Maximum file size: 5MB
+                  </p>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Additional Notes
+                  </label>
+                  <div className="relative">
+                    <MessageSquare className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                     <textarea
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00df82] focus:border-[#03624c] transition duration-200"
-                      id="notes"
                       rows="4"
                       placeholder="Add any additional notes about the candidate (skills, experience, etc.)..."
                       {...register('notes')}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20 transition-all duration-200"
                     />
-                  </motion.div>
+                  </div>
+                </div>
 
-                  {/* Submit Button */}
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-4 focus:ring-[#00df82] transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    type="submit"
-                    disabled={isSubmitting || existingCandidate}
-                  >
-                    {isSubmitting ? (
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="inline-block"
-                      >
-                        ⏳
-                      </motion.span>
-                    ) : (
-                      '👤 Add Candidate to System'
-                    )}
-                  </motion.button>
-                </form>
-              </motion.div>
-            </motion.div>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || existingCandidate}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Adding Candidate...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-5 h-5" />
+                      Add Candidate to System
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

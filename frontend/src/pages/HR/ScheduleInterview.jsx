@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
 import Sidebar from '../../components/Sidebar';
+import { 
+  LogOut, User, Briefcase, Calendar, Clock, Users, 
+  Video, Mail, AlertCircle, CheckCircle, UserPlus, Link2
+} from 'lucide-react';
 
 const ScheduleInterview = () => {
   const navigate = useNavigate();
@@ -30,16 +32,10 @@ const ScheduleInterview = () => {
     navigate('/');
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
-  // Fetch only NEW candidates for dropdown
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
         const token = localStorage.getItem('token');
-        // Add status filter to only get new candidates
         const response = await fetch('http://localhost:5000/api/candidates?page=1&limit=100&status=new', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -79,7 +75,6 @@ const ScheduleInterview = () => {
       setSuccessMessage('');
     }
 
-    // Enhanced validation for meeting link
     if (id === 'meetingLink' && value.trim() !== '') {
       if (isValidUrl(value)) {
         const url = new URL(value);
@@ -124,29 +119,7 @@ const ScheduleInterview = () => {
   const isValidUrl = (string) => {
     try {
       const url = new URL(string);
-      
-      // Check if it's a valid URL
-      if (!url.protocol || !url.host) {
-        return false;
-      }
-      
-      // Additional check for common meeting platforms
-      const meetingDomains = [
-        'meet.google.com',
-        'zoom.us',
-        'teams.microsoft.com',
-        'webex.com',
-        'gotomeet.me',
-        'gotomeeting.com'
-      ];
-      
-      const isMeetingLink = meetingDomains.some(domain => 
-        url.hostname.includes(domain)
-      );
-      
-      // Allow any valid URL, but show warning for non-meeting domains
-      return true;
-      
+      return !!(url.protocol && url.host);
     } catch (_) {
       return false;
     }
@@ -193,7 +166,6 @@ const ScheduleInterview = () => {
       newErrors.interviewers = 'Interviewers are required.';
     }
 
-    // Enhanced meeting link validation
     if (!formData.meetingLink || formData.meetingLink.trim() === '') {
       newErrors.meetingLink = 'Meeting link is required for scheduling interviews.';
     } else if (!isValidUrl(formData.meetingLink)) {
@@ -215,14 +187,12 @@ const ScheduleInterview = () => {
 
     try {
       const token = localStorage.getItem('token');
-
       const interviewDateTime = combineDateTime(formData.interviewDate, formData.interviewTime);
 
       if (!interviewDateTime) {
         throw new Error('Invalid date or time format');
       }
 
-      // Enhanced validation for meeting link - double check
       if (!formData.meetingLink || formData.meetingLink.trim() === '') {
         setErrors(prev => ({
           ...prev,
@@ -232,7 +202,6 @@ const ScheduleInterview = () => {
         return;
       }
 
-      // Validate URL format - double check
       if (!isValidUrl(formData.meetingLink)) {
         setErrors(prev => ({
           ...prev,
@@ -267,7 +236,6 @@ const ScheduleInterview = () => {
 
       setSuccessMessage('Interview scheduled successfully! Emails sent to candidate and interviewers.');
 
-      // Reset form
       setFormData({
         candidateId: '',
         interviewDate: '',
@@ -304,151 +272,98 @@ const ScheduleInterview = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-    >
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
-        <motion.nav
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Schedule Interview</h1>
+              <p className="text-sm text-gray-600">Schedule a new interview session</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+            </div>
+            <button
               onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
             >
+              <LogOut className="w-4 h-4" />
               Logout
-            </motion.button>
+            </button>
           </div>
-        </motion.nav>
+        </header>
 
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
-          <Sidebar/>
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+              {/* Success Message */}
+              {successMessage && (
+                <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-xl flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-green-800 font-medium">{successMessage}</p>
+                </div>
+              )}
 
-          {/* Main Content */}
-          <div className="flex-1 p-6 overflow-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center items-start min-h-full"
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="max-w-2xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
-              >
-                <motion.h2
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent"
-                >
-                  Schedule Interview
-                </motion.h2>
+              {/* Error Messages */}
+              {errors.fetch && (
+                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-800 font-medium">{errors.fetch}</p>
+                </div>
+              )}
 
-                {/* Success Message */}
-                <AnimatePresence>
-                  {successMessage && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl"
+              {errors.submit && (
+                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-800 font-medium">{errors.submit}</p>
+                </div>
+              )}
+
+              {/* No Candidates Info */}
+              {candidates.length === 0 && !errors.fetch && (
+                <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-blue-800 font-medium">No new candidates available for scheduling.</p>
+                    <button
+                      onClick={() => navigate("/hr/add-candidate")}
+                      className="text-[#3572EF] hover:text-[#050C9C] font-medium underline mt-1 text-sm"
                     >
-                      ✅ {successMessage}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      Add a new candidate first.
+                    </button>
+                  </div>
+                </div>
+              )}
 
-                {/* Error Messages */}
-                <AnimatePresence>
-                  {errors.fetch && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
-                    >
-                      ❌ {errors.fetch}
-                    </motion.div>
-                  )}
-
-                  {errors.submit && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
-                    >
-                      ❌ {errors.submit}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Info message when no new candidates available */}
-                {candidates.length === 0 && !errors.fetch && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl"
-                  >
-                    <p className="text-blue-700 flex items-center">
-                      <span className="mr-2">ℹ️</span>
-                      No new candidates available for scheduling.
-                      <button
-                        onClick={() => navigateTo("/hr/add-candidate")}
-                        className="ml-2 text-[#00df82] hover:text-[#03624c] font-medium underline"
-                      >
-                        Add a new candidate first.
-                      </button>
-                    </p>
-                  </motion.div>
-                )}
-
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                  {/* Candidate Selection */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="candidateId">
-                      Select Candidate *
-                    </label>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Candidate Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Select Candidate <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <UserPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                     <select
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.candidateId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                        }`}
                       id="candidateId"
                       value={formData.candidateId}
                       onChange={handleChange}
                       disabled={candidates.length === 0}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 appearance-none ${
+                        errors.candidateId
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
                     >
                       <option value="">
                         {candidates.length === 0 ? 'No new candidates available' : 'Select a candidate'}
@@ -459,202 +374,190 @@ const ScheduleInterview = () => {
                         </option>
                       ))}
                     </select>
-                    {errors.candidateId && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="mt-2 text-sm text-red-600"
-                      >
-                        {errors.candidateId}
-                      </motion.p>
-                    )}
-                  </motion.div>
+                  </div>
+                  {errors.candidateId && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.candidateId}
+                    </p>
+                  )}
+                </div>
 
-                  {/* Date and Time */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    <div>
-                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewDate">
-                        Interview Date *
-                      </label>
+                {/* Date and Time */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Interview Date <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                       <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                          }`}
                         id="interviewDate"
                         type="date"
                         value={formData.interviewDate}
                         onChange={handleChange}
                         min={getMinDate()}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.interviewDate
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       />
-                      {errors.interviewDate && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600"
-                        >
-                          {errors.interviewDate}
-                        </motion.p>
-                      )}
                     </div>
+                    {errors.interviewDate && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.interviewDate}
+                      </p>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewTime">
-                        Interview Time *
-                      </label>
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Interview Time <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                       <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewTime ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                          }`}
                         id="interviewTime"
                         type="time"
                         value={formData.interviewTime}
                         onChange={handleChange}
                         min={formData.interviewDate === getMinDate() ? getMinTime() : "09:30"}
                         max="17:30"
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.interviewTime
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       />
-
-                      {errors.interviewTime && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600"
-                        >
-                          {errors.interviewTime}
-                        </motion.p>
-                      )}
                     </div>
-                  </motion.div>
+                    {errors.interviewTime && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.interviewTime}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-                  {/* Interview Type and Interviewers */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                  >
-                    <div>
-                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewType">
-                        Interview Type *
-                      </label>
+                {/* Interview Type and Interviewers */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Interview Type <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Video className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                       <select
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewType ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                          }`}
                         id="interviewType"
                         value={formData.interviewType}
                         onChange={handleChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 appearance-none ${
+                          errors.interviewType
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                        }`}
                       >
                         <option value="First Round">First Round</option>
-                        <option value="Secound Round">Secound Round</option>
-                        <option value="technical">Technical</option>
+                        <option value="Second Round">Second Round</option>
+                        <option value="Technical">Technical</option>
                       </select>
-                      {errors.interviewType && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600"
-                        >
-                          {errors.interviewType}
-                        </motion.p>
-                      )}
                     </div>
+                    {errors.interviewType && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.interviewType}
+                      </p>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="interviewers">
-                        Interviewers (comma separated) *
-                      </label>
+                  <div>
+                    <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                      Interviewers (comma separated) <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.interviewers ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
-                          }`}
                         id="interviewers"
                         type="text"
-                        placeholder="e.g., john@company.com, jane@company.com"
+                        placeholder="john@company.com, jane@company.com"
                         value={formData.interviewers}
                         onChange={handleChange}
-                      />
-                      {errors.interviewers && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-2 text-sm text-red-600"
-                        >
-                          {errors.interviewers}
-                        </motion.p>
-                      )}
-                    </div>
-                  </motion.div>
-
-                  {/* Meeting Link */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <label className="block text-gray-700 text-sm font-semibold mb-3" htmlFor="meetingLink">
-                      Meeting Link *
-                    </label>
-                    <input
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition duration-200 shadow-sm ${errors.meetingLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#00df82]'
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                          errors.interviewers
+                            ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
                         }`}
+                      />
+                    </div>
+                    {errors.interviewers && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.interviewers}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Meeting Link */}
+                <div>
+                  <label className="block text-sm font-medium text-[#050C9C] mb-2">
+                    Meeting Link <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Link2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
                       id="meetingLink"
                       type="url"
                       placeholder="https://meet.google.com/abc-def-ghi"
                       value={formData.meetingLink}
                       onChange={handleChange}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 ${
+                        errors.meetingLink
+                          ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'border-gray-200 focus:border-[#3572EF] focus:ring-2 focus:ring-[#3ABEF9]/20'
+                      }`}
                     />
-                    {errors.meetingLink && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="mt-2 text-sm text-red-600"
-                      >
-                        {errors.meetingLink}
-                      </motion.p>
-                    )}
-                    {/* Warning for non-standard meeting platforms */}
-                    {warnings.meetingLink && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="mt-2 text-sm text-yellow-600 bg-yellow-50 p-2 rounded"
-                      >
-                        ⚠️ {warnings.meetingLink}
-                      </motion.p>
-                    )}
-                  </motion.div>
+                  </div>
+                  {errors.meetingLink && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {errors.meetingLink}
+                    </p>
+                  )}
+                  {warnings.meetingLink && (
+                    <p className="mt-2 text-sm text-yellow-700 bg-yellow-50 p-3 rounded-lg flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      {warnings.meetingLink}
+                    </p>
+                  )}
+                </div>
 
-                  {/* Submit Button */}
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white py-4 rounded-xl hover:from-[#00df82] hover:to-[#03624c] focus:ring-4 focus:ring-[#00df82] transition duration-200 font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    type="submit"
-                    disabled={isSubmitting || candidates.length === 0}
-                  >
-                    {isSubmitting ? (
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="inline-block"
-                      >
-                        ⏳
-                      </motion.span>
-                    ) : (
-                      '🗓️ Schedule Interview'
-                    )}
-                  </motion.button>
-                </form>
-              </motion.div>
-            </motion.div>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || candidates.length === 0}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Scheduling...
+                    </>
+                  ) : (
+                    <>
+                      <Calendar className="w-5 h-5" />
+                      Schedule Interview
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

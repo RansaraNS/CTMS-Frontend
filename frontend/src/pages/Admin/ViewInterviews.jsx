@@ -137,8 +137,42 @@ const ViewInterviews = () => {
         <AdminSidebar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#3572EF] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-[#050C9C] font-medium">Loading interviews...</p>
+            {/* Animated container with pulsing effect */}
+            <div className="relative mb-6">
+              {/* Outer rotating ring */}
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3572EF] border-t-transparent rounded-full animate-spin mx-auto"></div>
+              
+              {/* Middle rotating ring - slower */}
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3ABEF9] border-b-transparent rounded-full animate-spin mx-auto" style={{ animationDuration: '1.5s' }}></div>
+              
+              {/* Inner glow effect */}
+              <div className="absolute inset-0 w-32 h-32 bg-gradient-to-br from-[#3572EF]/20 to-[#3ABEF9]/20 rounded-full animate-pulse mx-auto"></div>
+              
+              {/* Company Logo */}
+              <div className="relative w-32 h-32 flex items-center justify-center mx-auto">
+                <img 
+                  src="/GRW.png" 
+                  alt="Gamage Recruiters" 
+                  className="w-20 h-20 object-contain animate-pulse"
+                  style={{ animationDuration: '2s' }}
+                />
+              </div>
+            </div>
+            
+            {/* Loading text with animated dots */}
+            <p className="text-[#050C9C] font-semibold text-lg mb-2">
+              Loading Interviews
+              <span className="inline-flex ml-1">
+                <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
+                <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
+                <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+              </span>
+            </p>
+            
+            {/* Subtitle */}
+            <p className="text-[#3572EF] text-sm font-medium">
+              Please wait while we prepare your data
+            </p>
           </div>
         </div>
       </div>
@@ -178,7 +212,7 @@ const ViewInterviews = () => {
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="max-w-8xl mx-auto space-y-6">
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {stats.map((stat, index) => {

@@ -277,7 +277,10 @@ const Login = () => {
 
           <div className="mt-12 pt-8 border-t border-white/20">
             <p className="text-sm text-white/60">
-              Developed by GR IT Solutions. All rights reserved.
+              Powered by GR IT Solutions.
+            </p>
+            <p className="text-xs text-white/40 mt-1">
+              © {new Date().getFullYear()} Gamage Recruiters. All rights reserved.
             </p>
           </div>
         </div>

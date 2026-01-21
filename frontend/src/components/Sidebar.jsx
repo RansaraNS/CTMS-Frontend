@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, UserPlus, Calendar, History, Eye, Briefcase } from 'lucide-react';
+import { Home, UserPlus, Calendar, History, Eye, Briefcase, FileText } from 'lucide-react';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const Sidebar = () => {
     { path: "/hr/schedule-interview", icon: Calendar, label: "Schedule Interview" },
     { path: "/interviews", icon: History, label: "Manage Interviews" },
     { path: "/candidates", icon: Eye, label: "View Candidates" },
+    { path: "/hr/reports", icon: FileText, label: "Reports" },
   ];
 
   const isActivePath = (path) => {
@@ -29,12 +30,16 @@ const Sidebar = () => {
       {/* Header */}
       <div className="px-6 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-xl flex items-center justify-center shadow-lg">
-            <Briefcase className="w-5 h-5 text-white" />
+          <div>
+            <img
+                src="/GRW.png"
+                alt="Company Logo"
+                className="w-15 h-15 object-contain"
+            />
           </div>
           <div>
             <h1 className="text-lg font-semibold text-white">CTMS HR</h1>
-            <p className="text-xs text-white/60">Human Resources</p>
+            <p className="text-xs text-white/60">Management Portal</p>
           </div>
         </div>
       </div>
@@ -79,8 +84,10 @@ const Sidebar = () => {
       {/* Footer */}
       <div className="px-6 py-4 border-t border-white/10">
         <div className="text-center">
-          <p className="text-xs font-medium text-white/60">Candidate Tracking</p>
-          <p className="text-xs text-white/40 mt-1">Management System</p>
+          <p className="text-xs font-medium text-white/60">Powered by GR IT Solutions.</p>
+          <p className="text-xs text-white/40 mt-1">
+           © {new Date().getFullYear()} Gamage Recruiters. All rights reserved.
+          </p>
         </div>
       </div>
     </div>

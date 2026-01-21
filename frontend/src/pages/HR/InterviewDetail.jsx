@@ -3,8 +3,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../../components/Sidebar";
+import { 
+  LogOut, User, Briefcase, ArrowLeft, Calendar, 
+  Clock, Users, Video, FileText, CheckCircle,
+  AlertCircle, XCircle, MessageSquare, Mail, 
+  MapPin, Building, Phone
+} from 'lucide-react';
 
 const InterviewDetail = () => {
   const { id } = useParams();
@@ -55,23 +60,19 @@ const InterviewDetail = () => {
     // Process candidate object
     if (processed.candidate && typeof processed.candidate === 'object') {
       processed.candidate = { ...processed.candidate };
-      // Add any candidate-specific processing if needed
     }
 
-    // Process interviewers array - ensure it's properly formatted
+    // Process interviewers array
     if (processed.interviewers) {
       if (Array.isArray(processed.interviewers)) {
-        // If it's already an array, use it as is
         processed.interviewers = processed.interviewers.join(', ');
       } else if (typeof processed.interviewers === 'string') {
-        // If it's a string, try to parse it as JSON
         try {
           const parsed = JSON.parse(processed.interviewers);
           if (Array.isArray(parsed)) {
             processed.interviewers = parsed.join(', ');
           }
         } catch {
-          // If parsing fails, use the string as is
           processed.interviewers = processed.interviewers;
         }
       }
@@ -79,7 +80,6 @@ const InterviewDetail = () => {
 
     // Process feedback if it exists
     if (processed.feedback && typeof processed.feedback === 'object') {
-      // If feedback is an object, stringify it for display
       try {
         processed.feedback = JSON.stringify(processed.feedback, null, 2);
       } catch {
@@ -121,7 +121,6 @@ const InterviewDetail = () => {
           throw new Error("Interview not found");
         }
 
-        // Process the interview data properly
         const processedInterview = processInterviewData(data.interview);
         setInterview(processedInterview);
       } catch (error) {
@@ -143,23 +142,46 @@ const InterviewDetail = () => {
     navigate('/');
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
   const getStatusBadge = (status) => {
     const statusConfig = {
-      scheduled: { color: 'bg-blue-100 text-blue-800 border border-blue-200', label: 'Scheduled' },
-      completed: { color: 'bg-green-100 text-green-800 border border-green-200', label: 'Completed' },
-      cancelled: { color: 'bg-red-100 text-red-800 border border-red-200', label: 'Cancelled' },
-      pending: { color: 'bg-yellow-100 text-yellow-800 border border-yellow-200', label: 'Pending' },
-      'in-progress': { color: 'bg-purple-100 text-purple-800 border border-purple-200', label: 'In Progress' }
+      scheduled: { 
+        color: 'bg-blue-50 text-blue-700 border border-blue-200', 
+        icon: Clock,
+        label: 'Scheduled' 
+      },
+      completed: { 
+        color: 'bg-green-50 text-green-700 border border-green-200', 
+        icon: CheckCircle,
+        label: 'Completed' 
+      },
+      cancelled: { 
+        color: 'bg-red-50 text-red-700 border border-red-200', 
+        icon: XCircle,
+        label: 'Cancelled' 
+      },
+      pending: { 
+        color: 'bg-yellow-50 text-yellow-700 border border-yellow-200', 
+        icon: AlertCircle,
+        label: 'Pending' 
+      },
+      'in-progress': { 
+        color: 'bg-purple-50 text-purple-700 border border-purple-200', 
+        icon: Clock,
+        label: 'In Progress' 
+      }
     };
 
-    const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800 border border-gray-200', label: status };
+    const config = statusConfig[status] || { 
+      color: 'bg-gray-50 text-gray-700 border border-gray-200', 
+      icon: AlertCircle,
+      label: status 
+    };
+    
+    const Icon = config.icon;
     
     return (
-      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${config.color} shadow-sm`}>
+      <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold ${config.color}`}>
+        <Icon className="w-4 h-4" />
         {config.label}
       </span>
     );
@@ -175,411 +197,325 @@ const InterviewDetail = () => {
 
   if (loading) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <div className="flex-1 flex flex-col">
-          {/* Enhanced Navbar */}
-          <motion.nav 
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-          >
-            <div className="flex items-center">
-              <motion.img
-                src="/GR.jpg"
-                alt="Company Logo"
-                transition={{ duration: 0.5 }}
-                className="w-10 h-10 mr-3 object-contain"
-              />
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-                Candidate Tracking Management System
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-              >
-                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-              </motion.div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleLogout}
-                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
-              >
-                Logout
-              </motion.button>
-            </div>
-          </motion.nav>
-          
-          <div className="flex-1 flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-[#00df82] border-t-transparent rounded-full mx-auto"
-              ></motion.div>
-              <p className="mt-4 text-gray-600 text-lg font-medium">Loading interview details...</p>
-            </motion.div>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-[#3572EF] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-[#050C9C] font-medium">Loading interview details...</p>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <div className="flex-1 flex flex-col">
-          {/* Enhanced Navbar */}
-          <motion.nav 
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-          >
-            <div className="flex items-center">
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="text-3xl mr-3"
-              >
-                📊
-              </motion.div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-                Candidate Tracking Management System
-              </h1>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#050C9C] to-[#3572EF] rounded-xl flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-[#050C9C]">Interview Details</h1>
+                <p className="text-sm text-gray-600">View complete interview information</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-              >
-                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-              </motion.div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+              </div>
+              <button
                 onClick={handleLogout}
-                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
               >
+                <LogOut className="w-4 h-4" />
                 Logout
-              </motion.button>
+              </button>
             </div>
-          </motion.nav>
-          
-          <div className="flex-1 flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center bg-white p-8 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full mx-4"
-            >
-              <div className="text-6xl mb-4">❌</div>
+          </header>
+
+          {/* Error Content */}
+          <main className="flex-1 overflow-y-auto p-8 flex items-center justify-center">
+            <div className="max-w-md w-full bg-white rounded-2xl shadow-md border border-gray-100 p-8 text-center">
+              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
+              </div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">Error Loading Interview</h3>
               <p className="text-gray-600 mb-6">{error}</p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => navigate('/interviews')}
-                className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
+                className="w-full bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
               >
                 Back to Interviews
-              </motion.button>
-            </motion.div>
-          </div>
+              </button>
+            </div>
+          </main>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   if (!interview) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <div className="flex-1 flex flex-col">
-          {/* Enhanced Navbar */}
-          <motion.nav 
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-          >
-            <div className="flex items-center">
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="text-3xl mr-3"
-              >
-                📊
-              </motion.div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-                Candidate Tracking Management System
-              </h1>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#050C9C] to-[#3572EF] rounded-xl flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-[#050C9C]">Interview Details</h1>
+                <p className="text-sm text-gray-600">View complete interview information</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-              >
-                <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-              </motion.div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+              </div>
+              <button
                 onClick={handleLogout}
-                className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
               >
+                <LogOut className="w-4 h-4" />
                 Logout
-              </motion.button>
+              </button>
             </div>
-          </motion.nav>
-          
-          <div className="flex-1 flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center bg-white p-8 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full mx-4"
-            >
-              <div className="text-6xl mb-4">📝</div>
+          </header>
+
+          {/* Not Found Content */}
+          <main className="flex-1 overflow-y-auto p-8 flex items-center justify-center">
+            <div className="max-w-md w-full bg-white rounded-2xl shadow-md border border-gray-100 p-8 text-center">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-8 h-8 text-gray-400" />
+              </div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">Interview Not Found</h3>
               <p className="text-gray-600 mb-6">No interview details found for the specified ID.</p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => navigate('/interviews')}
-                className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
+                className="w-full bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
               >
                 Back to Interviews
-              </motion.button>
-            </motion.div>
-          </div>
+              </button>
+            </div>
+          </main>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-    >
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
-        <motion.nav 
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl mr-3"
-            >
-              📊
-            </motion.div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Interview Details</h1>
+              <p className="text-sm text-gray-600">Complete interview information and candidate profile</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+            </div>
+            <button
               onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
             >
+              <LogOut className="w-4 h-4" />
               Logout
-            </motion.button>
+            </button>
           </div>
-        </motion.nav>
+        </header>
 
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1">
-          {/* Enhanced Sidebar */}
-           <Sidebar/>
-          {/* Main Content */}
-          <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center items-start min-h-full"
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-6xl mx-auto">
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-red-800 font-medium">{error}</p>
+              </div>
+            )}
+
+            {/* Back Button */}
+            <button
+              onClick={() => navigate('/interviews')}
+              className="mb-6 flex items-center gap-2 text-[#3572EF] hover:text-[#050C9C] font-medium transition-colors duration-200"
             >
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="max-w-4xl w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200"
-              >
-                {/* Error Message */}
-                <AnimatePresence>
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl"
-                    >
-                      ❌ {error}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              <ArrowLeft className="w-5 h-5" />
+              Back to Interviews
+            </button>
 
-                {/* Header */}
-                <motion.div 
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-between items-center mb-8"
-                >
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-[#03624c] to-[#030f0f] bg-clip-text text-transparent">
-                    Interview Details - {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}
-                  </h2>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate('/interviews')}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
-                  >
-                    ← Back to Interviews
-                  </motion.button>
-                </motion.div>
-
-                {/* Candidate Details */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="mb-8 p-6 bg-gradient-to-r from-[#03624c] to-[#030f0f] rounded-2xl border border-gray-200"
-                >
-                  <h3 className="font-semibold text-lg mb-4 text-white">👤 Candidate Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <p><strong className="text-[#00df82]">Full Name:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}</span></p>
-                      <p><strong className="text-[#00df82]">Position:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.position)}</span></p>
-                      <p><strong className="text-[#00df82]">Email:</strong> <span className="text-white font-bold">{safeRender(interview.candidate?.email)}</span></p>
-                    </div>
-                    <div className="space-y-3">
-                      {/* <p><strong className="text-gray-700">Phone:</strong> {safeRender(interview.candidate?.phone)}</p> */}
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Interview Details */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="mb-8"
-                >
-                  <h3 className="font-semibold text-lg mb-6 text-gray-800">📋 Interview Details</h3>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Basic Information */}
-                    <div className="space-y-6">
-                      {[
-                        { label: 'Interview Date', value: safeRender(interview.interviewDate), icon: '📅' },
-                        { label: 'Interview Type', value: safeRender(interview.interviewType), icon: '🎯' },
-                        { label: 'Status', value: interview.status ? getStatusBadge(interview.status) : "N/A", icon: '📊' },
-                        { label: 'Interviewers', value: safeRender(interview.interviewers), icon: '👥' },
-                      ].map((item, index) => (
-                        <motion.div 
-                          key={item.label}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 + index * 0.1 }}
-                          className="flex justify-between items-center p-4 px-1 bg-white rounded-xl border border-gray-200 shadow-sm"
-                        >
-                          <div className="flex items-center space-x-1">
-                            <span className="text-xl">{item.icon}</span>
-                            <span className="font-medium text-gray-700">{item.label}:</span>
-                          </div>
-                          <div className="text-right max-w-xs">
-                            {item.label === 'Status' ? item.value : <span className="font-semibold text-gray-800 break-words">{item.value}</span>}
-                          </div>
-                        </motion.div>
-                      ))}
+            <div className="space-y-6">
+              {/* Candidate Header Card */}
+              <div className="bg-gradient-to-r from-[#050C9C] to-[#3572EF] rounded-2xl p-8 text-white shadow-md">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <User className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold">
+                          {safeRender(interview.candidate?.firstName)} {safeRender(interview.candidate?.lastName)}
+                        </h2>
+                        <p className="text-[#A7E6FF] font-medium">{safeRender(interview.candidate?.position)}</p>
+                      </div>
                     </div>
                     
-                    {/* Additional Details */}
-                    <div className="space-y-6">
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="bg-gradient-to-br from-[#03624c] to-[#030f0f] p-6 rounded-2xl border border-[#00df82]"
-                      >
-                        <div className="space-y-3">
-                          {interview.meetingLink && interview.meetingLink !== "N/A" && (
-                            <div>
-                              <strong className="text-white">Meeting Link:</strong>
-                              <a
-                                href={interview.meetingLink}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="ml-2 text-[#00df82] underline hover:text-white break-all"
-                              >
-                                Join Meeting
-                              </a>
-                            </div>
-                          )}
-                          {interview.notes && interview.notes !== "N/A" && (
-                            <div>
-                              <strong className="text-white">Notes:</strong>
-                              <p className="mt-1 text-gray-200 whitespace-pre-wrap break-words">{safeRender(interview.notes)}</p>
-                            </div>
-                          )}
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-[#A7E6FF]" />
+                        <span className="text-sm">{safeRender(interview.candidate?.email)}</span>
+                      </div>
+                      {interview.candidate?.phone && interview.candidate.phone !== "N/A" && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-[#A7E6FF]" />
+                          <span className="text-sm">{safeRender(interview.candidate?.phone)}</span>
                         </div>
-                      </motion.div>
+                      )}
                     </div>
                   </div>
-                </motion.div>
+                  
+                  <div>
+                    {getStatusBadge(interview.status)}
+                  </div>
+                </div>
+              </div>
 
-                {/* Action Buttons */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                  className="flex space-x-4 pt-6 border-t border-gray-200"
+              {/* Interview Information Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Interview Details Card */}
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                  <h3 className="text-lg font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
+                    Interview Schedule
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between p-3 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[#3572EF]" />
+                        <span className="text-sm font-medium text-gray-700">Date & Time</span>
+                      </div>
+                      <span className="text-sm font-semibold text-[#050C9C] text-right">{safeRender(interview.interviewDate)}</span>
+                    </div>
+
+                    <div className="flex items-start justify-between p-3 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-[#3572EF]" />
+                        <span className="text-sm font-medium text-gray-700">Interview Type</span>
+                      </div>
+                      <span className="text-sm font-semibold text-[#050C9C] capitalize">{safeRender(interview.interviewType)}</span>
+                    </div>
+
+                    <div className="flex items-start justify-between p-3 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-[#3572EF]" />
+                        <span className="text-sm font-medium text-gray-700">Interviewers</span>
+                      </div>
+                      <span className="text-sm font-semibold text-[#050C9C] text-right max-w-xs break-words">{safeRender(interview.interviewers)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Information Card */}
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                  <h3 className="text-lg font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Additional Details
+                  </h3>
+                  <div className="space-y-4">
+                    {interview.meetingLink && interview.meetingLink !== "N/A" && (
+                      <div className="p-3 bg-gradient-to-r from-[#3ABEF9]/10 to-[#3572EF]/10 rounded-xl border border-[#3ABEF9]/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Video className="w-4 h-4 text-[#3572EF]" />
+                          <span className="text-sm font-medium text-gray-700">Meeting Link</span>
+                        </div>
+                        <a
+                          href={interview.meetingLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-[#3572EF] hover:text-[#050C9C] font-semibold underline break-all"
+                        >
+                          Join Interview Meeting
+                        </a>
+                      </div>
+                    )}
+
+                    {interview.notes && interview.notes !== "N/A" && (
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageSquare className="w-4 h-4 text-[#3572EF]" />
+                          <span className="text-sm font-medium text-gray-700">Notes</span>
+                        </div>
+                        <p className="text-sm text-gray-600 whitespace-pre-wrap break-words">{safeRender(interview.notes)}</p>
+                      </div>
+                    )}
+
+                    {(!interview.meetingLink || interview.meetingLink === "N/A") && 
+                     (!interview.notes || interview.notes === "N/A") && (
+                      <div className="p-4 bg-gray-50 rounded-xl text-center">
+                        <p className="text-sm text-gray-500">No additional details available</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Feedback Section */}
+              {interview.feedback && interview.feedback !== "N/A" && (
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                  <h3 className="text-lg font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" />
+                    Interview Feedback
+                  </h3>
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <pre className="text-sm text-gray-700 whitespace-pre-wrap break-words font-mono">
+                      {safeRender(interview.feedback)}
+                    </pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Button */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => navigate(`/interviews/${id}/feedback`)}
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
                 >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate(`/interviews/${id}/feedback`)}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white px-6 py-3 rounded-xl hover:from-[#00df82] hover:to-[#03624c] font-semibold shadow-lg"
-                  >
-                    📝 View/Add Feedback
-                  </motion.button>
-                </motion.div>
-              </motion.div>
-            </motion.div>
+                  <MessageSquare className="w-5 h-5" />
+                  {interview.feedback && interview.feedback !== "N/A" ? 'View/Edit Feedback' : 'Add Feedback'}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,8 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  LogOut, User, ArrowLeft, Mail, Phone, FileText, Calendar, 
+  Briefcase, Download, Eye, Award, MessageSquare, Users as UsersIcon,
+  AlertCircle, CheckCircle, XCircle, Clock, Star, Brain, TrendingUp
+} from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 
 const CandidateDetailsView = () => {
@@ -14,43 +17,26 @@ const CandidateDetailsView = () => {
   const [error, setError] = useState('');
   const [cvLoading, setCvLoading] = useState(false);
   const [cvError, setCvError] = useState('');
-
   const user = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    fetchCandidateDetails();
-  }, [id]);
+  useEffect(() => { fetchCandidateDetails(); }, [id]);
 
   const fetchCandidateDetails = async () => {
-    setLoading(true);
-    setError('');
+    setLoading(true); setError('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
+      if (!token) throw new Error('No authentication token found');
       const response = await fetch(`http://localhost:5000/api/candidates/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
       });
-      
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('role');
-          localStorage.removeItem('user');
-          navigate('/');
-          return;
+          ['token', 'role', 'user'].forEach(i => localStorage.removeItem(i));
+          navigate('/'); return;
         }
-        if (response.status === 404) {
-          throw new Error('Candidate not found');
-        }
+        if (response.status === 404) throw new Error('Candidate not found');
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
       const data = await response.json();
       setCandidate(data.candidate);
       setInterviews(data.interviews || []);
@@ -62,41 +48,24 @@ const CandidateDetailsView = () => {
     }
   };
 
-  // Function to handle CV download
   const handleDownloadCV = async () => {
     if (!candidate?.cv) return;
-    
-    setCvLoading(true);
-    setCvError('');
+    setCvLoading(true); setCvError('');
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:5000/api/candidates/${id}/cv`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Failed to download CV' }));
         throw new Error(errorData.message || `Failed to download CV: ${response.status}`);
       }
-
       const blob = await response.blob();
-      
-      // Check if blob is valid
-      if (blob.size === 0) {
-        throw new Error('CV file is empty or corrupted');
-      }
-
+      if (blob.size === 0) throw new Error('CV file is empty or corrupted');
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      
-      // Extract filename from CV path or use candidate name
-      const filename = candidate.cv.split('/').pop() || 
-        `${candidate.firstName}_${candidate.lastName}_CV.pdf`;
-      
-      link.download = filename;
+      link.download = candidate.cv.split('/').pop() || `${candidate.firstName}_${candidate.lastName}_CV.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -109,35 +78,22 @@ const CandidateDetailsView = () => {
     }
   };
 
-  // Function to handle CV view
   const handleViewCV = async () => {
     if (!candidate?.cv) return;
-    
-    setCvLoading(true);
-    setCvError('');
+    setCvLoading(true); setCvError('');
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:5000/api/candidates/${id}/cv`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Failed to load CV' }));
         throw new Error(errorData.message || `Failed to load CV: ${response.status}`);
       }
-
       const blob = await response.blob();
-      
-      // Check if blob is valid
-      if (blob.size === 0) {
-        throw new Error('CV file is empty or corrupted');
-      }
-
+      if (blob.size === 0) throw new Error('CV file is empty or corrupted');
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
-      // Don't revoke the URL immediately as it's being used in a new tab
       setTimeout(() => window.URL.revokeObjectURL(url), 1000);
     } catch (error) {
       console.error('Error viewing CV:', error);
@@ -148,491 +104,340 @@ const CandidateDetailsView = () => {
   };
 
   const getStatusBadge = (status) => {
-    const statusConfig = {
-      new: { color: 'bg-[#82162fff] text-white', label: 'New' },
-      scheduled: { color: 'bg-[#03624c] text-white', label: 'scheduled' },
-      hired: { color: 'bg-[#00df82] text-white', label: 'Hired' },
-      rejected: { color: 'bg-red-500 text-white', label: 'Rejected' },
-    };
-
-    const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', label: status };
-    
+    const config = {
+      new: { color: 'bg-gray-100 text-gray-800', icon: <AlertCircle className="w-3 h-3" />, label: 'New' },
+      contacted: { color: 'bg-blue-100 text-blue-800', icon: <Mail className="w-3 h-3" />, label: 'Contacted' },
+      scheduled: { color: 'bg-purple-100 text-purple-800', icon: <Calendar className="w-3 h-3" />, label: 'Scheduled' },
+      interviewed: { color: 'bg-yellow-100 text-yellow-800', icon: <UsersIcon className="w-3 h-3" />, label: 'Interviewed' },
+      hired: { color: 'bg-green-100 text-green-800', icon: <CheckCircle className="w-3 h-3" />, label: 'Hired' },
+      rejected: { color: 'bg-red-100 text-red-800', icon: <XCircle className="w-3 h-3" />, label: 'Rejected' }
+    }[status] || { color: 'bg-gray-100 text-gray-800', icon: <AlertCircle className="w-3 h-3" />, label: status };
     return (
-      <motion.span 
-        whileHover={{ scale: 1.05 }}
-        className={`px-3 py-1 rounded-full text-sm font-medium ${config.color} shadow-sm`}
-      >
-        {config.label}
-      </motion.span>
+      <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold ${config.color} shadow-sm`}>
+        {config.icon} {config.label}
+      </span>
     );
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getRatingStars = (rating) => {
+    return Array(5).fill(0).map((_, i) => (
+      <Star key={i} className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+    ));
   };
 
   const renderFeedback = (feedback) => {
     if (!feedback) return null;
-    
-    if (typeof feedback === 'string') {
-      return <p className="text-sm text-gray-600"><strong>Feedback:</strong> {feedback}</p>;
-    }
-    
+    if (typeof feedback === 'string') return <p className="text-sm text-gray-600"><strong>Feedback:</strong> {feedback}</p>;
     if (typeof feedback === 'object') {
+      const ratings = [
+        { label: 'Technical Skills', value: feedback.technicalSkills, icon: Brain },
+        { label: 'Communication', value: feedback.communication, icon: MessageSquare },
+        { label: 'Problem Solving', value: feedback.problemSolving, icon: TrendingUp },
+        { label: 'Cultural Fit', value: feedback.culturalFit, icon: UsersIcon }
+      ];
       return (
-        <div className="mt-2">
-          <p className="text-sm font-semibold text-gray-700">Interview Feedback:</p>
-          {feedback.technicalSkills && (
-            <p className="text-sm text-gray-600"><strong>Technical Skills:</strong> {feedback.technicalSkills}</p>
-          )}
-          {feedback.communication && (
-            <p className="text-sm text-gray-600"><strong>Communication:</strong> {feedback.communication}</p>
-          )}
-          {feedback.problemSolving && (
-            <p className="text-sm text-gray-600"><strong>Problem Solving:</strong> {feedback.problemSolving}</p>
-          )}
-          {feedback.culturalFit && (
-            <p className="text-sm text-gray-600"><strong>Cultural Fit:</strong> {feedback.culturalFit}</p>
-          )}
+        <div className="mt-4 space-y-3">
+          <p className="text-sm font-semibold text-[#050C9C]">Interview Feedback</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {ratings.map(r => r.value && (
+              <div key={r.label} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <r.icon className="w-4 h-4 text-[#3572EF]" />
+                  <span className="text-sm font-medium text-gray-700">{r.label}</span>
+                </div>
+                <div className="flex gap-0.5">{getRatingStars(r.value)}</div>
+              </div>
+            ))}
+          </div>
           {feedback.overallRating && (
-            <p className="text-sm text-gray-600"><strong>Overall Rating:</strong> {feedback.overallRating}</p>
+            <div className="bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] p-4 rounded-lg text-white">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">Overall Rating</span>
+                <span className="text-2xl font-bold">{feedback.overallRating}/5</span>
+              </div>
+            </div>
           )}
-          {feedback.notes && (
-            <p className="text-sm text-gray-600"><strong>Notes:</strong> {feedback.notes}</p>
-          )}
+          {feedback.notes && <div className="bg-gray-50 p-3 rounded-lg"><p className="text-sm text-gray-700"><strong>Notes:</strong> {feedback.notes}</p></div>}
           {feedback.outcome && (
-            <p className="text-sm text-gray-600"><strong>Outcome:</strong> {feedback.outcome}</p>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">Outcome:</span>
+              {getStatusBadge(feedback.outcome)}
+            </div>
           )}
         </div>
       );
     }
-    
     return null;
   };
 
-  const handleBack = () => {
-    navigate('/candidates');
-  };
-
-  const handleEdit = () => {
-    navigate(`/hr/edit-candidate/${id}`);
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem('role');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    ['role', 'token', 'user'].forEach(i => localStorage.removeItem(i));
     navigate('/');
-  };
-
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
-  const handleRetry = () => {
-    fetchCandidateDetails();
   };
 
   if (loading) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <motion.div
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1.5, repeat: Infinity }
-          }}
-          className="rounded-full h-16 w-16 border-4 border-[#00df82] border-t-transparent"
-        ></motion.div>
-      </motion.div>
-    );
-  }
-
-  if (error) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <motion.div
-            initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-2xl max-w-md text-center shadow-lg"
-          >
-            <p className="font-bold text-lg mb-2">Error</p>
-            <p className="mb-4">{error}</p>
-            <div className="flex gap-4 justify-center">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleRetry}
-                className="bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
-              >
-                Retry
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleBack}
-                className="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 shadow-lg"
-              >
-                Back to Candidates
-              </motion.button>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3572EF] border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="absolute inset-0 w-32 h-32 border-4 border-[#3ABEF9] border-b-transparent rounded-full animate-spin mx-auto" style={{ animationDuration: '1.5s' }}></div>
+              <div className="absolute inset-0 w-32 h-32 bg-gradient-to-br from-[#3572EF]/20 to-[#3ABEF9]/20 rounded-full animate-pulse mx-auto"></div>
+              <div className="relative w-32 h-32 flex items-center justify-center mx-auto">
+                <img src="/GRW.png" alt="Gamage Recruiters" className="w-20 h-20 object-contain animate-pulse" style={{ animationDuration: '2s' }} />
+              </div>
             </div>
-          </motion.div>
+            <p className="text-[#050C9C] font-semibold text-lg mb-2">Loading Candidate Details<span className="inline-flex ml-1"><span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span><span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span><span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span></span></p>
+            <p className="text-[#3572EF] text-sm font-medium">Please wait while we prepare your data</p>
+          </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
-  if (!candidate) {
+  if (error || !candidate) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-      >
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <motion.div
-            initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            className="text-center"
-          >
-            <p className="text-gray-600 text-lg mb-4">Candidate not found</p>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleBack}
-              className="bg-[#03624c] text-white px-6 py-2 rounded-xl hover:bg-[#00df82] shadow-lg"
-            >
-              Back to Candidates
-            </motion.button>
-          </motion.div>
+      <div className="flex h-screen bg-[#A7E6FF]">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-semibold text-[#050C9C]">Candidate Details</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+              </div>
+              <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium">
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto p-8 flex items-center justify-center">
+            <div className="bg-white p-12 rounded-2xl shadow-xl border border-gray-200 max-w-md w-full text-center">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-10 h-10 text-red-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#050C9C] mb-3">{error || 'Candidate Not Found'}</h3>
+              <p className="text-gray-600 mb-8">Unable to load candidate information</p>
+              <div className="flex gap-3 justify-center">
+                <button onClick={fetchCandidateDetails} className="flex items-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                  Retry
+                </button>
+                <button onClick={() => navigate('/candidates')} className="flex items-center gap-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200">
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+              </div>
+            </div>
+          </main>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-    >
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Enhanced Navbar */}
-        <motion.nav 
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-        >
-          <div className="flex items-center">
-            <motion.img
-              src="/GR.jpg"
-              alt="Company Logo"
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 mr-3 object-contain"
-            />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-              Candidate Tracking Management System
-            </h1>
+    <div className="flex h-screen bg-[#A7E6FF]">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate('/candidates')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <ArrowLeft className="w-5 h-5 text-[#050C9C]" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-[#050C9C]">Candidate Profile</h1>
+              <p className="text-sm text-gray-600">{candidate.firstName} {candidate.lastName}</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-            >
-              <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleLogout}
-              className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
-            >
-              Logout
-            </motion.button>
-          </div>
-        </motion.nav>
-
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <Sidebar/>
-
-          {/* Main Content */}
-          <div className="flex-1 p-6 overflow-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center">
-                <motion.button 
-                  whileHover={{ scale: 1.05, x: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleBack}
-                  className="flex items-center text-[#00df82] hover:text-[#03624c] font-medium"
-                >
-                  ← Back to Candidates
-                </motion.button>
-                {/* <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleEdit}
-                  className="bg-[#03624c] text-white px-6 py-3 rounded-xl hover:bg-[#00df82] shadow-lg font-medium"
-                >
-                  ✏️ Edit Candidate
-                </motion.button> */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
               </div>
+              <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+            </div>
+            <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium">
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
+          </div>
+        </header>
 
-              {/* Candidate Profile Card */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden"
-              >
-                <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <motion.div 
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        className="flex-shrink-0 h-20 w-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                      >
-                        <span className="text-white text-3xl font-bold">
-                          {candidate.firstName?.[0]}{candidate.lastName?.[0]}
-                        </span>
-                      </motion.div>
-                      <div className="ml-6">
-                        <h2 className="text-3xl font-bold">
-                          {candidate.firstName} {candidate.lastName}
-                        </h2>
-                        <p className="text-[#00df82] text-lg">{candidate.position}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      {getStatusBadge(candidate.status)}
-                      <p className="text-[#00df82] mt-2">Added on {formatDate(candidate.createdAt)}</p>
-                    </div>
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Profile Header */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-br from-[#050C9C] to-[#3572EF] rounded-2xl p-8 shadow-lg text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-4 border-white/30">
+                    <span className="text-4xl font-bold">{candidate.firstName?.[0]}{candidate.lastName?.[0]}</span>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">{candidate.firstName} {candidate.lastName}</h2>
+                    <p className="text-[#A7E6FF] text-lg flex items-center gap-2">
+                      <Briefcase className="w-5 h-5" /> {candidate.position}
+                    </p>
+                    <p className="text-sm opacity-75 mt-2">Added {formatDate(candidate.createdAt)}</p>
                   </div>
                 </div>
+                <div className="text-right">
+                  {getStatusBadge(candidate.status)}
+                </div>
+              </div>
+            </motion.div>
 
-                <div className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Personal Information */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">👤</span> Personal Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Email</label>
-                          <p className="text-gray-900 font-medium">{candidate.email}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Phone</label>
-                          <p className="text-gray-900 font-medium">{candidate.phone || 'N/A'}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Source</label>
-                          <p className="text-gray-900 font-medium">{candidate.source || 'N/A'}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-xl">
-                          <label className="text-sm font-medium text-gray-500">Status</label>
-                          <div className="mt-1  ">{getStatusBadge(candidate.status)}</div>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    {/* Professional Information */}
-
-                       {/* Skills */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 }}
-                    className="mt-8"
-                  >
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                      <span className="mr-2">🛠️</span> Skills
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {candidate.skills?.length > 0 ? candidate.skills.map((skill, index) => (
-                        <motion.span 
-                          key={index} 
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="px-3 py-1 rounded-full bg-[#00df82] text-white text-sm font-medium shadow-sm"
-                        >
-                          {skill}
-                        </motion.span>
-                      )) : <p className="text-gray-600">No skills listed</p>}
+            {/* Info Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Contact Info */}
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <h3 className="text-xl font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                  <Mail className="w-5 h-5" /> Contact Information
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Mail className="w-5 h-5 text-[#3572EF]" />
+                    <div>
+                      <p className="text-xs text-gray-500">Email</p>
+                      <p className="font-medium text-gray-900">{candidate.email}</p>
                     </div>
-                  </motion.div>
-                    
                   </div>
-
-               
-
-                  {/* Notes */}
-                  {candidate.notes && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="mt-8"
-                    >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">📝</span> Notes
-                      </h3>
-                      <div className="bg-gray-50 p-4 rounded-xl">
-                        <p className="text-gray-900 font-medium whitespace-pre-wrap">{candidate.notes}</p>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* CV Section */}
-                  {candidate.cv && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.45 }}
-                      className="mt-8"
-                    >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">📄</span> Curriculum Vitae (CV)
-                      </h3>
-                      <div className="bg-gray-50 p-4 rounded-xl">
-                        <div className="flex flex-col gap-4">
-                          <div className="flex gap-4 flex-wrap">
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={handleViewCV}
-                              disabled={cvLoading}
-                              className="bg-[#03624c] text-white px-6 py-3 rounded-lg hover:bg-[#00df82] disabled:opacity-50 shadow-md flex items-center gap-2"
-                            >
-                              <span>👁️</span>
-                              {cvLoading ? 'Loading...' : 'View CV'}
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={handleDownloadCV}
-                              disabled={cvLoading}
-                              className="bg-[#00df82] text-white px-6 py-3 rounded-lg hover:bg-[#03624c] disabled:opacity-50 shadow-md flex items-center gap-2"
-                            >
-                              <span>📥</span>
-                              {cvLoading ? 'Downloading...' : 'Download CV'}
-                            </motion.button>
-                          </div>
-                          
-                          {cvError && (
-                            <motion.div 
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"
-                            >
-                              <p className="font-medium">CV Error:</p>
-                              <p className="text-sm">{cvError}</p>
-                              <button 
-                                onClick={() => setCvError('')}
-                                className="text-red-600 hover:text-red-800 text-sm mt-2"
-                              >
-                                Dismiss
-                              </button>
-                            </motion.div>
-                          )}
-                          
-                          <p className="text-sm text-gray-600 mt-2">
-                            <strong>File:</strong> {candidate.cv.split('/').pop()}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Interviews */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="mt-8"
-                  >
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                      <span className="mr-2">📊</span> Interview History
-                    </h3>
-                    {interviews.length > 0 ? (
-                      <div className="space-y-4">
-                        {interviews.map((interview, index) => (
-                          <motion.div 
-                            key={interview._id || index} 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="bg-gray-50 p-4 rounded-xl shadow-sm border-l-4 border-[#03624c]"
-                          >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <p><strong>Date:</strong> {formatDate(interview.interviewDate || interview.date)}</p>
-                                <p><strong>Type:</strong> {interview.interviewType || 'N/A'}</p>
-                                <p><strong>Status:</strong> {interview.status || 'N/A'}</p>
-                              </div>
-                              <div>
-                                <p><strong>Interviewers:</strong> {interview.interviewers?.join(', ') || 'N/A'}</p>
-                                {/* <p><strong>Round:</strong> {interview.round || 'N/A'}</p> */}
-                              </div>
-                            </div>
-                            {renderFeedback(interview.feedback)}
-                          </motion.div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 p-6 rounded-xl text-center">
-                        <p className="text-gray-600">No interviews scheduled for this candidate</p>
-                        <motion.button 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => navigateTo('/hr/schedule-interview')}
-                          className="mt-4 bg-[#03624c] text-white px-6 py-2 rounded-lg hover:bg-[#00df82]"
-                        >
-                          Schedule Interview
-                        </motion.button>
-                      </div>
-                    )}
-                  </motion.div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Phone className="w-5 h-5 text-[#3572EF]" />
+                    <div>
+                      <p className="text-xs text-gray-500">Phone</p>
+                      <p className="font-medium text-gray-900">{candidate.phone || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <UsersIcon className="w-5 h-5 text-[#3572EF]" />
+                    <div>
+                      <p className="text-xs text-gray-500">Source</p>
+                      <p className="font-medium text-gray-900">{candidate.source || 'N/A'}</p>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
+
+              {/* Skills */}
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <h3 className="text-xl font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                  <Award className="w-5 h-5" /> Skills
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {candidate.skills?.length > 0 ? candidate.skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white text-sm font-medium shadow-sm">
+                      {skill}
+                    </span>
+                  )) : <p className="text-gray-500">No skills listed</p>}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Notes */}
+            {candidate.notes && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <h3 className="text-xl font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" /> Notes
+                </h3>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-700 whitespace-pre-wrap">{candidate.notes}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* CV Section */}
+            {candidate.cv && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <h3 className="text-xl font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5" /> Curriculum Vitae
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3 flex-wrap">
+                    <button onClick={handleViewCV} disabled={cvLoading} className="flex items-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 font-medium disabled:opacity-50">
+                      <Eye className="w-4 h-4" /> {cvLoading ? 'Loading...' : 'View CV'}
+                    </button>
+                    <button onClick={handleDownloadCV} disabled={cvLoading} className="flex items-center gap-2 bg-white border-2 border-[#3572EF] text-[#3572EF] px-6 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium disabled:opacity-50">
+                      <Download className="w-4 h-4" /> {cvLoading ? 'Downloading...' : 'Download'}
+                    </button>
+                  </div>
+                  {cvError && (
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="font-medium text-red-800">Error</p>
+                          <p className="text-sm text-red-700">{cvError}</p>
+                          <button onClick={() => setCvError('')} className="text-red-600 hover:text-red-800 text-sm mt-2 font-medium">Dismiss</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                    <strong>File:</strong> {candidate.cv.split('/').pop()}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Interview History */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+              <h3 className="text-xl font-semibold text-[#050C9C] mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5" /> Interview History
+              </h3>
+              {interviews.length > 0 ? (
+                <div className="space-y-4">
+                  {interviews.map((interview, i) => (
+                    <div key={interview._id || i} className="bg-gray-50 p-5 rounded-xl border-l-4 border-[#3572EF]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Calendar className="w-4 h-4 text-[#3572EF]" />
+                            <span className="font-medium">{formatDate(interview.interviewDate || interview.date)}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Briefcase className="w-4 h-4 text-[#3572EF]" />
+                            <span>{interview.interviewType || 'N/A'}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm">
+                            <UsersIcon className="w-4 h-4 text-[#3572EF]" />
+                            <span>{interview.interviewers?.join(', ') || 'N/A'}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(interview.status || 'pending')}
+                          </div>
+                        </div>
+                      </div>
+                      {renderFeedback(interview.feedback)}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-600 mb-6">No interviews scheduled for this candidate</p>
+                  <button onClick={() => navigate('/hr/schedule-interview')} className="flex items-center gap-2 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9] text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-200 mx-auto">
+                    <Calendar className="w-4 h-4" /> Schedule Interview
+                  </button>
+                </div>
+              )}
             </motion.div>
           </div>
-        </div>
+        </main>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import Sidebar from "../../components/Sidebar";
 import GenerateInterviewsReport from "./GenerateInterviewsReports";
 import GenerateCandidatesReport from "./GenerateCandidatesReports";
-
+import { 
+  LogOut, User, FileText, Users, Calendar, 
+  BarChart3, Download, TrendingUp
+} from 'lucide-react';
 
 const ReportsHome = () => {
     const navigate = useNavigate();
@@ -20,113 +22,93 @@ const ReportsHome = () => {
         navigate('/');
     };
 
-
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="flex min-h-screen bg-gradient-to-br from-[#03624c] to-[#030f0f]"
-        >
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col">
-                {/* Enhanced Navbar */}
-                <motion.nav
-                    initial={{ y: -100 }}
-                    animate={{ y: 0 }}
-                    className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-4 flex justify-between items-center w-full shadow-lg"
-                >
-                    <div className="flex items-center">
-                        <motion.img
-                            src="/GR.jpg"
-                            alt="Company Logo"
-                            transition={{ duration: 0.5 }}
-                            className="w-10 h-10 mr-3 object-contain"
-                        />
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00df82]">
-                            Candidate Tracking Management System
-                        </h1>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            className="bg-[#03624c] px-4 py-2 rounded-full shadow-lg"
-                        >
-                            <span className="font-medium">Welcome, {user?.name || "HR"}</span>
-                        </motion.div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={handleLogout}
-                            className="bg-red-500 px-6 py-2 rounded-full hover:bg-red-600 shadow-lg font-medium"
-                        >
-                            Logout
-                        </motion.button>
-                    </div>
-                </motion.nav>
+        <div className="flex h-screen bg-[#A7E6FF]">
+            <Sidebar />
 
-                {/* Sidebar + Main Content */}
-                <div className="flex flex-1">
-                    {/* Enhanced Sidebar */}
-                    <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Header */}
+                <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm">
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <h1 className="text-xl font-semibold text-[#050C9C]">Reports Dashboard</h1>
+                            <p className="text-sm text-gray-600">Generate and download comprehensive reports</p>
+                        </div>
+                    </div>
 
-                    {/* Main Content Area */}
-                    <div className="flex-1 p-6 overflow-auto">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-2xl shadow-xl border border-gray-200 min-h-full"
-                        >
-                            {/* Reports Header */}
-                            <div className="bg-gradient-to-r from-[#03624c] to-[#030f0f] text-white p-6 rounded-t-2xl">
-                                <motion.h2
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-3xl font-bold text-center mb-2"
-                                >
-                                    Reports Dashboard
-                                </motion.h2>
-                                <p className="text-center text-gray-200">
-                                    Generate and download comprehensive reports
-                                </p>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+                            <div className="w-8 h-8 bg-gradient-to-br from-[#3572EF] to-[#3ABEF9] rounded-lg flex items-center justify-center">
+                                <User className="w-4 h-4 text-white" />
                             </div>
+                            <span className="text-sm font-medium text-[#050C9C]">Welcome, {user?.name || "HR"}</span>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-200 font-medium"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Logout
+                        </button>
+                    </div>
+                </header>
 
+                {/* Content */}
+                <main className="flex-1 overflow-y-auto p-8">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Main Report Card */}
+                        <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                             {/* Tab Navigation */}
-                            <div className="border-b border-gray-200">
-                                <nav className="flex space-x-8 px-6" aria-label="Tabs">
+                            <div className="border-b border-gray-200 bg-gray-50">
+                                <nav className="flex" aria-label="Tabs">
                                     <button
                                         onClick={() => setActiveTab("interviews")}
-                                        className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+                                        className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 relative ${
                                             activeTab === "interviews"
-                                                ? "border-[#00df82] text-[#03624c]"
-                                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                                ? "text-[#050C9C] bg-white"
+                                                : "text-gray-600 hover:text-[#3572EF] hover:bg-gray-100"
                                         }`}
                                     >
-                                        Interviews Report
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Calendar className="w-4 h-4" />
+                                            Interviews Report
+                                        </div>
+                                        {activeTab === "interviews" && (
+                                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9]"></div>
+                                        )}
                                     </button>
                                     <button
                                         onClick={() => setActiveTab("candidates")}
-                                        className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+                                        className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 relative ${
                                             activeTab === "candidates"
-                                                ? "border-[#00df82] text-[#03624c]"
-                                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                                ? "text-[#050C9C] bg-white"
+                                                : "text-gray-600 hover:text-[#3572EF] hover:bg-gray-100"
                                         }`}
                                     >
-                                        Candidates Report
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Users className="w-4 h-4" />
+                                            Candidates Report
+                                        </div>
+                                        {activeTab === "candidates" && (
+                                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3572EF] to-[#3ABEF9]"></div>
+                                        )}
                                     </button>
                                 </nav>
                             </div>
 
                             {/* Tab Content */}
-                            <div className="p-6">
-                                {activeTab === "interviews" && <GenerateInterviewsReport />}
-                                {activeTab === "candidates" && <GenerateCandidatesReport />}
+                            <div className="p-8">
+                                {/* Report Content */}
+                                <div className="min-h-[400px]">
+                                    {activeTab === "interviews" && <GenerateInterviewsReport />}
+                                    {activeTab === "candidates" && <GenerateCandidatesReport />}
+                                </div>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
-                </div>
+                </main>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
