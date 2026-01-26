@@ -461,7 +461,7 @@ const ScheduleInterview = () => {
                       >
                         <option value="First Round">First Round</option>
                         <option value="Second Round">Second Round</option>
-                        <option value="Technical">Technical</option>
+                        <option value="technical">Technical</option>
                       </select>
                     </div>
                     {errors.interviewType && (

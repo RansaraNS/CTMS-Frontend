@@ -393,6 +393,7 @@ const AddCandidate = () => {
                       >
                         <option value="">Select Position</option>
                         <option value="Software Engineer Intern">Software Engineer Intern</option>
+                        <option value="Quality Assurance Intern">IT Intern</option>
                         <option value="Frontend Developer Intern">Frontend Developer Intern</option>
                         <option value="Backend Developer Intern">Backend Developer Intern</option>
                         <option value="Full Stack Developer Intern">Full Stack Developer Intern</option>
@@ -428,7 +429,6 @@ const AddCandidate = () => {
                       >
                         <option value="">Select Source</option>
                         <option value="LinkedIn">LinkedIn</option>
-                        <option value="Indeed">Indeed</option>
                         <option value="Company Website">Company Website</option>
                         <option value="Employee Referral">Employee Referral</option>
                         <option value="Job Fair">Job Fair</option>
